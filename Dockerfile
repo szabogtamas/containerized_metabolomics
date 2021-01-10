@@ -1,5 +1,8 @@
 FROM rocker/rstudio:3.6.3
 
+RUN sudo apt-get update -y
+RUN sudo apt-get install -y libxt-dev
+
 RUN install2.r --error \
     --deps TRUE \
     devtools \
