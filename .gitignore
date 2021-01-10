@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Input and output datasets
+data/
+results/
+
 # User-specific files
 *.rsuser
 *.suo

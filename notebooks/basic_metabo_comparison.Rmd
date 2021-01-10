@@ -1,0 +1,8 @@
+---
+title: "Basic comparison of metabolomic profiles"
+output: html_notebook
+---
+
+```{r}
+library(MetaboAnalystR)
+```
