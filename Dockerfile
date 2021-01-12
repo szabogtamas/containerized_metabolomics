@@ -8,7 +8,7 @@ RUN sudo apt-get install -y zlib1g-dev
 RUN sudo apt-get install -y cargo
 RUN sudo apt-get install -y libxml2-dev
 RUN sudo apt-get install -y libcairo2-dev
-RUN sudo apt-get install -y install mesa-common-dev
+RUN sudo apt-get install -y mesa-common-dev
 
 RUN install2.r --error \
     --deps TRUE \
