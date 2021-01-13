@@ -2,6 +2,7 @@ FROM rocker/rstudio:3.6.3
 
 RUN sudo apt-get update -y
 RUN sudo apt-get install -y libxt-dev
+RUN sudo apt-get install -y libx11-dev
 RUN sudo apt-get install -y libmagick++-dev
 RUN sudo apt-get install -y libfontconfig1-dev
 RUN sudo apt-get install -y zlib1g-dev
@@ -9,6 +10,7 @@ RUN sudo apt-get install -y cargo
 RUN sudo apt-get install -y libxml2-dev
 RUN sudo apt-get install -y libcairo2-dev
 RUN sudo apt-get install -y mesa-common-dev
+RUN sudo apt-get install -y libglu1-mesa-dev
 
 RUN install2.r --error \
     --deps TRUE \
