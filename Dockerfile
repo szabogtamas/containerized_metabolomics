@@ -10,6 +10,7 @@ RUN sudo apt-get install -y cargo
 RUN sudo apt-get install -y libxml2-dev
 RUN sudo apt-get install -y libcairo2-dev
 RUN sudo apt-get install -y mesa-common-dev
+RUN sudo apt-get install -y libglu1-mesa-dev
 RUN sudo apt-get install -y libopenmpi-dev
 
 RUN install2.r --error \
