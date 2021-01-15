@@ -12,6 +12,8 @@ RUN sudo apt-get install -y libcairo2-dev
 RUN sudo apt-get install -y mesa-common-dev
 RUN sudo apt-get install -y libglu1-mesa-dev
 RUN sudo apt-get install -y libopenmpi-dev
+RUN sudo apt-get install -y libnetcdf-dev
+RUN sudo apt-get install -y libssl-dev 
 
 RUN install2.r --error \
     --deps TRUE \
@@ -50,13 +52,19 @@ RUN R -e "BiocManager::install('siggenes')"
 RUN R -e "BiocManager::install('globaltest')"
 RUN R -e "BiocManager::install('GlobalAncova')"
 RUN R -e "BiocManager::install('Rgraphviz')"
-RUN R -e "BiocManager::install('pcaMethods')"
-RUN R -e "BiocManager::install('siggenes')"
 RUN R -e "BiocManager::install('KEGGgraph')"
 RUN R -e "BiocManager::install('preprocessCore')"
 RUN R -e "BiocManager::install('genefilter')"
 RUN R -e "BiocManager::install('SSPA')"
+RUN R -e "BiocManager::install('BiocParallel')"
+RUN R -e "BiocManager::install('MSnbase')"
+RUN R -e "BiocManager::install('RBGL')"
+RUN R -e "BiocManager::install('multtest')"
+RUN R -e "BiocManager::install('edgeR')"
+RUN R -e "BiocManager::install('limma')"
+RUN R -e "BiocManager::install('fgsea')"
 RUN R -e "BiocManager::install('sva')"
+RUN R -e "BiocManager::install('crmn')"
 
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
