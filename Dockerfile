@@ -43,7 +43,9 @@ RUN install2.r --error \
     pROC \
     Rcpp \
     caret \
-    ellipse
+    ellipse \
+    glasso \
+    cal 
     
 RUN R -e "BiocManager::install('xcms')"
 RUN R -e "BiocManager::install('impute')"
