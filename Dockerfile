@@ -65,6 +65,7 @@ RUN R -e "BiocManager::install('limma')"
 RUN R -e "BiocManager::install('fgsea')"
 RUN R -e "BiocManager::install('sva')"
 RUN R -e "BiocManager::install('crmn')"
+RUN R -e "BiocManager::install('ctc')"
 
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
