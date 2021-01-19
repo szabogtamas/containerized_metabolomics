@@ -18,6 +18,7 @@ RUN sudo apt-get install -y libcurl4-openssl-dev
 RUN sudo apt-get install -y libssh2-1-dev
 RUN sudo apt-get install -y libpq-dev
 RUN sudo apt-get install -y zlib1g-dev
+RUN sudo apt-get install -y libgeos-dev
 
 RUN install2.r --error \
     --deps TRUE \
@@ -49,6 +50,7 @@ RUN install2.r --error \
     caret \
     ellipse \
     glasso \
+    graph \
     huge \
     plotly
     
@@ -74,7 +76,6 @@ RUN R -e "BiocManager::install('sva')"
 RUN R -e "BiocManager::install('crmn')"
 RUN R -e "BiocManager::install('ctc')"
 RUN R -e "BiocManager::install('ppcor')"
-RUN R -e "BiocManager::install('graph')"
 
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
