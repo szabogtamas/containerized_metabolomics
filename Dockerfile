@@ -14,6 +14,10 @@ RUN sudo apt-get install -y libglu1-mesa-dev
 RUN sudo apt-get install -y libopenmpi-dev
 RUN sudo apt-get install -y libnetcdf-dev
 RUN sudo apt-get install -y libssl-dev 
+RUN sudo apt-get install -y libcurl4-openssl-dev
+RUN sudo apt-get install -y libssh2-1-dev
+RUN sudo apt-get install -y libpq-dev
+RUN sudo apt-get install -y zlib1g-dev
 
 RUN install2.r --error \
     --deps TRUE \
@@ -45,7 +49,8 @@ RUN install2.r --error \
     caret \
     ellipse \
     glasso \
-    huge
+    huge \
+    plotly
     
 RUN R -e "BiocManager::install('xcms')"
 RUN R -e "BiocManager::install('impute')"
