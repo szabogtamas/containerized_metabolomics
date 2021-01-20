@@ -20,8 +20,6 @@ RUN sudo apt-get install -y libpq-dev
 RUN sudo apt-get install -y zlib1g-dev
 RUN sudo apt-get install -y libgeos-dev
 
-RUN R -e "BiocManager::install('graph')"
-
 RUN install2.r --error \
     --deps TRUE \
     devtools \
@@ -38,22 +36,12 @@ RUN install2.r --error \
     gplots \
     e1071 \
     caTools \
-    igraph \
-    randomForest \
     Cairo \
-    pls \
     pheatmap \
     lattice \
     rmarkdown \
     knitr \
-    data.table \
-    pROC \
-    Rcpp \
-    caret \
-    ellipse \
-    glasso \
-    huge \
-    plotly
+    data.table
     
 RUN R -e "BiocManager::install('xcms')"
 RUN R -e "BiocManager::install('impute')"
@@ -77,6 +65,20 @@ RUN R -e "BiocManager::install('sva')"
 RUN R -e "BiocManager::install('crmn')"
 RUN R -e "BiocManager::install('ctc')"
 RUN R -e "BiocManager::install('ppcor')"
+RUN R -e "BiocManager::install('graph')"
+
+RUN install2.r --error \
+    --deps TRUE \
+    igraph \
+    randomForest \
+    pls \
+    pROC \
+    Rcpp \
+    caret \
+    ellipse \
+    glasso \
+    huge \
+    plotly
 
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
