@@ -50,7 +50,6 @@ RUN install2.r --error \
     caret \
     ellipse \
     glasso \
-    graph \
     huge \
     plotly
     
@@ -76,6 +75,7 @@ RUN R -e "BiocManager::install('sva')"
 RUN R -e "BiocManager::install('crmn')"
 RUN R -e "BiocManager::install('ctc')"
 RUN R -e "BiocManager::install('ppcor')"
+RUN R -e "BiocManager::install('graph')"
 
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
