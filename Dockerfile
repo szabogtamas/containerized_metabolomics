@@ -89,6 +89,6 @@ RUN install2.r --error \
 
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
-ADD ./ /scripts
-ADD ./ /notebooks
-ADD ./ /data_examples
+COPY ./scripts /home/workdir
+COPY ./notebooks /home/workdir
+COPY ./data_examples /home/workdir
