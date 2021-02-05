@@ -5,4 +5,10 @@ output: html_notebook
 
 ```{r}
 library(MetaboAnalystR)
+
+source("../scripts/drive_reader")
+```
+
+```{r}
+metab_data <- read_drive("~/Datasets/faeces vizsgálat IBD.xlsx")
 ```
