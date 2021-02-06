@@ -28,7 +28,7 @@ for (rn in names(scriptOptionalArgs)){
   opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
 }
 
-for (pk in c("tidyr", "dplyr")){
+for (pk in c("tidyr", "dplyr", "dplyr", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
@@ -57,6 +57,19 @@ main <- function(opt){
   fig2pdf(results$figure, outFile, height=8.64, width=7.2)
 
   invisible(NULL)
+}
+
+
+#' Downloads a data table from Drive and reads it as a dataframe.
+#' 
+#' @param in_df dataframe. Metabolomics data with abundance values and standardized compound names 
+#' 
+#' @return top results and overview plots.
+compare_metabo <- function(in_df){
+  
+  in_df %>%
+    Ttests.Anal()
+  
 }
 
 # Ensuring command line connectivity by sourcing an argument parser
