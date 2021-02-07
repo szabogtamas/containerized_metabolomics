@@ -60,7 +60,7 @@ main <- function(opt){
 }
 
 
-#' Downloads a data table from Drive and reads it as a dataframe.
+#' Carries out basic metabolomocs analysis for compuonds in a table.
 #' 
 #' @param in_df dataframe. Metabolomics data with abundance values and standardized compound names 
 #' 
