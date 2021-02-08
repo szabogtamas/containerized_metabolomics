@@ -72,5 +72,22 @@ compare_metabo <- function(in_df){
   
 }
 
+
+#' Explores differentially regulated metabolic pathways.
+#' 
+#' @param in_df dataframe. Metabolomics data with abundance values and standardized compound names 
+#' 
+#' @return top results and overview plots.
+find_de_paths <- function(in_df){
+  
+  in_df %>%
+    msea()
+  
+}
+
+
+# Ensuring command line connectivity by sourcing an argument parser
+source(opt$commandRpath, local=TRUE)
+
 # Ensuring command line connectivity by sourcing an argument parser
 source(opt$commandRpath, local=TRUE)
