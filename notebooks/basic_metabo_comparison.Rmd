@@ -6,9 +6,28 @@ output: html_notebook
 ```{r}
 library(MetaboAnalystR)
 
-source("../scripts/drive_reader")
+library(dplyr)
+library(tidyr)
+library(stringr)
 ```
 
 ```{r}
-metab_data <- read_drive("~/Datasets/faeces vizsgálat IBD.xlsx")
+test_data_file <- "data_examples/test.tsv"
+```
+
+```{r}
+metab_data <- test_data_file %>%
+  read.table(sep="\t", stringsAsFactors=FALSE, header=TRUE) %>%
+  rename(Metabolite = X, MetaboGroup = X.1) %>%
+  pivot_longer(c(-Metabolite, -MetaboGroup)) %>%
+  mutate(
+    Condition = str_extract(name, 'Condition(A|B)'),
+    Replicate = case_when(
+      grepl('\\.1', name) ~ 'Batch_2',
+      TRUE ~ 'Batch_1'
+    )
+  ) %>%
+  select(-name)
+
+head(metab_data)
 ```
