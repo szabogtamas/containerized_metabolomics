@@ -85,9 +85,7 @@ RUN install2.r --error \
     Rcpp \
     glasso \
     huge \
-    plotly \
-    readxl \
-    googledrive
+    plotly
 
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
