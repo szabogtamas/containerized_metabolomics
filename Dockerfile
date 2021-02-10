@@ -21,6 +21,7 @@ RUN sudo apt-get install -y zlib1g-dev
 RUN sudo apt-get install -y libgeos-dev
 RUN sudo apt-get install -y libudunits2-dev
 RUN sudo apt-get install -y libgdal-dev
+RUN sudo apt-get install -y libsodium-dev
 
 RUN sudo apt-get install -y build-essential chrpath libxft-dev
 RUN sudo apt-get install -y libfreetype6-dev libfreetype6 libfontconfig1-dev libfontconfig1
@@ -85,7 +86,9 @@ RUN install2.r --error \
     Rcpp \
     glasso \
     huge \
-    plotly
+    plotly \
+    readxl \
+    googledrive
 
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
