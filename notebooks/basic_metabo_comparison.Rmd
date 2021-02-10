@@ -4,6 +4,7 @@ output: html_notebook
 ---
 
 ```{r}
+# Recreate tutorial at https://www.metaboanalyst.ca with own dataset
 library(MetaboAnalystR)
 
 library(dplyr)
@@ -60,11 +61,22 @@ mSet <- PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
 ```
 
 ```{r}
-mSet <- PlotNormSummary(mSet, "norm_0_", "png", 72, width=NA)
-mSet <- PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
+mSet <- FC.Anal.unpaired(mSet, 2.0, 0)
+mSet <- PlotFC(mSet, "fc_0_", "png", 72, width=NA)
 ```
 
 ```{r}
-mSet <- PlotNormSummary(mSet, "norm_0_", "png", 72, width=NA)
-mSet <- PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
+mSet <- Ttests.Anal(mSet, F, 0.05, FALSE, TRUE)
+mSet <- PlotTT(mSet, "tt_0_", "png", 72, width=NA)
+```
+
+```{r}
+mSet <- mSet %>%
+  PCA.Anal() %>%
+  PlotPCAPairSummary("pca_pair_0_", "png", 72, width=NA, 5) %>%
+  PlotPCAScree("pca_scree_0_", "png", 72, width=NA, 5) %>%
+  PlotPCA2DScore("pca_score2d_0_", "png", 72, width=NA, 1,2,0.95,1,0) %>%
+  PlotPCALoading("pca_loading_0_", "png", 72, width=NA, 1,2) %>%
+  PlotPCABiplot("pca_biplot_0_", "png", 72, width=NA, 1,2) %>%
+  PlotPCA3DScoreImg("pca_score3d_0_", "png", 72, width=NA, 1,2,3, 40)
 ```
