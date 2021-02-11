@@ -93,3 +93,5 @@ RUN install2.r --error \
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
 ADD ./ /home/rstudio
+RUN rm -rf /home/rstudio/kitematic
+RUN chmod a+rwx -R /home/rstudio
