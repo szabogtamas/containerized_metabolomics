@@ -13,7 +13,7 @@ library(stringr)
 ```
 
 ```{r}
-test_data_file <- "data_examples/test.tsv"
+test_data_file <- "~/git_repo/data_examples/test.tsv"
 ```
 
 ```{r}
@@ -25,8 +25,10 @@ metab_data <- test_data_file %>%
     Condition = str_extract(name, 'Condition(A|B)'),
     Replicate = case_when(
       grepl('\\.1', name) ~ 'Batch_2',
+      grepl('\\.2', name) ~ 'Batch_3',
       TRUE ~ 'Batch_1'
-    )
+    ),
+    Subject = paste(Condition, Replicate, sep="_")
   ) %>%
   select(-name)
 
