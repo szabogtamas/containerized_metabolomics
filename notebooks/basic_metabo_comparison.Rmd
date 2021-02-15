@@ -36,11 +36,13 @@ head(metab_data)
 ```
 
 ```{r}
-metab_data <- metab_data %>%
-  select(-MetaboGroup)  %>%
-  pivot_longer(Metabolite)
+analyst_compatible_data <- "~/local_files/local_data/reshaped_metabo.csv"
   
-head(metab_data)
+metab_data %>%
+  select(-MetaboGroup, -Replicate)  %>%
+  select(Subject, Condition, Metabolite, value)  %>%
+  pivot_wider(names_from=Metabolite) %>%
+  write.csv(analyst_compatible_data, row.names=FALSE)
 ```
 
 ```{r}
