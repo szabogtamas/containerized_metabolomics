@@ -49,6 +49,7 @@ metab_data %>%
 mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
 anal.type <- "msetquea"
 msg.vec <- list()
+
 mSet <- InitDataObjects("conc", "msetquea") %>%
   Read.TextData(analyst_compatible_data, "rowu") %>%
   SanityCheckData()
@@ -69,7 +70,8 @@ mSet <- PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
 ```
 
 ```{r}
-mSet <- FC.Anal.unpaired(mSet, 2.0, 0)
+#mSet <- FC.Anal.unpaired(mSet, 2.0, 0)
+mSet <- FC.Anal(mSet, 2.0, 0)
 mSet <- PlotFC(mSet, "fc_0_", "png", 72, width=NA)
 ```
 
