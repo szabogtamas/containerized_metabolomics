@@ -46,18 +46,12 @@ metab_data %>%
 ```
 
 ```{r}
-mSet <- InitDataObjects("conc", "msetquea", FALSE)  %>%
-  ReadIndData(metab_data)
-```
-
-```{r}
-# Perform data processing - Data checking
-mSet <- SanityCheckData(mSet)
-```
-
-```{r}
-# Perform data processing - Minimum Value Replacing
-mSet <- ReplaceMin(mSet)
+mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
+anal.type <- "msetquea"
+msg.vec <- list()
+mSet <- InitDataObjects("conc", "msetquea") %>%
+  Read.TextData(analyst_compatible_data, "rowu") %>%
+  SanityCheckData()
 ```
 
 ```{r}
