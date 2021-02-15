@@ -94,5 +94,7 @@ RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build
 
 ADD ./ /home/rstudio/git_repo
 RUN chmod a+rwx -R /home/rstudio
+RUN cd /home/rstudio/git_repo
 RUN git init
 RUN git remote add origin https://github.com/szabogtamas/containerized_metabolomics.git
+RUN git checkout dev
