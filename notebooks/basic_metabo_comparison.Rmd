@@ -55,10 +55,12 @@ mSet <- InitDataObjects("conc", "msetquea") %>%
 ```
 
 ```{r}
-# Perform data processing - Variable Filtering and Normalization
-mSet <- FilterVariable(mSet, "iqr", "F", 25)
-mSet <- PreparePrenormData(mSet)
-mSet <- Normalization(mSet, "MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
+# Preprocess data
+mSet <- mSet %>%
+  ReplaceMin() %>%
+  FilterVariable("iqr", "F", 25) %>%
+  PreparePrenormData() %>%
+  Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
 ```
 
 ```{r}
