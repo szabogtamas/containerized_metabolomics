@@ -100,4 +100,4 @@ RUN chmod a+rwx -R /home/rstudio
 RUN cd /home/rstudio/git_repo
 RUN git init
 RUN git remote add origin https://github.com/szabogtamas/containerized_metabolomics.git
-RUN git checkout dev
+RUN git fetch origin && git checkout --track origin/dev
