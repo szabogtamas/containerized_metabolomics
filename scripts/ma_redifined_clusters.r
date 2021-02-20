@@ -68,7 +68,7 @@ main <- function(opt){
 plot_metabo_enrichment <- function(in_df){
   
   in_df %>%
-    Enrich.Anal()
+    pca.Anal()
   
 }
 
