@@ -67,8 +67,27 @@ main <- function(opt){
 #' @return top results and overview plots.
 plot_metabo_enrichment <- function(in_df){
   
-  in_df %>%
-    pca.Anal()
+mSet <- in_df %>%
+  mSet()
+
+mSet <- mSet %>%
+  PCA.Anal() %>%
+  PlotPCAPairSummary("pca_pair_0_", "png", 72, width=NA, 5) %>%
+  PlotPCAScree("pca_scree_0_", "png", 72, width=NA, 5) %>%
+  PlotPCA2DScore("pca_score2d_0_", "png", 72, width=NA, 1,2,0.95,1,0) %>%
+  PlotPCALoading("pca_loading_0_", "png", 72, width=NA, 1,2) %>%
+  PlotPCABiplot("pca_biplot_0_", "png", 72, width=NA, 1,2) %>%
+  PlotPCA3DScoreImg("pca_score3d_0_", "png", 72, width=NA, 1,2,3, 40)
+
+mSet <- mSet %>%
+  PLSR.Anal(reg=TRUE) %>%
+  PlotPLSPairSummary("pls_pair_0_", "png", 72, width=NA, 5) %>%
+  PlotPLS2DScore("pls_score2d_0_", "png", 72, width=NA, 1,2,0.95,1,0) %>%
+  PlotPLS3DScoreImg("pls_score3d_0_", "png", 72, width=NA, 1,2,3, 40) %>%
+  PlotPLSLoading("pls_loading_0_", "png", 72, width=NA, 1, 2) %>%
+  PLSDA.CV("L",5, "Q2") %>%
+  PlotPLS.Classification("pls_cv_0_", "png", 72, width=NA) %>%
+  PlotPLS.Imp("pls_imp_0_", "png", 72, width=NA, "vip", "Comp. 1", 15, FALSE)
   
 }
 
