@@ -68,7 +68,18 @@ main <- function(opt){
 plot_metabo_enrichment <- function(in_df){
   
   in_df %>%
-    ttest.Anal()
+    mSet <- mSet %>%
+  ReplaceMin() %>%
+  FilterVariable("iqr", "F", 25) %>%
+  PreparePrenormData() %>%
+  Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
+
+  mSet <- PlotNormSummary(mSet, "norm_0_", "png", 72, width=NA)
+  mSet <- PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
+
+  #mSet <- FC.Anal.unpaired(mSet, 2.0, 0)
+  mSet <- FC.Anal(mSet, 2.0, 0)
+  mSet <- PlotFC(mSet, "fc_0_", "png", 72, width=NA)
   
 }
 
