@@ -82,31 +82,49 @@ mSet <- mSet %>%
 ```{r}
 # A built-in summary of normalization
 
-mSet <- PlotNormSummary(mSet, file.path(figure_folder, "normalization_summary"), "png")
+img_path <- file.path(figure_folder, "normalization_summary")
+
+mSet <- PlotNormSummary(mSet, img_path, "png")
+
+include_graphics(paste(img_path, "png", sep = "."))
 ```
 
 ```{r}
 # A built-in summary of sample normalization
 
-mSet <- PlotSampleNormSummary(mSet, file.path(figure_folder, "sample_normalization"), "png")
+img_path <- file.path(figure_folder, "sample_normalization")
+
+mSet <- PlotSampleNormSummary(mSet, img_path, "png")
+
+include_graphics(paste(img_path, "png", sep = "."))
 ```
 
 ```{r}
 # The built-in overview of fold changes
 
+img_path <- file.path(figure_folder, "fold_changes")
+
 mSet <- FC.Anal(mSet, 2.0, 0) %>%
-  PlotFC(file.path(figure_folder, "fold_changes"), "png")
+  PlotFC(img_path, "png")
+
+include_graphics(paste(img_path, "png", sep = "."))
 ```
 
 ```{r}
 # Biomarker ranking is based on multiple t-tests
 
+img_path <- file.path(figure_folder, "t_tests")
+
 mSet <- Ttests.Anal(mSet, F, 0.05, FALSE, TRUE) %>%
-  PlotTT(file.path(figure_folder, "t_tests"), "png")
+  PlotTT(img_path, "png")
+
+include_graphics(paste(img_path, "png", sep = "."))
 ```
 
 ```{r}
 # A standard PCA
+
+img_path <- file.path(figure_folder, "pca")
 
 mSet <- mSet %>%
   PCA.Anal() %>%
@@ -114,17 +132,23 @@ mSet <- mSet %>%
   PlotPCAScree(file.path(figure_folder, "pca_scree"), "png", 72, width=NA, 5) %>%
   PlotPCA2DScore(file.path(figure_folder, "pca_score2d"), "png", 72, width=NA, 1, 2, 0.95, 1, 0) %>%
   PlotPCALoading(file.path(figure_folder, "pca_loading"), "png", 72, width=NA, 1, 2) %>%
-  PlotPCABiplot(file.path(figure_folder, "pca_biplot"), "png", 72, width=NA, 1, 2) %>%
+  PlotPCABiplot(img_path, "png", 72, width=NA, 1, 2) %>%
   PlotPCA3DScoreImg(file.path(figure_folder, "pca_score3d"), "png", 72, width=NA, 1,2,3, 40)
+
+include_graphics(paste(img_path, "png", sep = "."))
 ```
 
 ```{r}
 # Partial least squares regression
 
+img_path <- file.path(figure_folder, "pls")
+
 mSet <- mSet %>%
   PLSR.Anal(reg=TRUE) %>%
-  PlotPLSPairSummary(file.path(figure_folder"pls_pair"), "png", 72, width=NA, 5) %>%
-  PlotPLS2DScore(file.path(figure_folder"pls_score2d"), "png", 72, width=NA, 1,2,0.95,1,0) %>%
-  PlotPLS3DScoreImg(file.path(figure_folder"pls_score3d"), "png", 72, width=NA, 1,2,3, 40) %>%
-  PlotPLSLoading(file.path(figure_folder"pls_loading"), "png", 72, width=NA, 1, 2) %>%
+  PlotPLSPairSummary(img_path, "png", 72, width=NA, 5) %>%
+  PlotPLS2DScore(file.path(figure_folder, "pls_score2d"), "png", 72, width=NA, 1,2,0.95,1,0) %>%
+  PlotPLS3DScoreImg(file.path(figure_folderm, "pls_score3d"), "png", 72, width=NA, 1,2,3, 40) %>%
+  PlotPLSLoading(file.path(figure_folder", pls_loading"), "png", 72, width=NA, 1, 2)
+
+include_graphics(paste(img_path, "png", sep = "."))
 ```
