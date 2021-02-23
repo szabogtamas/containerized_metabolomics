@@ -101,6 +101,7 @@ selected_compounds <- significance_table[1:50, "compound"]
 ```{r}
 # Parse the hitlist
 
+mSet <- NULL
 mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
   Setup.MapData(selected_compounds) %>%
   CrossReferencing("name")
@@ -122,6 +123,45 @@ mSet <- mSet %>%
   SetCurrentMsetLib("smpdb_pathway", 2) %>%
   CalculateHyperScore() %>%
   PlotORA(mSet, img_path, "bar", "png")
+
+include_graphics(paste(img_path, "png", sep = "."))
+```
+
+## Demonstrate mSEA approach
+
+```{r}
+# Initialize the mSet object agian
+
+mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
+anal.type <- "stat"
+msg.vec <- list()
+
+mSet <- InitDataObjects("conc", "msetqea") %>%
+  Read.TextData(analyst_compatible_data, "rowu") %>%
+  CrossReferencing("name") %>%
+  CreateMappingResultTable() %>%
+  SanityCheckData()
+```
+
+```{r}
+# Normalize data
+
+mSet <- mSet %>%
+  ReplaceMin(mSet) %>%
+  PreparePrenormData() %>%
+  Normalization("NULL", "NULL", "NULL", "PIF_178", ratio=FALSE, ratioNum=20)
+```
+
+```{r}
+# Run the mSEA pipeline
+
+img_path <- file.path(figure_folder, "msea")
+
+mSet <- mSet %>%
+  SetMetabolomeFilter(FALSE) %>%
+  SetCurrentMsetLib("smpdb_pathway", 2) %>%
+  CalculateGlobalTestScore() %>%
+  PlotQEA.Overview("img_path, "bar", "png")
 
 include_graphics(paste(img_path, "png", sep = "."))
 ```
