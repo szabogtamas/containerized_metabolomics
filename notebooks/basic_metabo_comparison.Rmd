@@ -1,5 +1,5 @@
 ---
-title: "Basic comparison of metabolomic profiles"
+title: "Descriptive stats using MetaboAnalyst"
 output: html_notebook
 ---
 
@@ -14,6 +14,8 @@ library(stringr)
 
 ```{r}
 test_data_file <- "~/git_repo/data_examples/test.tsv"
+figure_folder <- "~/local_files/analyst_out/basic_stats"
+if(!dir.exists(figure_folder)) dir.create(figure_folder, recursive = TRUE)
 ```
 
 ```{r}
@@ -50,7 +52,7 @@ mSet <- NULL # Have to reset otherwise the app resurrects old instance from glob
 anal.type <- "msetquea"
 msg.vec <- list()
 
-mSet <- InitDataObjects("conc", "msetquea") %>%
+mSet <- InitDataObjects("conc", "stat") %>%
   Read.TextData(analyst_compatible_data, "rowu") %>%
   SanityCheckData()
 ```
@@ -65,40 +67,39 @@ mSet <- mSet %>%
 ```
 
 ```{r}
-mSet <- PlotNormSummary(mSet, "norm_0_", "png", 72, width=NA)
-mSet <- PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
+mSet <- PlotNormSummary(mSet, file.path(figure_folder, "normalization_summary"), "png")
 ```
 
 ```{r}
-#mSet <- FC.Anal.unpaired(mSet, 2.0, 0)
+mSet <- PlotSampleNormSummary(mSet, file.path(figure_folder, "sample_normalization"), "png")
+```
+
+```{r}
 mSet <- FC.Anal(mSet, 2.0, 0)
-mSet <- PlotFC(mSet, "fc_0_", "png", 72, width=NA)
+mSet <- PlotFC(mSet, file.path(figure_folder, "fold_changes"), "png")
 ```
 
 ```{r}
 mSet <- Ttests.Anal(mSet, F, 0.05, FALSE, TRUE)
-mSet <- PlotTT(mSet, "tt_0_", "png", 72, width=NA)
+mSet <- PlotTT(mSet, file.path(figure_folder, "t_tests"), "png")
 ```
 
 ```{r}
 mSet <- mSet %>%
   PCA.Anal() %>%
-  PlotPCAPairSummary("pca_pair_0_", "png", 72, width=NA, 5) %>%
-  PlotPCAScree("pca_scree_0_", "png", 72, width=NA, 5) %>%
-  PlotPCA2DScore("pca_score2d_0_", "png", 72, width=NA, 1,2,0.95,1,0) %>%
-  PlotPCALoading("pca_loading_0_", "png", 72, width=NA, 1,2) %>%
-  PlotPCABiplot("pca_biplot_0_", "png", 72, width=NA, 1,2) %>%
-  PlotPCA3DScoreImg("pca_score3d_0_", "png", 72, width=NA, 1,2,3, 40)
+  PlotPCAPairSummary(file.path(figure_folder, "pca_pair"), "png", 72, width=NA, 5) %>%
+  PlotPCAScree(file.path(figure_folder, "pca_scree"), "png", 72, width=NA, 5) %>%
+  PlotPCA2DScore(file.path(figure_folder, "pca_score2d"), "png", 72, width=NA, 1, 2, 0.95, 1, 0) %>%
+  PlotPCALoading(file.path(figure_folder, "pca_loading"), "png", 72, width=NA, 1, 2) %>%
+  PlotPCABiplot(file.path(figure_folder, "pca_biplot"), "png", 72, width=NA, 1, 2) %>%
+  PlotPCA3DScoreImg(file.path(figure_folder, "pca_score3d"), "png", 72, width=NA, 1,2,3, 40)
 ```
 
 ```{r}
 mSet <- mSet %>%
   PLSR.Anal(reg=TRUE) %>%
-  PlotPLSPairSummary("pls_pair_0_", "png", 72, width=NA, 5) %>%
-  PlotPLS2DScore("pls_score2d_0_", "png", 72, width=NA, 1,2,0.95,1,0) %>%
-  PlotPLS3DScoreImg("pls_score3d_0_", "png", 72, width=NA, 1,2,3, 40) %>%
-  PlotPLSLoading("pls_loading_0_", "png", 72, width=NA, 1, 2) %>%
-  PLSDA.CV("L",5, "Q2") %>%
-  PlotPLS.Classification("pls_cv_0_", "png", 72, width=NA) %>%
-  PlotPLS.Imp("pls_imp_0_", "png", 72, width=NA, "vip", "Comp. 1", 15, FALSE)
+  PlotPLSPairSummary(file.path(figure_folder"pls_pair"), "png", 72, width=NA, 5) %>%
+  PlotPLS2DScore(file.path(figure_folder"pls_score2d"), "png", 72, width=NA, 1,2,0.95,1,0) %>%
+  PlotPLS3DScoreImg(file.path(figure_folder"pls_score3d"), "png", 72, width=NA, 1,2,3, 40) %>%
+  PlotPLSLoading(file.path(figure_folder"pls_loading"), "png", 72, width=NA, 1, 2) %>%
 ```
