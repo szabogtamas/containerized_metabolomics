@@ -127,6 +127,45 @@ mSet <- mSet %>%
 include_graphics(paste(img_path, "png", sep = "."))
 ```
 
+## Pathway-focused approach
+
+```{r}
+# Go back to the hitlist
+
+mSet <- NULL
+mSet <- InitDataObjects("conc", "pathora", FALSE) %>%
+  Setup.MapData(selected_compounds) %>%
+  CrossReferencing("name") %>%
+  CreateMappingResultTable()
+
+mSet$dataSet$map.table
+```
+
+```{r}
+# Run the PATHORA pipeline
+
+img_path <- file.path(figure_folder, "path_view")
+
+mSet <- mSet %>%
+  SetKEGG.PathLib("hsa", "current") %>%
+  SetMetabolomeFilter(mSet, FALSE) %>%
+  CalculateOraScore("rbc", "hyperg") %>%
+  PlotPathSummary(img_path, "png")
+
+include_graphics(paste(img_path, "png", sep = "."))
+```
+
+```{r}
+# Plot a specific metabolic pathway, in this case "Glycine, serine and threonine metabolism"
+
+img_path <- file.path(figure_folder, "Glycine, serine and threonine metabolism")
+
+mSet <- mSet %>%
+  PlotKEGGPath(img_path, 528, 480, "png", NULL)
+
+include_graphics(paste(img_path, "png", sep = "."))
+```
+
 ## Demonstrate mSEA approach
 
 ```{r}
