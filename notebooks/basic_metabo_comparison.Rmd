@@ -5,6 +5,7 @@ output: html_notebook
 
 ```{r}
 # Recreate tutorial at https://www.metaboanalyst.ca with own dataset
+
 library(MetaboAnalystR)
 
 library(dplyr)
@@ -13,12 +14,18 @@ library(stringr)
 ```
 
 ```{r}
+# Define input location and where figures should be saved
+
 test_data_file <- "~/git_repo/data_examples/test.tsv"
+
+analyst_compatible_data <- "~/local_files/local_data/reshaped_metabo.csv"
 figure_folder <- "~/local_files/analyst_out/basic_stats"
 if(!dir.exists(figure_folder)) dir.create(figure_folder, recursive = TRUE)
 ```
 
 ```{r}
+# Reshape the input a little to be in a tidy format
+
 metab_data <- test_data_file %>%
   read.table(sep="\t", stringsAsFactors=FALSE, header=TRUE) %>%
   rename(Metabolite = X, MetaboGroup = X.1) %>%
@@ -38,18 +45,23 @@ head(metab_data)
 ```
 
 ```{r}
+# The metaboAnalyst library needs a bit different input format and needs an input file (data frame is not good enough)
+
 analyst_compatible_data <- "~/local_files/local_data/reshaped_metabo.csv"
   
 metab_data %>%
   select(-MetaboGroup, -Replicate)  %>%
   select(Subject, Condition, Metabolite, value)  %>%
-  pivot_wider(names_from=Metabolite) %>%
+  pivot_wider(names_from=Metabolite) %T>%
+  { print(head((.)); . } %>%
   write.csv(analyst_compatible_data, row.names=FALSE)
 ```
 
 ```{r}
+# After all the transformations, finally, read the input as a MetaboAnalyst object (mSet)
+
 mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
-anal.type <- "msetquea"
+anal.type <- "stat"
 msg.vec <- list()
 
 mSet <- InitDataObjects("conc", "stat") %>%
@@ -58,7 +70,8 @@ mSet <- InitDataObjects("conc", "stat") %>%
 ```
 
 ```{r}
-# Preprocess data
+# Preprocess and normalize data
+
 mSet <- mSet %>%
   ReplaceMin() %>%
   FilterVariable("iqr", "F", 25) %>%
@@ -67,24 +80,34 @@ mSet <- mSet %>%
 ```
 
 ```{r}
+# A built-in summary of normalization
+
 mSet <- PlotNormSummary(mSet, file.path(figure_folder, "normalization_summary"), "png")
 ```
 
 ```{r}
+# A built-in summary of sample normalization
+
 mSet <- PlotSampleNormSummary(mSet, file.path(figure_folder, "sample_normalization"), "png")
 ```
 
 ```{r}
-mSet <- FC.Anal(mSet, 2.0, 0)
-mSet <- PlotFC(mSet, file.path(figure_folder, "fold_changes"), "png")
+# The built-in overview of fold changes
+
+mSet <- FC.Anal(mSet, 2.0, 0) %>%
+  PlotFC(file.path(figure_folder, "fold_changes"), "png")
 ```
 
 ```{r}
-mSet <- Ttests.Anal(mSet, F, 0.05, FALSE, TRUE)
-mSet <- PlotTT(mSet, file.path(figure_folder, "t_tests"), "png")
+# Biomarker ranking is based on multiple t-tests
+
+mSet <- Ttests.Anal(mSet, F, 0.05, FALSE, TRUE) %>%
+  PlotTT(file.path(figure_folder, "t_tests"), "png")
 ```
 
 ```{r}
+# A standard PCA
+
 mSet <- mSet %>%
   PCA.Anal() %>%
   PlotPCAPairSummary(file.path(figure_folder, "pca_pair"), "png", 72, width=NA, 5) %>%
@@ -96,6 +119,8 @@ mSet <- mSet %>%
 ```
 
 ```{r}
+# Partial least squares regression
+
 mSet <- mSet %>%
   PLSR.Anal(reg=TRUE) %>%
   PlotPLSPairSummary(file.path(figure_folder"pls_pair"), "png", 72, width=NA, 5) %>%
