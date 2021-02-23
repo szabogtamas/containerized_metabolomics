@@ -1,0 +1,127 @@
+---
+title: "Pathway analysis using MetaboAnalyst"
+output: html_notebook
+---
+
+```{r}
+# Based on tutorials at https://drive.google.com/file/d/1CXluzyYqNoPqu1DI3HwvDAmRVGMe825m/view and https://drive.google.com/file/d/1bLHQC8G7n9XyBG4Vim63hhICb4Qtw36M/view
+
+library(MetaboAnalystR)
+
+library(dplyr)
+library(tidyr)
+library(stringr)
+```
+
+```{r}
+# Define input location and where figures should be saved
+
+test_data_file <- "~/git_repo/data_examples/test.tsv"
+
+analyst_compatible_data <- "~/local_files/local_data/reshaped_metabo.csv"
+figure_folder <- "~/local_files/analyst_out/basic_stats"
+if(!dir.exists(figure_folder)) dir.create(figure_folder, recursive = TRUE)
+```
+
+## Preprocessing steps
+
+```{r}
+# Reshape the input a little to be in a tidy format
+
+metab_data <- test_data_file %>%
+  read.table(sep="\t", stringsAsFactors=FALSE, header=TRUE) %>%
+  rename(Metabolite = X, MetaboGroup = X.1) %>%
+  pivot_longer(c(-Metabolite, -MetaboGroup)) %>%
+  mutate(
+    Condition = str_extract(name, 'Condition(A|B)'),
+    Replicate = case_when(
+      grepl('\\.1', name) ~ 'Batch_2',
+      grepl('\\.2', name) ~ 'Batch_3',
+      TRUE ~ 'Batch_1'
+    ),
+    Subject = paste(Condition, Replicate, sep="_")
+  ) %>%
+  select(-name)
+
+head(metab_data)
+```
+
+```{r}
+# The metaboAnalyst library needs a bit different input format and needs an input file (data frame is not good enough)
+
+analyst_compatible_data <- "~/local_files/local_data/reshaped_metabo.csv"
+  
+metab_data %>%
+  select(-MetaboGroup, -Replicate)  %>%
+  select(Subject, Condition, Metabolite, value)  %>%
+  pivot_wider(names_from=Metabolite) %T>%
+  { print(head((.)); . } %>%
+  write.csv(analyst_compatible_data, row.names=FALSE)
+```
+
+```{r}
+# After all the transformations, finally, read the input as a MetaboAnalyst object (mSet)
+
+mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
+anal.type <- "stat"
+msg.vec <- list()
+
+mSet <- InitDataObjects("conc", "stat") %>%
+  Read.TextData(analyst_compatible_data, "rowu") %>%
+  SanityCheckData()
+```
+
+```{r}
+# Normalize data
+
+mSet <- mSet %>%
+  ReplaceMin() %>%
+  FilterVariable("iqr", "F", 25) %>%
+  PreparePrenormData() %>%
+  Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
+```
+
+## Hitlist-based approach
+
+
+```{r}
+# Select top compounds based on t-tests
+
+mSet <- FC.Anal(mSet, 2.0, 0) %>%
+  Ttests.Anal(F, 0.05, FALSE, TRUE)
+
+significance_table <- mSet$analSet$tt$sig.mat %>%
+  data.frame(compound = rownames(.), .) %>%
+  arrange(p.value)
+
+head(significance_table)
+selected_compounds <- significance_table[1:50, "compound"]
+```
+
+```{r}
+# Parse the hitlist
+
+mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
+  Setup.MapData(selected_compounds) %>%
+  CrossReferencing("name")
+
+mSet$name.map
+```
+
+```{r}
+# Run the ORA pipeline
+
+img_path <- file.path(figure_folder, "ora")
+
+mSet <- mSet %>%
+  CreateMappingResultTable() %>%
+  PerformDetailMatch("L-Isolucine") %>%
+  GetCandidateList() %>%
+  SetCandidate("L-Isolucine", "L-Isoleucine") %>%
+  SetMetabolomeFilter(FALSE) %>%
+  SetCurrentMsetLib("smpdb_pathway", 2) %>%
+  CalculateHyperScore() %>%
+  PlotORA(mSet, img_path, "bar", "png")
+
+include_graphics(paste(img_path, "png", sep = "."))
+```
