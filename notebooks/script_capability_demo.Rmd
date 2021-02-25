@@ -1,0 +1,33 @@
+---
+title: "Metabolomic analysis powered by MetaboAnalyst, made flexible"
+output: html_notebook
+---
+
+```{r}
+# Source scripts that bundle MetaboAnalyst functions
+
+source("../scripts/ma_redefined_stats.r")
+```
+
+```{r}
+# Parse test input
+
+test_data_file <- "~/git_repo/data_examples/test.tsv"
+metabo_data <- csv_to_mset(test_data_file)
+
+head(metabo_data)
+```
+
+```{r}
+# Calculate basic descriptive statistics
+
+stat_results <- metabo_desc_stat(metabo_data)
+
+head(stat_results$data)
+```
+
+```{r}
+# Show a volcano plot of the results
+
+stat_results$plot
+```
