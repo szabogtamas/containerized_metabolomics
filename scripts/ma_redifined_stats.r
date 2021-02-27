@@ -47,8 +47,11 @@ main <- function(opt){
   opt$help <- NULL
   opt$verbose <- NULL
 
-  cat("Just a test for now\n")
-  results <- do.call(print, opt)
+  cat("Parsing metabolomics input\n")
+  mSet <- mSetFromFile(opt$input)
+
+  cat("Calculating basic descriptive statistics\n")
+  results <- do.call(calculate_basic_stats, opt)
   
   cat("Saving table\n")
   tab2tsv(results$table, outFile)
@@ -60,19 +63,19 @@ main <- function(opt){
 }
 
 
-#' Carries out enrichment analysis of metabolites.
+#' Calculates basic descriptive statistics for metabolite quantities in conditions.
 #' 
 #' @param in_df dataframe. Metabolomics data with abundance values and standardized compound names 
 #' 
 #' @return top results and overview plots.
-plot_metabo_enrichment <- function(in_df){
+calculate_basic_stats <- function(in_df, tmp_work_dir){
   
   in_df %>%
-    mSet <- mSet %>%
-  ReplaceMin() %>%
-  FilterVariable("iqr", "F", 25) %>%
-  PreparePrenormData() %>%
-  Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
+    make_mSet_df() %>%
+    ReplaceMin() %>%
+    FilterVariable("iqr", "F", 25) %>%
+    PreparePrenormData() %>%
+    Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
 
   mSet <- PlotNormSummary(mSet, "norm_0_", "png", 72, width=NA)
   mSet <- PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
