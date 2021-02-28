@@ -54,7 +54,8 @@ main <- function(opt){
   cat("Saving figure\n")
   tmp_wd <- getwd()
   setwd(dirname(opt$outFile))
-  PlotNormSummary(results, basename(opt$outFile), opt$fileType)
+  #PlotNormSummary(results, basename(opt$outFile), opt$fileType)
+  PlotSampleNormSummary(results, basename(opt$outFile), opt$fileType)
   setwd(tmp_wd)
 
   invisible(NULL)
