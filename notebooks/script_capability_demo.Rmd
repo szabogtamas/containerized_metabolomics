@@ -1,6 +1,11 @@
 ---
 title: "Metabolomic analysis powered by MetaboAnalyst, made flexible"
-output: html_notebook
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float:
+      toc_collapsed: true
 ---
 
 ```{r}
