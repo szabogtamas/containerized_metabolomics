@@ -47,6 +47,10 @@ main <- function(opt){
   opt$help <- NULL
   opt$verbose <- NULL
 
+  mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
+  anal.type <- "stat"
+  msg.vec <- list()
+
   cat("Just a test for now\n")
   results <- do.call(print, opt)
   
@@ -57,6 +61,22 @@ main <- function(opt){
   fig2pdf(results$figure, outFile, height=8.64, width=7.2)
 
   invisible(NULL)
+}
+
+
+#' Parse a file with metabolite quantities that is in MetaboAnalyst compatible format and return an initialized mSet object
+#' 
+#' @param analyst_compatible_data character. Path to the preformatted input file. Cannot be dataframe unfortunately.
+#' @param analysis_type character. Code for the analysis we want to codoct on the mSet object later (e.g. "stat") 
+#' @param input_format character. Input format of file to be parsed (almost always "rowu") 
+#' 
+#' @return Not intended to return anything, but rather to save outputs to files.
+convert_cc_to_mSet <- function(analyst_compatible_data, analysis_type, input_format){
+  
+  InitDataObjects("conc", analysis_type) %>%
+    Read.TextData(analyst_compatible_data, input_format) %>%
+    SanityCheckData()
+
 }
 
 # Ensuring command line connectivity by sourcing an argument parser
