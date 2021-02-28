@@ -31,7 +31,7 @@ for (rn in names(scriptOptionalArgs)){
   opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
 }
 
-for (pk in c("tidyr", "dplyr")){
+for (pk in c("tidyr", "dplyr", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
