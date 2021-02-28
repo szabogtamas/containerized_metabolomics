@@ -52,7 +52,6 @@ head(metab_data)
 analyst_compatible_data <- "~/local_files/local_data/reshaped_metabo.csv"
   
 metab_data %>%
-  select(-MetaboGroup, -Replicate)  %>%
   select(Subject, Condition, Metabolite, value)  %>%
   pivot_wider(names_from=Metabolite) %T>%
   { print(head((.)); . } %>%
