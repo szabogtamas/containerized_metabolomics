@@ -46,8 +46,6 @@ for (pk in c("tidyr", "dplyr")){
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
   
-  outFile <- "metabolomics_results"
-  opt$outFile <- NULL
   opt$help <- NULL
   opt$verbose <- NULL
 
@@ -59,14 +57,13 @@ main <- function(opt){
   results <- standardize_metabo_data(opt$inFile, subject, condition, metabolite, value, tmp_out_file)
   
   cat("Saving to temporary MetoboAnalyst file\n")
-
   tmp_wd <- getwd()
   setwd(dirname(opt$tmpLocation))
-  write_metabodf_tmp(analyst_compatible_data, analysis_type, input_format)
+  write_metabodf_tmp(results, subject, condition, metabolite, value, opt$tmpLocation)
+  mSet <- convert_cc_to_mSet(opt$tmpLocation, analysis_type, input_format)
   setwd(tmp_wd)
   
-
-  invisible(NULL)
+  invisible(mSet)
 }
 
 
