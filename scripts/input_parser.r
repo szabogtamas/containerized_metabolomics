@@ -55,8 +55,8 @@ main <- function(opt){
   anal.type <- "stat"
   msg.vec <- list()
 
-  cat("Just a test for now\n")
-  results <- do.call(print, opt)
+  cat("Standardizing input\n")
+  results <- standardize_metabo_data(opt$inFile, subject, condition, metabolite, value, tmp_out_file)
   
   cat("Saving to temporary MetoboAnalyst file\n")
 
