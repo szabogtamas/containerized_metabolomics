@@ -17,6 +17,10 @@ scriptOptionalArgs <- list(
     type="vector",
     help="Order of conditions in the experimental design formula. Makes sense to put control as first."
   ),
+  tmpLocation = list(
+    default="tmp.csv",
+    help="Path to the temporary file used to push results in an mSet object."
+  ),
   commandRpath = list(
     default="commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
@@ -46,7 +50,7 @@ main <- function(opt){
   opt$outFile <- NULL
   opt$help <- NULL
   opt$verbose <- NULL
-  
+
   mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
   anal.type <- "stat"
   msg.vec <- list()
@@ -54,11 +58,13 @@ main <- function(opt){
   cat("Just a test for now\n")
   results <- do.call(print, opt)
   
-  cat("Saving table\n")
-  tab2tsv(results$table, outFile)
+  cat("Saving to temporary MetoboAnalyst file\n")
+
+  tmp_wd <- getwd()
+  setwd(dirname(opt$tmpLocation))
+  write_metabodf_tmp(analyst_compatible_data, analysis_type, input_format)
+  setwd(tmp_wd)
   
-  cat("Saving figure\n")
-  fig2pdf(results$figure, outFile, height=8.64, width=7.2)
 
   invisible(NULL)
 }
