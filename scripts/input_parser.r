@@ -46,7 +46,7 @@ main <- function(opt){
   opt$outFile <- NULL
   opt$help <- NULL
   opt$verbose <- NULL
-
+  
   mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
   anal.type <- "stat"
   msg.vec <- list()
@@ -61,6 +61,33 @@ main <- function(opt){
   fig2pdf(results$figure, outFile, height=8.64, width=7.2)
 
   invisible(NULL)
+}
+
+
+
+#' Save a standardized dataframe to a temporary file that can be read in as an mSet object
+#' 
+#' @param metab_data datafram. Path to the preformatted input file. Cannot be dataframe unfortunately.
+#' @param subject character. Column name for subject identifiers 
+#' @param condition character. Column name for condition  
+#' @param metabolite character. Column name for metabolite identifiers 
+#' @param value character. Column name for metabolite quantity (concentration) values
+#' @param tmp_out_file character. Path to the temporary output file 
+#' 
+#' @return Not intended to return anything, but rather to save output to file.
+write_metabodf_tmp <- function(metab_data, subject, condition, metabolite, value, tmp_out_file){
+  
+  metab_data %>%
+    select(
+      !!symbol(subject), !!symbol(condition), !!symbol(metabolite), !!symbol(value)
+    )  %>%
+    rename(
+      Subject = !!symbol(subject), Condition = !!symbol(condition),
+      Metabolite = !!symbol(metabolite), value = !!symbol(value)
+    )  %>%
+    pivot_wider(names_from=Metabolite) %>%
+    write.csv(tmp_out_file, row.names=FALSE)
+
 }
 
 
