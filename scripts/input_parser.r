@@ -7,7 +7,7 @@ scriptMandatoryArgs <- list(
     abbr="-i",
     type="table",
     readoptions=list(sep="\t", stringsAsFactors=FALSE),
-    help="Table of metobolite abundances."
+    help="Table of metobolite quantities/concentrations."
   )
 )
 
@@ -63,6 +63,29 @@ main <- function(opt){
   invisible(NULL)
 }
 
+
+#' Convert primary input to a standardized, tidy format
+#' 
+#' @param input_data dataframe. The primary input
+#' 
+#' @return Not intended to return anything, but rather to save outputs to files.
+standardize_metabo_data <- function(input_data){
+
+  input_data %>%
+    rename(Metabolite = X, MetaboGroup = X.1) %>%
+    pivot_longer(c(-Metabolite, -MetaboGroup)) %>%
+    mutate(
+      Condition = str_extract(name, 'Condition(A|B)'),
+      Replicate = case_when(
+        grepl('\\.1', name) ~ 'Batch_2',
+        grepl('\\.2', name) ~ 'Batch_3',
+        TRUE ~ 'Batch_1'
+      ),
+      Subject = paste(Condition, Replicate, sep="_")
+    ) %>%
+    select(-name)
+    
+}
 
 
 #' Save a standardized dataframe to a temporary file that can be read in as an mSet object
