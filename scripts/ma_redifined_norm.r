@@ -7,13 +7,13 @@ scriptMandatoryArgs <- list(
     abbr="-i",
     type="table",
     readoptions=list(sep="\t", stringsAsFactors=FALSE),
-    help="Table of metobolite abundances."
+    help="Table of metabolite abundances in the MetaboAnalyser standard format."
   )
 )
 
 scriptOptionalArgs <- list(
   outFile = list(
-    default="normalitazion_summary",
+    default="normalization_summary",
     help="File path without extension to normalization summary figure."
   ),
   fileType = list(
