@@ -61,6 +61,7 @@ main <- function(opt){
   setwd(dirname(opt$tmpLocation))
   write_metabodf_tmp(results, subject, condition, metabolite, value, opt$tmpLocation)
   mSet <- convert_cc_to_mSet(opt$tmpLocation, analysis_type, input_format)
+  unlink(tmpLocation)
   setwd(tmp_wd)
   
   invisible(mSet)
