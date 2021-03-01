@@ -47,15 +47,17 @@ main <- function(opt){
 
   cat("Parsing dataset\n")
   input <- convert_to_mSet(inFile)
+  
+  tmp_wd <- getwd()
+  setwd(dirname(opt$outFile))
 
   cat("Normalizing dataset\n")
   results <- normalize_mSet(input)
 
   cat("Saving figure\n")
-  tmp_wd <- getwd()
-  setwd(dirname(opt$outFile))
   #PlotNormSummary(results, basename(opt$outFile), opt$fileType)
   PlotSampleNormSummary(results, basename(opt$outFile), opt$fileType)
+  
   setwd(tmp_wd)
 
   invisible(NULL)
