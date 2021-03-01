@@ -28,7 +28,7 @@ for (rn in names(scriptOptionalArgs)){
   opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
 }
 
-for (pk in c("tidyr", "dplyr", "dplyr", "MetaboAnalystR")){
+for (pk in c("tidyr", "dplyr", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
@@ -47,61 +47,23 @@ main <- function(opt){
   opt$help <- NULL
   opt$verbose <- NULL
 
-  cat("Parsing metabolomics input\n")
-  mSet <- mSetFromFile(opt$input)
+  cat("Parsing dataset\n")
+  input <- convert_to_mSet(inFile)
+
+  cat("Normalizing dataset\n")
+  mSet <- normalize_mSet(input)
 
   cat("Calculating basic descriptive statistics\n")
-  results <- do.call(calculate_basic_stats, opt)
+  mSet <- FC.Anal(mSet, 2.0, 0)
   
   cat("Saving table\n")
-  tab2tsv(results$table, outFile)
+  tab2tsv(mSet$table, outFile)
   
   cat("Saving figure\n")
-  fig2pdf(results$figure, outFile, height=8.64, width=7.2)
+  PlotFC(mSet, "fc_0_", "png", 72, width=NA)
 
   invisible(NULL)
 }
-
-
-#' Calculates basic descriptive statistics for metabolite quantities in conditions.
-#' 
-#' @param in_df dataframe. Metabolomics data with abundance values and standardized compound names 
-#' 
-#' @return top results and overview plots.
-calculate_basic_stats <- function(in_df, tmp_work_dir){
-  
-  in_df %>%
-    make_mSet_df() %>%
-    ReplaceMin() %>%
-    FilterVariable("iqr", "F", 25) %>%
-    PreparePrenormData() %>%
-    Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
-
-  mSet <- PlotNormSummary(mSet, "norm_0_", "png", 72, width=NA)
-  mSet <- PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
-
-  #mSet <- FC.Anal.unpaired(mSet, 2.0, 0)
-  mSet <- FC.Anal(mSet, 2.0, 0)
-  mSet <- PlotFC(mSet, "fc_0_", "png", 72, width=NA)
-  
-}
-
-
-#' Explores differentially regulated metabolic pathways.
-#' 
-#' @param in_df dataframe. Metabolomics data with abundance values and standardized compound names 
-#' 
-#' @return top results and overview plots.
-find_de_paths <- function(in_df){
-  
-  in_df %>%
-    msea()
-  
-}
-
-
-# Ensuring command line connectivity by sourcing an argument parser
-source(opt$commandRpath, local=TRUE)
 
 # Ensuring command line connectivity by sourcing an argument parser
 source(opt$commandRpath, local=TRUE)
