@@ -17,6 +17,14 @@ scriptOptionalArgs <- list(
     type="vector",
     help="Order of conditions in the experimental design formula. Makes sense to put control as first."
   ),
+  outFile = list(
+    default="fold_change_summary",
+    help="File path without extension to fold change summary figure."
+  ),
+  fileType = list(
+    default="png",
+    help="File extension to fold change summary figure."
+  ),
   commandRpath = list(
     default="commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
@@ -64,7 +72,7 @@ main <- function(opt){
   setwd(dirname(opt$outFile))
   PlotFC(mSet, basename(opt$outFile), opt$fileType)
   setwd(tmp_wd)
-  
+
   invisible(NULL)
 }
 
