@@ -21,6 +21,14 @@ scriptOptionalArgs <- list(
     default="tmp.csv",
     help="Path to the temporary file used to push results in an mSet object."
   ),
+  analysis_type = list(
+    default="stat",
+    help="Analysis type added when mSet object is initialized."
+  ),
+  input_format = list(
+    default="rowu",
+    help="Format code used by MetaboAnalyser to parse input."
+  ),
   commandRpath = list(
     default="commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
@@ -60,7 +68,7 @@ main <- function(opt){
   tmp_wd <- getwd()
   setwd(dirname(opt$tmpLocation))
   write_metabodf_tmp(results, subject, condition, metabolite, value, opt$tmpLocation)
-  mSet <- convert_cc_to_mSet(opt$tmpLocation, analysis_type, input_format)
+  mSet <- convert_cc_to_mSet(opt$tmpLocation, opt$analysis_type, opt$input_format)
   unlink(tmpLocation)
   setwd(tmp_wd)
   
