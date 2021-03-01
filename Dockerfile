@@ -94,7 +94,6 @@ RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build
 
 ADD ./ /home/rstudio/git_repo
 ADD ./.Rprofile ~/.Rprofile
-RUN chmod +x ~/.Rprofile
 RUN chmod a+rwx -R /home/rstudio
 
 RUN cd /home/rstudio/git_repo
