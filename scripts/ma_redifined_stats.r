@@ -60,8 +60,11 @@ main <- function(opt){
   tab2tsv(mSet$table, outFile)
   
   cat("Saving figure\n")
-  PlotFC(mSet, "fc_0_", "png", 72, width=NA)
-
+  tmp_wd <- getwd()
+  setwd(dirname(opt$outFile))
+  PlotFC(mSet, basename(opt$outFile), opt$fileType)
+  setwd(tmp_wd)
+  
   invisible(NULL)
 }
 
