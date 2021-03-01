@@ -54,7 +54,7 @@ main <- function(opt){
   msg.vec <- list()
 
   cat("Standardizing input\n")
-  results <- standardize_metabo_data(opt$inFile, subject, condition, metabolite, value, tmp_out_file)
+  results <- standardize_metabo_data(opt$inFile)
   
   cat("Saving to temporary MetoboAnalyst file\n")
   tmp_wd <- getwd()
@@ -102,7 +102,7 @@ standardize_metabo_data <- function(input_data){
 #' @param tmp_out_file character. Path to the temporary output file 
 #' 
 #' @return Not intended to return anything, but rather to save output to file.
-write_metabodf_tmp <- function(metab_data, subject, condition, metabolite, value, tmp_out_file){
+write_metabodf_tmp <- function(metab_data, subject="Subject", condition="Condition", metabolite="Metabolite", value="value", tmp_out_file="tmp.csv"){
   
   metab_data %>%
     select(
@@ -125,7 +125,7 @@ write_metabodf_tmp <- function(metab_data, subject, condition, metabolite, value
 #' @param input_format character. Input format of file to be parsed (almost always "rowu") 
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
-convert_cc_to_mSet <- function(analyst_compatible_data, analysis_type, input_format){
+convert_cc_to_mSet <- function(analyst_compatible_data, analysis_type="stat", input_format="rowu"){
   
   InitDataObjects("conc", analysis_type) %>%
     Read.TextData(analyst_compatible_data, input_format) %>%
