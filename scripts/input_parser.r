@@ -1,13 +1,13 @@
 #!/usr/bin/env Rscript
 
-scriptDescription <- "A script that parses metabolomics measurement results."
+scriptDescription <- "A script that parses metabolomics measurement results for MetaboAnalyst."
 
 scriptMandatoryArgs <- list(
   inFile = list(
     abbr="-i",
     type="table",
     readoptions=list(sep="\t", stringsAsFactors=FALSE),
-    help="Table of metobolite quantities/concentrations."
+    help="Table of metabolite quantities/concentrations."
   )
 )
 
@@ -53,13 +53,6 @@ for (pk in c("tidyr", "dplyr", "MetaboAnalystR")){
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
-  
-  opt$help <- NULL
-  opt$verbose <- NULL
-
-  mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
-  anal.type <- "stat"
-  msg.vec <- list()
 
   cat("Standardizing input\n")
   results <- standardize_metabo_data(opt$inFile)
@@ -135,6 +128,10 @@ write_metabodf_tmp <- function(metab_data, subject="Subject", condition="Conditi
 #' @return Not intended to return anything, but rather to save outputs to files.
 convert_cc_to_mSet <- function(analyst_compatible_data, analysis_type="stat", input_format="rowu"){
   
+  mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
+  anal.type <- "stat"
+  msg.vec <- list()
+
   InitDataObjects("conc", analysis_type) %>%
     Read.TextData(analyst_compatible_data, input_format) %>%
     SanityCheckData()

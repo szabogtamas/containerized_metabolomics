@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-scriptDescription <- "A script that parses metabolomics measurement results."
+scriptDescription <- "A script that runs normalization for metabolomics results."
 
 scriptMandatoryArgs <- list(
   inFile = list(

@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-scriptDescription <- "Some functions from Metaboanalyst redefined."
+scriptDescription <- "A script that runs descreptive statistics via MetaboAnlyst."
 
 scriptMandatoryArgs <- list(
   inFile = list(
