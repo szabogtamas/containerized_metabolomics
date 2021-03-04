@@ -89,5 +89,23 @@ main <- function(opt){
   invisible(NULL)
 }
 
+
+#' Creat a simple Volcano plot with Fold changes and p-values
+#' 
+#' @param stats_data dataframe or mSet. Metabolomics data with Fold Changes and p-values.
+#' 
+#' @return Not intended to return anything, but rather to save outputs to files.
+plotMetaboVolcano <- function(stats_data){
+  
+  if(is(stats_data, "mSet")){
+    stats_data <- stats_data$data
+  }
+
+  stats_data %>%
+    ggplot(aes(x=FC, y=pvalue)) +
+    geom_point(size=2)
+
+}
+
 # Ensuring command line connectivity by sourcing an argument parser
 source(opt$commandRpath, local=TRUE)
