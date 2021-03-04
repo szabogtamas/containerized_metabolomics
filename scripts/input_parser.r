@@ -12,11 +12,6 @@ scriptMandatoryArgs <- list(
 )
 
 scriptOptionalArgs <- list(
-  conditionOrder = list(
-    default=NULL,
-    type="vector",
-    help="Order of conditions in the experimental design formula. Makes sense to put control as first."
-  ),
   tmpLocation = list(
     default="tmp.csv",
     help="Path to the temporary file used to push results in an mSet object."
@@ -40,7 +35,7 @@ for (rn in names(scriptOptionalArgs)){
   opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
 }
 
-for (pk in c("tidyr", "dplyr", "MetaboAnalystR")){
+for (pk in c("tidyr", "dplyr", "stringr", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
@@ -78,14 +73,12 @@ standardize_metabo_data <- function(input_data){
 
   input_data %>%
     rename(Metabolite = X, MetaboGroup = X.1) %>%
-    pivot_longer(c(-Metabolite, -MetaboGroup)) %>%
+    pivot_longer(
+      c(-Metabolite, -MetaboGroup), names_to="Condition", names_repair="universal"
+    ) %>%
     mutate(
-      Condition = str_extract(name, 'Condition(A|B)'),
-      Replicate = case_when(
-        grepl('\\.1', name) ~ 'Batch_2',
-        grepl('\\.2', name) ~ 'Batch_3',
-        TRUE ~ 'Batch_1'
-      ),
+      Replicate = paste("BATCH", str_extract(Condition, "\\.\\d+")),
+      Condition = str_replace(Condition, "\\.\\d+", ""),
       Subject = paste(Condition, Replicate, sep="_")
     ) %>%
     select(-name)
