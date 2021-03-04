@@ -77,7 +77,11 @@ main <- function(opt){
   } else {
     tmp_wd <- getwd()
     setwd(dirname(opt$outFile))
-    PlotFC(mSet, basename(opt$outFile), opt$fileType)
+    if(opt$figureType == "FCscatter"){
+      PlotFC(mSet, basename(opt$outFile), opt$fileType)
+    } else {
+      PlotTT(mSet, basename(opt$outFile), opt$fileType)
+    }
     setwd(tmp_wd)
     unlink(dirname(opt$outFile))
   }
