@@ -25,6 +25,10 @@ scriptOptionalArgs <- list(
     default="png",
     help="File extension to fold change summary figure."
   ),
+  figureType = list(
+    default="volcano",
+    help="Type of plot to save as output."
+  ),
   commandRpath = list(
     default="commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
@@ -68,10 +72,15 @@ main <- function(opt){
   tab2tsv(mSet$table, outFile)
   
   cat("Saving figure\n")
-  tmp_wd <- getwd()
-  setwd(dirname(opt$outFile))
-  PlotFC(mSet, basename(opt$outFile), opt$fileType)
-  setwd(tmp_wd)
+  if(opt$figureType == "volcano"){
+    plotMetaboVolcano(mSet)
+  } else {
+    tmp_wd <- getwd()
+    setwd(dirname(opt$outFile))
+    PlotFC(mSet, basename(opt$outFile), opt$fileType)
+    setwd(tmp_wd)
+    unlink(dirname(opt$outFile))
+  }
 
   invisible(NULL)
 }
