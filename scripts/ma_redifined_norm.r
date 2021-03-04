@@ -20,6 +20,10 @@ scriptOptionalArgs <- list(
     default="png",
     help="File extension to normalization summary figure."
   ),
+  figureType = list(
+    default="samplenorm",
+    help="Type of plot to save as output. Default is samplenorm"
+  ),
   commandRpath = list(
     default="commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
@@ -55,8 +59,11 @@ main <- function(opt){
   results <- normalize_mSet(input)
 
   cat("Saving figure\n")
-  #PlotNormSummary(results, basename(opt$outFile), opt$fileType)
-  PlotSampleNormSummary(results, basename(opt$outFile), opt$fileType)
+  if(opt$figureType =="samplenorm"){
+    PlotSampleNormSummary(results, basename(opt$outFile), opt$fileType)
+  } else {
+    PlotNormSummary(results, basename(opt$outFile), opt$fileType)
+  }  
   
   setwd(tmp_wd)
 
