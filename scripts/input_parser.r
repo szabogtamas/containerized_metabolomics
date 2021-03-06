@@ -55,10 +55,12 @@ main <- function(opt){
   cat("Saving to temporary MetoboAnalyst file\n")
   tmp_wd <- getwd()
   setwd(dirname(opt$tmpLocation))
+  
   write_metabodf_tmp(results, opt$tmpLocation)
   mSet <- convert_cc_to_mSet(opt$tmpLocation, opt$analysis_type, opt$input_format)
-  unlink(tmpLocation)
+  
   setwd(tmp_wd)
+  unlink(dirname(opt$tmpLocation))
   
   invisible(mSet)
 }
