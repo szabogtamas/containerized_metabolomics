@@ -96,13 +96,21 @@ standardize_metabo_data <- function(input_data){
 convert_cc_to_mSet <- function(input_data, tmpLocation="tmp.csv", analysis_type="stat", input_format="rowu"){
 
   tmp_wd <- getwd()
+  tmp_dir <- dirname(tmpLocation)
+  preexisted_dir <- dir.exists(tmp_dir)
+  
+  if(!preexisted_dir) dir.create(tmp_dir)
   setwd(dirname(tmpLocation))
 
   write_metabodf_tmp(results, tmpLocation)
   mSet <- populate_mSet(tmpLocation, analysis_type, input_format)
   
   setwd(tmp_wd)
-  unlink(tmpLocation)
+  if(preexisted_dir){
+    unlink(tmpLocation)
+  } else {
+    unlink(tmp_dir)
+  }
     
 }
 
