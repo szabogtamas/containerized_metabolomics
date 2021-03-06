@@ -13,7 +13,7 @@ scriptMandatoryArgs <- list(
 
 scriptOptionalArgs <- list(
   tmpLocation = list(
-    default="tmp.csv",
+    default="tmp/tmp.csv",
     help="Path to the temporary file used to push results in an mSet object."
   ),
   analysis_type = list(
@@ -100,7 +100,7 @@ standardize_metabo_data <- function(input_data){
     
 }
 
-#' Write metabo dataframe to tmp file and read as mSet
+#' Write metabo dataframe to tmp file and read as mSet; if mor control is needed, use populate_mSet()
 #' 
 #' @param input_data dataframe. The primary input
 #' @param tmp_location character. Path to a temporary file needed for mSet creation
@@ -108,16 +108,17 @@ standardize_metabo_data <- function(input_data){
 #' @param input_format character. Input format of file to be parsed (almost always "rowu") 
 #' 
 #' @return Populated mSet object.
-convert_cc_to_mSet <- function(input_data, tmpLocation="tmp.csv", analysis_type="stat", input_format="rowu"){
+convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_type="stat", input_format="rowu"){
 
   tmp_wd <- getwd()
   tmp_dir <- dirname(tmpLocation)
   preexisted_dir <- dir.exists(tmp_dir)
+  tmpLocation <- basename(tmpLocation)
   
   if(!preexisted_dir) dir.create(tmp_dir)
   setwd(dirname(tmpLocation))
 
-  write_metabodf_tmp(results, tmpLocation)
+  write_metabodf_tmp(input_data, tmp_out_file=tmpLocation)
   mSet <- populate_mSet(tmpLocation, analysis_type, input_format)
   
   setwd(tmp_wd)
@@ -144,11 +145,11 @@ write_metabodf_tmp <- function(metab_data, subject="Subject", condition="Conditi
   
   metab_data %>%
     select(
-      !!symbol(subject), !!symbol(condition), !!symbol(metabolite), !!symbol(value)
+      !!sym(subject), !!sym(condition), !!sym(metabolite), !!sym(value)
     )  %>%
     rename(
-      Subject = !!symbol(subject), Condition = !!symbol(condition),
-      Metabolite = !!symbol(metabolite), value = !!symbol(value)
+      Subject = !!sym(subject), Condition = !!sym(condition),
+      Metabolite = !!sym(metabolite), value = !!sym(value)
     )  %>%
     pivot_wider(names_from=Metabolite) %>%
     write.csv(tmp_out_file, row.names=FALSE)
