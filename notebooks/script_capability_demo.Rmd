@@ -11,17 +11,24 @@ output:
 ```{r}
 # Source scripts that bundle MetaboAnalyst functions
 
-source("../scripts/ma_redefined_stats.r")
+source("../scripts/input_parser.r")
 ```
 
 ```{r}
 # Parse test input
 
 test_data_file <- "~/git_repo/data_examples/test.tsv"
-metabo_data <- csv_to_mset(test_data_file)
+metabo_data <-standardize_metabo_data(test_data_file)
 
 head(metabo_data)
 ```
+
+```{r}
+# Convert input to an mSet object
+
+mSet <- convert_cc_to_mSet(metabo_data)
+```
+
 
 ```{r}
 # Calculate basic descriptive statistics
