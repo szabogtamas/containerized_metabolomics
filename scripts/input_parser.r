@@ -76,6 +76,13 @@ main <- function(opt){
 #' @return Not intended to return anything, but rather to save outputs to files.
 standardize_metabo_data <- function(input_data){
 
+  if(is.character(input_data) & length(input_data) == 1){
+    print(input_data)
+    input_data <- scriptMandatoryArgs %>%
+      parser4tsv(., "inFile", .["inFile"], input_data) %>%
+      .$inFile
+  }
+
   input_data %>%
     rename(Metabolite = X, MetaboGroup = X.1) %>%
     pivot_longer(
