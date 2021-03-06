@@ -53,15 +53,8 @@ main <- function(opt){
   results <- standardize_metabo_data(opt$inFile)
   
   cat("Saving to temporary MetoboAnalyst file\n")
-  tmp_wd <- getwd()
-  setwd(dirname(opt$tmpLocation))
-  
-  write_metabodf_tmp(results, opt$tmpLocation)
-  mSet <- convert_cc_to_mSet(opt$tmpLocation, opt$analysis_type, opt$input_format)
-  
-  setwd(tmp_wd)
-  unlink(dirname(opt$tmpLocation))
-  
+  mSet <- convert_cc_to_mSet(results, opt$tmpLocation, opt$analysis_type, opt$input_format)
+
   invisible(mSet)
 }
 
@@ -84,6 +77,27 @@ standardize_metabo_data <- function(input_data){
       Subject = paste(Condition, Replicate, sep="_")
     ) %>%
     select(-name)
+    
+}
+
+#' Write metabo dataframe to tmp file and read as mSet
+#' 
+#' @param input_data dataframe. The primary input
+#' @param tmp_location character. Path to a temporary file needed for mSet creation
+#' @param analysis_type character. Code for the analysis we want to codoct on the mSet object later (e.g. "stat") 
+#' @param input_format character. Input format of file to be parsed (almost always "rowu") 
+#' 
+#' @return Populated mSet object.
+convert_cc_to_mSet <- function(input_data, tmpLocation="tmp.csv", analysis_type="stat", input_format="rowu"){
+
+  tmp_wd <- getwd()
+  setwd(dirname(tmpLocation))
+
+  write_metabodf_tmp(results, tmpLocation)
+  mSet <- populate_mSet(tmpLocation, analysis_type, input_format)
+  
+  setwd(tmp_wd)
+  unlink(tmpLocation)
     
 }
 
@@ -121,7 +135,7 @@ write_metabodf_tmp <- function(metab_data, subject="Subject", condition="Conditi
 #' @param input_format character. Input format of file to be parsed (almost always "rowu") 
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
-convert_cc_to_mSet <- function(analyst_compatible_data, analysis_type="stat", input_format="rowu"){
+populate_mSet <- function(analyst_compatible_data, analysis_type="stat", input_format="rowu"){
   
   mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
   anal.type <- "stat"
