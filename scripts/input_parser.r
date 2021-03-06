@@ -25,14 +25,19 @@ scriptOptionalArgs <- list(
     help="Format code used by MetaboAnalyser to parse input."
   ),
   commandRpath = list(
-    default="commandR.r",
+    default="/home/rstudio/git_repo/scripts/commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
   )
 )
 
-opt <- list()
+if(!exists("opt")){
+  opt <- list()
+}
+
 for (rn in names(scriptOptionalArgs)){
-  opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
+  if(!(rn %in% names(opt))){
+    opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
+  }
 }
 
 for (pk in c("tidyr", "dplyr", "stringr", "MetaboAnalystR")){
@@ -148,4 +153,4 @@ populate_mSet <- function(analyst_compatible_data, analysis_type="stat", input_f
 }
 
 # Ensuring command line connectivity by sourcing an argument parser
-source(opt$commandRpath, local=TRUE)
+source(opt$commandRpath, local=TRUE, chdir=TRUE)
