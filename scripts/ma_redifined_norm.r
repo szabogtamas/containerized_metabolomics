@@ -25,10 +25,19 @@ scriptOptionalArgs <- list(
     help="Type of plot to save as output. Default is samplenorm"
   ),
   commandRpath = list(
-    default="commandR.r",
+    default="/home/rstudio/git_repo/scripts/commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
   )
 )
+
+if(!exists("opt")){
+  opt <- list()
+}
+
+rg <- commandArgs()
+if("--commandRpath" %in% rg){
+  opt$commandRpath <- rg[[which(rg == "--commandRpath") + 1]]
+}
 
 opt <- list()
 for (rn in names(scriptOptionalArgs)){
