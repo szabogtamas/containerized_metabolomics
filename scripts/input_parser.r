@@ -77,23 +77,26 @@ main <- function(opt){
 standardize_metabo_data <- function(input_data){
 
   if(is.character(input_data) & length(input_data) == 1){
-    print(input_data)
+    warning(paste("Parsing data in file:", input_data, sep="\n"))
     input_data <- scriptMandatoryArgs %>%
       parser4tsv(., "inFile", .["inFile"], input_data) %>%
       .$inFile
   }
-
+  
   input_data %>%
     rename(Metabolite = X, MetaboGroup = X.1) %>%
     pivot_longer(
       c(-Metabolite, -MetaboGroup), names_to="Condition", names_repair="universal"
     ) %>%
     mutate(
-      Replicate = paste("BATCH", str_extract(Condition, "\\.\\d+")),
-      Condition = str_replace(Condition, "\\.\\d+", ""),
+      Replicate = str_extract(Condition, "\\.+\\d+") %>%
+        str_replace("\\.+", "") %>%
+        as.numeric() %>%
+        {ifelse(is.na(.), 1, . +1)} %>%
+        paste("BATCH", ., sep="_"),
+      Condition = str_replace(Condition, "\\.+\\d+", ""),
       Subject = paste(Condition, Replicate, sep="_")
-    ) %>%
-    select(-name)
+    )
     
 }
 
