@@ -15,6 +15,13 @@ source("../scripts/data_norm.r", chdir=TRUE)
 ```
 
 ```{r}
+# Specify output location and create if not existent
+
+local_folder <- "/home/rstudio/local_files/test_output"
+if(!dir.exists(local_folder)) dir.create(local_folder)
+```
+
+```{r}
 # Parse test input
 
 test_data_file <- "~/git_repo/data_examples/test.tsv"
@@ -38,7 +45,7 @@ mSet <- normalize_mSet(mSet)
 ```{r}
 # Save normalization report
 
-mSet <- PlotSampleNormSummary(mSet, "sampleNorm", "png")
+mSet <- PlotSampleNormSummary(mSet, "sampleNorm", "pdf")
 ```
 
 ```{r}
