@@ -29,6 +29,12 @@ head(metabo_data)
 mSet <- convert_cc_to_mSet(metabo_data)
 ```
 
+```{r}
+# Normalize input data
+
+mSet <- normalize_mSet(mSet)
+```
+
 
 ```{r}
 # Calculate basic descriptive statistics
