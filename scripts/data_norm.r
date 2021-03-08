@@ -93,14 +93,11 @@ main <- function(opt){
 #' @param tmpLocation character. Path to a temporary file needed for mSet creation
 #' 
 #' @return normalized metabo Set.
-normalize_mSet <- function(inSet, tmpLocation){
+normalize_mSet <- function(inSet, tmpLocation="tmp"){
   
   old_wd <- getwd()
   if(!dir.exists(tmpLocation)) dir.create(tmp_dir)
-  setwd(dirname(tmpLocation))
-
-  write_metabodf_tmp(input_data, tmp_out_file=tmpLocation)
-  mSet <- populate_mSet(tmpLocation, analysis_type, input_format)
+  setwd(tmpLocation)
   
   out <- inSet %>%
     ReplaceMin() %>%
