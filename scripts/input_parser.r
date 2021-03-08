@@ -125,7 +125,7 @@ convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_t
   if(preexisted_dir){
     unlink(tmpLocation)
   } else {
-    unlink(tmp_dir)
+    unlink(tmp_dir, tmpLocation, recursive=TRUE, force=TRUE)
   }
   
   invisible(mSet)
