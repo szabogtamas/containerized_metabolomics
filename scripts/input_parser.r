@@ -116,7 +116,7 @@ convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_t
   tmpLocation <- basename(tmpLocation)
   
   if(!preexisted_dir) dir.create(tmp_dir)
-  setwd(dirname(tmpLocation))
+  setwd(tmp_dir)
 
   write_metabodf_tmp(input_data, tmp_out_file=tmpLocation)
   mSet <- populate_mSet(tmpLocation, analysis_type, input_format)
