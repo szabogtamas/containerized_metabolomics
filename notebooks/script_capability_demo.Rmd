@@ -11,7 +11,7 @@ output:
 ```{r}
 # Source scripts that bundle MetaboAnalyst functions
 
-source("../scripts/input_parser.r")
+source("../scripts/data_norm.r", chdir=TRUE)
 ```
 
 ```{r}
@@ -35,6 +35,11 @@ mSet <- convert_cc_to_mSet(metabo_data)
 mSet <- normalize_mSet(mSet)
 ```
 
+```{r}
+# Save normalization report
+
+mSet <- PlotSampleNormSummary(mSet, "sampleNorm", "png")
+```
 
 ```{r}
 # Calculate basic descriptive statistics
