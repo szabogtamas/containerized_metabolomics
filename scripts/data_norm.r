@@ -65,7 +65,7 @@ main <- function(opt){
   cat("Parsing dataset\n")
   input <- convert_to_mSet(inFile)
   
-  tmp_wd <- getwd()
+  old_wd <- getwd()
   setwd(dirname(opt$outFile))
 
   cat("Normalizing dataset\n")
@@ -78,7 +78,7 @@ main <- function(opt){
     PlotNormSummary(results, basename(opt$outFile), opt$fileType)
   }  
   
-  setwd(tmp_wd)
+  setwd(old_wd)
 
   invisible(NULL)
 }
