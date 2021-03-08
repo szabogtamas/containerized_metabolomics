@@ -24,6 +24,10 @@ scriptOptionalArgs <- list(
     default="samplenorm",
     help="Type of plot to save as output. Default is samplenorm"
   ),
+  tmpLocation = list(
+    default="tmp",
+    help="Path to a temporary folder polluted by mSet."
+  ),
   commandRpath = list(
     default="/home/rstudio/git_repo/scripts/commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
