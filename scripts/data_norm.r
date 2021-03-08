@@ -96,9 +96,9 @@ main <- function(opt){
 normalize_mSet <- function(inSet, tmpLocation="tmp"){
   
   old_wd <- getwd()
-  if(!dir.exists(tmpLocation)) dir.create(tmp_dir)
+  if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
   setwd(tmpLocation)
-  
+
   out <- inSet %>%
     ReplaceMin() %>%
     FilterVariable("iqr", "F", 25) %>%
@@ -106,7 +106,7 @@ normalize_mSet <- function(inSet, tmpLocation="tmp"){
     Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
 
   setwd(old_wd)
-  unlink(tmpLocation)
+  unlink(tmpLocation, recursive=TRUE, force=TRUE)
 
   invisible(out)
 }
