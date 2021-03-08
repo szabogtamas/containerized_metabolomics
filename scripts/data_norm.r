@@ -63,15 +63,16 @@ for (pk in c("tidyr", "dplyr", "MetaboAnalystR")){
 main <- function(opt){
 
   cat("Parsing dataset\n")
-  input <- convert_to_mSet(inFile)
+  input <- convert_to_mSet(opt$inFile)
+  
+  cat("Normalizing dataset\n")
+  results <- normalize_mSet(input, opt$tmpLocation)
+
+  cat("Saving figure\n")
   
   old_wd <- getwd()
   setwd(dirname(opt$outFile))
 
-  cat("Normalizing dataset\n")
-  results <- normalize_mSet(input)
-
-  cat("Saving figure\n")
   if(opt$figureType =="samplenorm"){
     PlotSampleNormSummary(results, basename(opt$outFile), opt$fileType)
   } else {
@@ -87,16 +88,28 @@ main <- function(opt){
 #' Preprocess and normalize data inside a MetaboAnalyst mSet object
 #' 
 #' @param inSet mSet. a proprietary object of MetaboAnalyst after sanitycheck
+#' @param tmpLocation character. Path to a temporary file needed for mSet creation
 #' 
 #' @return normalized metabo Set.
-normalize_mSet <- function(inSet){
+normalize_mSet <- function(inSet, tmpLocation){
+  
+  old_wd <- getwd()
+  if(!dir.exists(tmpLocation)) dir.create(tmp_dir)
+  setwd(dirname(tmpLocation))
 
-  inSet %>%
+  write_metabodf_tmp(input_data, tmp_out_file=tmpLocation)
+  mSet <- populate_mSet(tmpLocation, analysis_type, input_format)
+  
+  out <- inSet %>%
     ReplaceMin() %>%
     FilterVariable("iqr", "F", 25) %>%
     PreparePrenormData() %>%
     Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
 
+  setwd(old_wd)
+  unlink(tmpLocation)
+
+  invisible(out)
 }
 
 # Ensuring command line connectivity by sourcing an argument parser
