@@ -127,7 +127,8 @@ convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_t
   } else {
     unlink(tmp_dir)
   }
-    
+  
+  invisible(mSet)
 }
 
 
