@@ -103,7 +103,7 @@ standardize_metabo_data <- function(input_data){
 #' Write metabo dataframe to tmp file and read as mSet; if mor control is needed, use populate_mSet()
 #' 
 #' @param input_data dataframe. The primary input
-#' @param tmp_location character. Path to a temporary file needed for mSet creation
+#' @param tmpLocation character. Path to a temporary file needed for mSet creation
 #' @param analysis_type character. Code for the analysis we want to codoct on the mSet object later (e.g. "stat") 
 #' @param input_format character. Input format of file to be parsed (almost always "rowu") 
 #' 
