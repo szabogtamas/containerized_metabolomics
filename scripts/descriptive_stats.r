@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-scriptDescription <- "A script that runs descreptive statistics via MetaboAnlyst."
+scriptDescription <- "A script that runs descriptive statistics via MetaboAnlyst."
 
 scriptMandatoryArgs <- list(
   inFile = list(
@@ -55,6 +55,8 @@ for (pk in c("tidyr", "dplyr", "MetaboAnalystR")){
   }
 }
 
+source("data_norm.r", local=TRUE)
+
 #' The main function of the script, executed only if called from command line.
 #' Calls subfunctions according to supplied command line arguments.
 #' 
@@ -99,7 +101,25 @@ main <- function(opt){
 }
 
 
-#' Creat a simple Volcano plot with Fold changes and p-values
+#' Calculate basic escriptive statistics, like pairwise t-tests and fold changes on mSet
+#' 
+#' @param stats_data dataframe or mSet. Metabolomics data with Fold Changes and p-values.
+#' 
+#' @return Not intended to return anything, but rather to save outputs to files.
+calcMetaboStat <- function(stats_data){
+  
+  if(is(stats_data, "mSet")){
+    stats_data <- stats_data$data
+  }
+
+  stats_data %>%
+    ggplot(aes(x=FC, y=pvalue)) +
+    geom_point(size=2)
+
+}
+
+
+#' Create a simple Volcano plot with Fold changes and p-values
 #' 
 #' @param stats_data dataframe or mSet. Metabolomics data with Fold Changes and p-values.
 #' 
