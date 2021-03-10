@@ -77,7 +77,7 @@ main <- function(opt){
   mSet <- normalize_mSet(input)
 
   cat("Calculating basic descriptive statistics\n")
-  mSet <- FC.Anal(mSet, 2.0, 0)
+  mSet <- calcMetaboStat(mSet, keep_mSet=TRUE)
   
   cat("Saving table\n")
   tab2tsv(mSet$table, outFile)
@@ -103,17 +103,16 @@ main <- function(opt){
 #' Calculate basic escriptive statistics, like pairwise t-tests and fold changes on mSet
 #' 
 #' @param stats_data dataframe or mSet. Metabolomics data with Fold Changes and p-values.
+#' @param keep_mSet logical. If the mSet obeject should be returned or the dataframe only.
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
-calcMetaboStat <- function(stats_data){
+calcMetaboStat <- function(stats_data, keep_mSet=FALSE){
   
-  if(is(stats_data, "mSet")){
-    stats_data <- stats_data$data
-  }
-
-  stats_data %>%
-    ggplot(aes(x=FC, y=pvalue)) +
-    geom_point(size=2)
+  mSet <- mSet %>%
+    FC.Anal(2.0, 0) %>%
+    Ttests.Anal(F, 0.05, FALSE, TRUE)
+  
+  invisible(mSet)
 
 }
 

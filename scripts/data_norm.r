@@ -104,7 +104,7 @@ normalize_mSet <- function(inSet, tmpLocation="tmp"){
     FilterVariable("iqr", "F", 25) %>%
     PreparePrenormData() %>%
     Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
-
+  
   setwd(old_wd)
   unlink(tmpLocation, recursive=TRUE, force=TRUE)
 
