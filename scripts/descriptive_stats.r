@@ -102,15 +102,47 @@ main <- function(opt){
 
 #' Calculate basic escriptive statistics, like pairwise t-tests and fold changes on mSet
 #' 
-#' @param stats_data dataframe or mSet. Metabolomics data with Fold Changes and p-values.
+#' @param norm_data dataframe or mSet. Metabolomics data with Fold Changes and p-values.
+#' @param norm_path string. Path to the normalization set.
 #' @param keep_mSet logical. If the mSet obeject should be returned or the dataframe only.
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
-calcMetaboStat <- function(stats_data, keep_mSet=FALSE){
+calcMetaboStat <- function(norm_data, norm_path="row_norm.qs", keep_mSet=FALSE){
   
-  mSet <- mSet %>%
+  if(norm_path != "row_norm.qs"){
+    file.copy(norm_path, "row_norm.qs")
+  }
+  
+  mSet <- norm %>%
     FC.Anal(2.0, 0) %>%
     Ttests.Anal(F, 0.05, FALSE, TRUE)
+  
+  if(!keep_mSet){
+    
+    fc_df <- stat_results %>%
+      .$analSet %>%
+      .$fc %>%
+      .$sig.mat %>%
+      data.frame() %>%
+      tibble::rownames_to_column("Metabolite")
+    
+    colnames(fc_df) <- c("Metabolite", "FC", "logFC")
+    
+    tt_df <- stat_results %>%
+      .$analSet %>%
+      .$tt %>%
+      .$sig.mat %>%
+      data.frame() %>%
+      tibble::rownames_to_column("Metabolite")
+    
+    colnames(tt_df) <- c("Metabolite", "t.stat", "p.value", "logP", "FDR")
+    
+    mSet <- full_join(fc_df, tt_df, by="Metabolite")
+    
+  }
+  
+  unlink(norm_path)
+  unlink("row_norm.qs")
   
   invisible(mSet)
 
