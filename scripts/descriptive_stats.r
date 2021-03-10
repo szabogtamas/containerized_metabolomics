@@ -108,7 +108,7 @@ main <- function(opt){
 #' @param keep_mSet logical. If the mSet obeject should be returned or the dataframe only.
 #' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
-#' @return Not intended to return anything, but rather to save outputs to files.
+#' @return A standardized dataframe with stats or mSet if explicitly asked for.
 calcMetaboStat <- function(norm_data, norm_path="row_norm.qs", tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
   
   if(norm_path != "row_norm.qs"){
@@ -129,35 +129,43 @@ calcMetaboStat <- function(norm_data, norm_path="row_norm.qs", tmpLocation="tmp"
     FC.Anal(2.0, 0) %>%
     Ttests.Anal(F, 0.05, FALSE, TRUE)
   
-  if(!keep_mSet){
-    
-    fc_df <- stat_results %>%
-      .$analSet %>%
-      .$fc %>%
-      .$sig.mat %>%
-      data.frame() %>%
-      tibble::rownames_to_column("Metabolite")
-    
-    colnames(fc_df) <- c("Metabolite", "FC", "logFC")
-    
-    tt_df <- stat_results %>%
-      .$analSet %>%
-      .$tt %>%
-      .$sig.mat %>%
-      data.frame() %>%
-      tibble::rownames_to_column("Metabolite")
-    
-    colnames(tt_df) <- c("Metabolite", "t.stat", "p.value", "logP", "FDR")
-    
-    mSet <- full_join(fc_df, tt_df, by="Metabolite")
-    
-  }
+  if(!keep_mSet) mSet <- extract_stat_from_mSet(mSet)
   
-  unlink(norm_path)
   unlink("row_norm.qs")
+  if(cleanUp) unlink(norm_path)
   
   invisible(mSet)
 
+}
+
+
+#' Extract descriptive stats from an Mset object into a neat dataframe
+#' 
+#' @param mSet dataframe or mSet. Metabolomics data with Fold Changes and p-values.
+#' 
+#' @return standardized dataframe with FC and p-values.
+extract_stat_from_mSet <- function(mSet){
+  
+  fc_df <- mSet %>%
+    .$analSet %>%
+    .$fc %>%
+    .$sig.mat %>%
+    data.frame() %>%
+    tibble::rownames_to_column("Metabolite")
+  
+  colnames(fc_df) <- c("Metabolite", "FC", "logFC")
+  
+  tt_df <- mSet %>%
+    .$analSet %>%
+    .$tt %>%
+    .$sig.mat %>%
+    data.frame() %>%
+    tibble::rownames_to_column("Metabolite")
+  
+  colnames(tt_df) <- c("Metabolite", "t.stat", "p.value", "logP", "FDR")
+  
+  full_join(fc_df, tt_df, by="Metabolite")
+  
 }
 
 
@@ -171,12 +179,13 @@ plotMetaboVolcano <- function(stats_data){
   if(is(stats_data, "mSet")){
     stats_data <- stats_data$data
   }
-
+  
   stats_data %>%
     ggplot(aes(x=FC, y=pvalue)) +
     geom_point(size=2)
-
+  
 }
+
 
 # Ensuring command line connectivity by sourcing an argument parser
 source(opt$commandRpath, local=TRUE)
