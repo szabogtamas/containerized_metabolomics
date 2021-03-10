@@ -12,11 +12,6 @@ scriptMandatoryArgs <- list(
 )
 
 scriptOptionalArgs <- list(
-  conditionOrder = list(
-    default=NULL,
-    type="vector",
-    help="Order of conditions in the experimental design formula. Makes sense to put control as first."
-  ),
   outFile = list(
     default="fold_change_summary",
     help="File path without extension to fold change summary figure."
@@ -28,6 +23,10 @@ scriptOptionalArgs <- list(
   figureType = list(
     default="volcano",
     help="Type of plot to save as output."
+  ),
+  tmpLocation = list(
+    default="tmp",
+    help="Path to a temporary folder polluted by mSet."
   ),
   commandRpath = list(
     default="/home/rstudio/git_repo/scripts/commandR.r",
@@ -64,27 +63,24 @@ source("data_norm.r", local=TRUE)
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
-  
-  outFile <- "metabolomics_results"
-  opt$outFile <- NULL
-  opt$help <- NULL
-  opt$verbose <- NULL
 
   cat("Parsing dataset\n")
-  input <- convert_to_mSet(inFile)
-
-  cat("Normalizing dataset\n")
-  mSet <- normalize_mSet(input)
+  input <- inFile %>%
+    convert_cc_to_mSet(tmpLocation=file.path(opt$tmpLocation, "tmp.csv"), cleanUp=FALSE) %>%
+    normalize_mSet(tmpLocation=opt$tmpLocation, cleanUp=FALSE)
 
   cat("Calculating basic descriptive statistics\n")
-  mSet <- calcMetaboStat(mSet, keep_mSet=TRUE)
+  mSet <- calcMetaboStat(mSet, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
   
   cat("Saving table\n")
-  tab2tsv(mSet$table, outFile)
+  stats_data <- extract_stat_from_mSet(stats_data)
+  tab2tsv(stats_data, opt$outFile)
   
   cat("Saving figure\n")
   if(opt$figureType == "volcano"){
-    plotMetaboVolcano(mSet)
+    stats_data %>%
+      plotMetaboVolcano() %>%
+      fig2pdf()
   } else {
     tmp_wd <- getwd()
     setwd(dirname(opt$outFile))
@@ -132,7 +128,7 @@ calcMetaboStat <- function(norm_data, norm_path="row_norm.qs", tmpLocation="tmp"
   if(!keep_mSet) mSet <- extract_stat_from_mSet(mSet)
   
   unlink("row_norm.qs")
-  if(cleanUp) unlink(norm_path)
+  if(cleanUp) unlink(dirname(norm_path))
   
   invisible(mSet)
 
