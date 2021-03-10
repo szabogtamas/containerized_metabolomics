@@ -173,16 +173,31 @@ extract_stat_from_mSet <- function(mSet){
 #' 
 #' @param stats_data dataframe or mSet. Metabolomics data with Fold Changes and p-values.
 #' 
-#' @return Not intended to return anything, but rather to save outputs to files.
+#' @return A ggplot with the Volcano.
 plotMetaboVolcano <- function(stats_data){
   
   if(is(stats_data, "mSet")){
-    stats_data <- stats_data$data
+    stats_data <- extract_stat_from_mSet(stats_data)
   }
   
   stats_data %>%
-    ggplot(aes(x=FC, y=pvalue)) +
-    geom_point(size=2)
+    mutate(
+      p.value = ifelse(is.na(p.value), 1, p.value),
+      Effect = case_when(
+        abs(FC) < 2 ~ "Small change",
+        FDR < 0.05 ~ "Significant change",
+        TRUE < "Insignificant change"
+      ),
+      Effect = factor(Effect, levels=c("Significant change", "Small change", "Insignificant change"))
+    ) %>%
+    ggplot(aes(x=log2(FC), y=-log10(p.value), color=Effect)) +
+    geom_point(size=2) +
+    scale_color_manual(values=c("#E64B35B2", "#4DBBD5B2", "#00A087B2")) +
+    theme_bw() +
+    labs(
+      main = "Volcano plot of results",
+      x = "log2(FC)", y = "-log10(p)"
+    )
   
 }
 
