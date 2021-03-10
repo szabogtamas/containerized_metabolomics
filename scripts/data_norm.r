@@ -17,7 +17,7 @@ scriptOptionalArgs <- list(
     help="File path without extension to normalization summary figure."
   ),
   fileType = list(
-    default="png",
+    default="pdf",
     help="File extension to normalization summary figure."
   ),
   figureType = list(

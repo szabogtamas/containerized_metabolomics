@@ -22,7 +22,7 @@ scriptOptionalArgs <- list(
     help="File path without extension to fold change summary figure."
   ),
   fileType = list(
-    default="png",
+    default="pdf",
     help="File extension to fold change summary figure."
   ),
   figureType = list(
@@ -94,7 +94,6 @@ main <- function(opt){
       PlotTT(mSet, basename(opt$outFile), opt$fileType)
     }
     setwd(tmp_wd)
-    unlink(dirname(opt$outFile))
   }
 
   invisible(NULL)
