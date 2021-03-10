@@ -104,16 +104,28 @@ main <- function(opt){
 #' 
 #' @param norm_data dataframe or mSet. Metabolomics data with Fold Changes and p-values.
 #' @param norm_path string. Path to the normalization set.
+#' @param tmpLocation string. Path to temporary file for mSet init.
 #' @param keep_mSet logical. If the mSet obeject should be returned or the dataframe only.
+#' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
-calcMetaboStat <- function(norm_data, norm_path="row_norm.qs", keep_mSet=FALSE){
+calcMetaboStat <- function(norm_data, norm_path="row_norm.qs", tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
   
   if(norm_path != "row_norm.qs"){
     file.copy(norm_path, "row_norm.qs")
   }
   
-  mSet <- norm %>%
+  if(!is(norm_data, "mSet")){
+    stats_data <- norm_data %>%
+      convert_cc_to_mSet(tmpLocation=file.path(tmpLocation, "tmp.csv"), cleanUp=FALSE) %>%
+      normalize_mSet(tmpLocation=tmpLocation, cleanUp=FALSE)
+  }
+  
+  old_wd <- getwd()
+  if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
+  setwd(tmpLocation)
+  
+  mSet <- norm_data %>%
     FC.Anal(2.0, 0) %>%
     Ttests.Anal(F, 0.05, FALSE, TRUE)
   
