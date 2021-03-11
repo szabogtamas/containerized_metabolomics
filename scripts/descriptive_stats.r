@@ -110,11 +110,7 @@ main <- function(opt){
 #' 
 #' @return A standardized dataframe with stats or mSet if explicitly asked for.
 calcMetaboStat <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
-  
-  if(norm_path != "row_norm.qs"){
-    file.copy(norm_path, "row_norm.qs")
-  }
-  
+    
   if(!is(norm_data, "mSet")){
     stats_data <- norm_data %>%
       convert_cc_to_mSet(tmpLocation=file.path(tmpLocation, "tmp.csv")) %>%
@@ -123,6 +119,9 @@ calcMetaboStat <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="
   
   old_wd <- getwd()
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
+  if(norm_path != file.path(tmpLocation, "row_norm.qs"){
+    file.copy(norm_path, file.path(tmpLocation, "row_norm.qs"))
+  }
   setwd(tmpLocation)
   
   mSet <- norm_data %>%
