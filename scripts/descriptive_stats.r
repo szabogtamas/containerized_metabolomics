@@ -130,7 +130,7 @@ calcMetaboStat <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="
   
   if(!keep_mSet) mSet <- extract_stat_from_mSet(mSet)
   
-  unlink("row_norm.qs")
+  setwd(tmp_wd)
   if(cleanUp) unlink(tmpLocation)
   
   invisible(mSet)
@@ -183,7 +183,7 @@ plotMetaboVolcano <- function(stats_data){
     mutate(
       p.value = ifelse(is.na(p.value), 1, p.value),
       Effect = case_when(
-        abs(FC) < 2 ~ "Small change",
+        abs(log2(FC)) < log2(2) ~ "Small change",
         FDR < 0.05 ~ "Significant change",
         TRUE ~ "Insignificant change"
       ),
@@ -191,10 +191,10 @@ plotMetaboVolcano <- function(stats_data){
     ) %>%
     ggplot(aes(x=log2(FC), y=-log10(p.value), color=Effect)) +
     geom_point(size=2) +
-    scale_color_manual(values=c("#E64B35B2", "#4DBBD5B2", "#00A087B2")) +
+    scale_color_manual(values=c("#E64B35B2", "#4DBBD5B2", "#00A087B2"), drop=FALSE) +
     theme_bw() +
     labs(
-      main = "Volcano plot of results",
+      title = "Volcano plot of results",
       x = "log2(FC)", y = "-log10(p)"
     )
   
