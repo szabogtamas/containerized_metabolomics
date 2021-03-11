@@ -11,7 +11,7 @@ output:
 ```{r}
 # Source scripts that bundle MetaboAnalyst functions
 
-source("../scripts/data_norm.r", chdir=TRUE)
+source("../scripts/descriptive_stats.r", chdir=TRUE)
 ```
 
 ```{r}
@@ -45,19 +45,21 @@ mSet <- normalize_mSet(mSet)
 ```{r}
 # Save normalization report
 
-mSet <- PlotSampleNormSummary(mSet, "sampleNorm", "pdf")
+mSet <- PlotSampleNormSummary(mSet, file.path(local_folder, "sampleNorm"), "pdf")
 ```
 
 ```{r}
 # Calculate basic descriptive statistics
 
-stat_results <- metabo_desc_stat(metabo_data)
+stat_results <- calcMetaboStat(mSet)
 
-head(stat_results$data)
+#head(stat_results$data)
 ```
+
+
 
 ```{r}
 # Show a volcano plot of the results
 
-stat_results$plot
+plotMetaboVolcano(stat_results)
 ```
