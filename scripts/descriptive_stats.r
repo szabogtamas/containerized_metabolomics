@@ -48,7 +48,7 @@ for (rn in names(scriptOptionalArgs)){
   opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
 }
 
-for (pk in c("tidyr", "dplyr", "MetaboAnalystR")){
+for (pk in c("tidyr", "dplyr", "ggplot2", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
@@ -111,7 +111,7 @@ main <- function(opt){
 #' @return A standardized dataframe with stats or mSet if explicitly asked for.
 calcMetaboStat <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
     
-  if(!is(norm_data, "mSet")){
+  if(!is(norm_data, "list")){
     stats_data <- norm_data %>%
       convert_cc_to_mSet(tmpLocation=file.path(tmpLocation, "tmp.csv")) %>%
       normalize_mSet(tmpLocation=tmpLocation)
@@ -119,7 +119,7 @@ calcMetaboStat <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="
   
   old_wd <- getwd()
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
-  if(norm_path != file.path(tmpLocation, "row_norm.qs"){
+  if(norm_path != file.path(tmpLocation, "row_norm.qs")){
     file.copy(norm_path, file.path(tmpLocation, "row_norm.qs"))
   }
   setwd(tmpLocation)
@@ -175,7 +175,7 @@ extract_stat_from_mSet <- function(mSet){
 #' @return A ggplot with the Volcano.
 plotMetaboVolcano <- function(stats_data){
   
-  if(is(stats_data, "mSet")){
+  if(is(stats_data, "list")){
     stats_data <- extract_stat_from_mSet(stats_data)
   }
   
@@ -185,7 +185,7 @@ plotMetaboVolcano <- function(stats_data){
       Effect = case_when(
         abs(FC) < 2 ~ "Small change",
         FDR < 0.05 ~ "Significant change",
-        TRUE < "Insignificant change"
+        TRUE ~ "Insignificant change"
       ),
       Effect = factor(Effect, levels=c("Significant change", "Small change", "Insignificant change"))
     ) %>%
