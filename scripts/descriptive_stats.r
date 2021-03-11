@@ -78,10 +78,13 @@ main <- function(opt){
   
   cat("Saving figure\n")
   if(opt$figureType == "volcano"){
+    
     stats_data %>%
       plotMetaboVolcano() %>%
-      fig2pdf()
+      fig2pdf(opt$outFile)
+    
   } else {
+    
     tmp_wd <- getwd()
     setwd(dirname(opt$outFile))
     if(opt$figureType == "FCscatter"){
@@ -90,6 +93,7 @@ main <- function(opt){
       PlotTT(mSet, basename(opt$outFile), opt$fileType)
     }
     setwd(tmp_wd)
+    
   }
 
   invisible(NULL)
@@ -128,7 +132,7 @@ calcMetaboStat <- function(norm_data, norm_path="row_norm.qs", tmpLocation="tmp"
   if(!keep_mSet) mSet <- extract_stat_from_mSet(mSet)
   
   unlink("row_norm.qs")
-  if(cleanUp) unlink(dirname(norm_path))
+  if(cleanUp) unlink(tmpLocation)
   
   invisible(mSet)
 
