@@ -66,8 +66,8 @@ main <- function(opt){
 
   cat("Parsing dataset\n")
   input <- inFile %>%
-    convert_cc_to_mSet(tmpLocation=file.path(opt$tmpLocation, "tmp.csv"), cleanUp=FALSE) %>%
-    normalize_mSet(tmpLocation=opt$tmpLocation, cleanUp=FALSE)
+    convert_cc_to_mSet(tmpLocation=file.path(opt$tmpLocation, "tmp.csv")) %>%
+    normalize_mSet(tmpLocation=opt$tmpLocation)
 
   cat("Calculating basic descriptive statistics\n")
   mSet <- calcMetaboStat(mSet, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
@@ -109,7 +109,7 @@ main <- function(opt){
 #' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
 #' @return A standardized dataframe with stats or mSet if explicitly asked for.
-calcMetaboStat <- function(norm_data, norm_path="row_norm.qs", tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
+calcMetaboStat <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
   
   if(norm_path != "row_norm.qs"){
     file.copy(norm_path, "row_norm.qs")
@@ -117,8 +117,8 @@ calcMetaboStat <- function(norm_data, norm_path="row_norm.qs", tmpLocation="tmp"
   
   if(!is(norm_data, "mSet")){
     stats_data <- norm_data %>%
-      convert_cc_to_mSet(tmpLocation=file.path(tmpLocation, "tmp.csv"), cleanUp=FALSE) %>%
-      normalize_mSet(tmpLocation=tmpLocation, cleanUp=FALSE)
+      convert_cc_to_mSet(tmpLocation=file.path(tmpLocation, "tmp.csv")) %>%
+      normalize_mSet(tmpLocation=tmpLocation)
   }
   
   old_wd <- getwd()

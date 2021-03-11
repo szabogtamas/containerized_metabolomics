@@ -63,7 +63,9 @@ main <- function(opt){
   results <- standardize_metabo_data(opt$inFile)
   
   cat("Saving to temporary MetoboAnalyst file\n")
-  mSet <- convert_cc_to_mSet(results, opt$tmpLocation, opt$analysis_type, opt$input_format)
+  mSet <- convert_cc_to_mSet(
+    results, opt$tmpLocation, opt$analysis_type, opt$input_format, cleanUp=TRUE
+  )
 
   invisible(mSet)
 }
@@ -109,7 +111,7 @@ standardize_metabo_data <- function(input_data){
 #' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
 #' @return Populated mSet object.
-convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_type="stat", input_format="rowu", cleanUp=TRUE){
+convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_type="stat", input_format="rowu", cleanUp=FALSE){
 
   old_wd <- getwd()
   tmp_dir <- dirname(tmpLocation)

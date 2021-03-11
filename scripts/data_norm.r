@@ -68,7 +68,7 @@ main <- function(opt){
   input <- convert_to_mSet(opt$inFile)
   
   cat("Normalizing dataset\n")
-  results <- normalize_mSet(input, opt$tmpLocation)
+  results <- normalize_mSet(input, opt$tmpLocation, cleanUp=TRUE)
 
   cat("Saving figure\n")
   
@@ -94,7 +94,7 @@ main <- function(opt){
 #' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
 #' @return normalized metabo Set.
-normalize_mSet <- function(inSet, tmpLocation="tmp", cleanUp=TRUE){
+normalize_mSet <- function(inSet, tmpLocation="tmp", cleanUp=FALSE){
   
   old_wd <- getwd()
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
