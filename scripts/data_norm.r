@@ -91,9 +91,10 @@ main <- function(opt){
 #' 
 #' @param inSet mSet. a proprietary object of MetaboAnalyst after sanitycheck
 #' @param tmpLocation character. Path to a temporary file needed for mSet creation
+#' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
 #' @return normalized metabo Set.
-normalize_mSet <- function(inSet, tmpLocation="tmp"){
+normalize_mSet <- function(inSet, tmpLocation="tmp", cleanUp=TRUE){
   
   old_wd <- getwd()
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
@@ -106,7 +107,7 @@ normalize_mSet <- function(inSet, tmpLocation="tmp"){
     Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
   
   setwd(old_wd)
-  unlink(tmpLocation, recursive=TRUE, force=TRUE)
+  if(cleanUp) unlink(norm_path)
 
   invisible(out)
 }

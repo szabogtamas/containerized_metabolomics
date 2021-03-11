@@ -106,9 +106,10 @@ standardize_metabo_data <- function(input_data){
 #' @param tmpLocation character. Path to a temporary file needed for mSet creation
 #' @param analysis_type character. Code for the analysis we want to codoct on the mSet object later (e.g. "stat") 
 #' @param input_format character. Input format of file to be parsed (almost always "rowu") 
+#' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
 #' @return Populated mSet object.
-convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_type="stat", input_format="rowu"){
+convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_type="stat", input_format="rowu", cleanUp=TRUE){
 
   old_wd <- getwd()
   tmp_dir <- dirname(tmpLocation)
@@ -123,9 +124,9 @@ convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_t
   
   setwd(old_wd)
   if(preexisted_dir){
-    unlink(tmpLocation)
+    if(cleanUp) unlink(tmpLocation)
   } else {
-    unlink(tmp_dir, tmpLocation, recursive=TRUE, force=TRUE)
+    if(cleanUp) unlink(tmp_dir, tmpLocation, recursive=TRUE, force=TRUE)
   }
   
   invisible(mSet)
