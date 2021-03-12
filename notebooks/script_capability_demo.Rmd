@@ -1,5 +1,5 @@
 ---
-title: "Metabolomic analysis powered by MetaboAnalyst, made flexible"
+title: "Metabolomic analysis powered by MetaboAnalyst, made flexible with scripts"
 output: 
   html_document:
     code_folding: hide
@@ -8,8 +8,17 @@ output:
       toc_collapsed: true
 ---
 
+## Workspace setup
+
+The reason of using wrapper functions instead of directly the native MetaboAnalyst functions is that it provides shortcuts to the most common analysis pipelines we are planning to use.  
+Another point is that much of the outputs are saved to a file in the temporary location, without offering a means to modify the figure and limits options for saving different stages of quality control (spams working directory).
+Some fundamental figures are recreated as ggplots to enhance the above accessibility to figures.
+In addition to figures, data is also converted to a more convenient format, mainly dataframes.
+
 ```{r}
 # Source scripts that bundle MetaboAnalyst functions
+
+library(DT)
 
 source("../scripts/descriptive_stats.r", chdir=TRUE)
 ```
@@ -19,15 +28,23 @@ source("../scripts/descriptive_stats.r", chdir=TRUE)
 
 local_folder <- "/home/rstudio/local_files/test_output"
 if(!dir.exists(local_folder)) dir.create(local_folder)
+
+test_data_file <- "~/git_repo/data_examples/test.tsv"
+
+print("Test data is given to be:")
+print(test_data_file)
 ```
+
+## Descriptive statistics
+
+### Parse inputs assuming a standarized internal format
 
 ```{r}
 # Parse test input
 
-test_data_file <- "~/git_repo/data_examples/test.tsv"
 metabo_data <-standardize_metabo_data(test_data_file)
 
-head(metabo_data)
+datatable(metabo_data)
 ```
 
 ```{r}
@@ -35,6 +52,8 @@ head(metabo_data)
 
 mSet <- convert_cc_to_mSet(metabo_data)
 ```
+
+### Key steps to differential met boudled together
 
 ```{r}
 # Normalize input data
@@ -53,19 +72,20 @@ mSet <- PlotSampleNormSummary(mSet, file.path(local_folder, "sampleNorm"), "pdf"
 
 stat_results <- calcMetaboStat(mSet)
 
-#head(stat_results$data)
+head(stat_results$data)
 ```
-
-
 
 ```{r}
-# Show a volcano plot of the results
+# Show a volcano plot of the results (also save this figure)
 
-plotMetaboVolcano(stat_results)
+p <- plotMetaboVolcano(stat_results)
+fig2pdf(p, file.path(local_folder, "example_metabo_volcano"))
+
+p
 ```
 
 
-
+## Pathway analyses
 
 
 
