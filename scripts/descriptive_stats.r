@@ -130,7 +130,7 @@ calcMetaboStat <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="
   
   if(!keep_mSet) mSet <- extract_stat_from_mSet(mSet)
   
-  setwd(tmp_wd)
+  setwd(old_wd)
   if(cleanUp) unlink(tmpLocation)
   
   invisible(mSet)
