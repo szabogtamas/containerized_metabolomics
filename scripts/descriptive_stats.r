@@ -108,7 +108,7 @@ main <- function(opt){
 #' @param keep_mSet logical. If the mSet obeject should be returned or the dataframe only.
 #' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
-#' @return A standardized dataframe with stats or mSet if explicitly asked for.
+#' @return dataframe or mSet  Contains descriptive stats.
 calcMetaboStat <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
     
   if(!is(norm_data, "list")){
@@ -142,7 +142,7 @@ calcMetaboStat <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="
 #' 
 #' @param mSet dataframe or mSet. Metabolomics data with Fold Changes and p-values.
 #' 
-#' @return standardized dataframe with FC and p-values.
+#' @return dataframe Containing FC and p-values.
 extract_stat_from_mSet <- function(mSet){
   
   fc_df <- mSet %>%
