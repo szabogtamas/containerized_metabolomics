@@ -59,7 +59,7 @@ metabo_data <- "~/Datasets/faeces vizsgálat IBD standard.xlsx" %>%
     Condition = gsub("\\d+_", "", Subject),
     Replicate = paste0(stringr::str_extract(Subject, "\\d+_"), "Batch")
   ) %>%
-  head()
+  filter(Condition %in% c("Friss_MC", "Friss_UC"))
 
 datatable(metabo_data)
 ```
