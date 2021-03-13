@@ -21,9 +21,19 @@ scriptOptionalArgs <- list(
   )
 )
 
-opt <- list()
+if(!exists("opt")){
+  opt <- list()
+}
+
+rg <- commandArgs()
+if("--commandRpath" %in% rg){
+  opt$commandRpath <- rg[[which(rg == "--commandRpath") + 1]]
+}
+
 for (rn in names(scriptOptionalArgs)){
-  opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
+  if(!(rn %in% names(opt))){
+    opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
+  }
 }
 
 for (pk in c("tidyr", "dplyr", "readxl", "googledrive")){
