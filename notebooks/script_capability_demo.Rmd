@@ -48,35 +48,18 @@ metabo_data <-standardize_metabo_data(test_data_file)
 datatable(metabo_data)
 ```
 
-
-
-```{r}
-read_drive <- function(drive_path){
-  
-  drive_download(
-    drive_path,
-    overwrite = TRUE
-  )
-
-  data_file <- basename(drive_path)
-  
-  if(tail(unlist(strsplit(data_file, "\\.")), -1) %in% c("xls", "xlsx")){
-    data_table <- readexcel(data_file)
-  } else {
-    data_table <- read.csv(data_file, sep = "\t", stringsAsFactors = FALSE)
-  }
-  
-  unlink(data_file)
-
-  return(data_table)
-  
-}
-```
-
 ```{r}
 # Get the actual, sensitive data from Drive - execute this only of you have a key
 
-metabo_data <- read_drive("~/Datasets/faeces vizsgálat IBD.xlsx")
+metabo_data <- "~/Datasets/faeces vizsgálat IBD standard.xlsx" %>%
+  read_drive() %>%
+  pivot_longer(-one_of("Metabolite", "Group")) %>%
+  rename(MetaboGroup = Group, Subject = name) %>%
+  mutate(
+    Condition = gsub("\\d+_", "", Subject),
+    Replicate = paste0(stringr::str_extract(Subject, "\\d+_"), "Batch")
+  ) %>%
+  head()
 
 datatable(metabo_data)
 ```
