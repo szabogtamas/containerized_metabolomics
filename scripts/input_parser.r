@@ -75,7 +75,7 @@ main <- function(opt){
 #' 
 #' @param input_data dataframe. The primary input
 #' 
-#' @return Not intended to return anything, but rather to save outputs to files.
+#' @return dtaframe Standardized and reshaped to a long format.
 standardize_metabo_data <- function(input_data){
 
   if(is.character(input_data) & length(input_data) == 1){
@@ -144,7 +144,7 @@ convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_t
 #' @param value character. Column name for metabolite quantity (concentration) values
 #' @param tmp_out_file character. Path to the temporary output file 
 #' 
-#' @return Not intended to return anything, but rather to save output to file.
+#' @return NULL The objective is to save to a temporary fileneeded by mSet.
 write_metabodf_tmp <- function(metab_data, subject="Subject", condition="Condition", metabolite="Metabolite", value="value", tmp_out_file="tmp.csv"){
   
   metab_data %>%
@@ -167,7 +167,7 @@ write_metabodf_tmp <- function(metab_data, subject="Subject", condition="Conditi
 #' @param analysis_type character. Code for the analysis we want to codoct on the mSet object later (e.g. "stat") 
 #' @param input_format character. Input format of file to be parsed (almost always "rowu") 
 #' 
-#' @return Not intended to return anything, but rather to save outputs to files.
+#' @return mSet Initialized and populated from a temporary file.
 populate_mSet <- function(analyst_compatible_data, analysis_type="stat", input_format="rowu"){
   
   mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
