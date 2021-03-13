@@ -3,9 +3,8 @@
 scriptDescription <- "A script that reads a table from Google Drive."
 
 scriptMandatoryArgs <- list(
-  inFile = list(
+  drive_path = list(
     abbr="-i",
-    type="table",
     readoptions=list(sep="\t", stringsAsFactors=FALSE),
     help="Data table on Drive."
   )
@@ -60,7 +59,7 @@ main <- function(opt){
 
 #' Downloads a data table from Drive and reads it as a dataframe.
 #' 
-#' @param drive_path string. Pseudopath to data table on Drive 
+#' @param drive_path string. Pseudopath to data table on Drive.
 #' 
 #' @return dataframe or list of them, if multisheet.
 read_drive <- function(drive_path){
@@ -70,17 +69,15 @@ read_drive <- function(drive_path){
     overwrite = TRUE
   )
 
-  data_table <- basename(drive_path)
+  data_file <- basename(drive_path)
   
-  if(unlist(strsplit(data_table, "\\.")) %in% c("xls", "xlsx")){
-    data_table <- readxl(data_table)
+  if(tail(unlist(strsplit(data_table, "\\.")), -1) %in% c("xls", "xlsx")){
+    data_table <- readxl(data_file)
   } else {
-    data_table <- read.csv(data_table, sep = "\t", stringsAsFactors = FALSE)
+    data_table <- read.csv(data_file, sep = "\t", stringsAsFactors = FALSE)
   }
-
-  drive_path %>%
-    basename() %>%
-    unlink()
+  
+  unlink(data_file)
 
   return(data_table)
   
