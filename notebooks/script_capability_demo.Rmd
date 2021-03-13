@@ -21,6 +21,7 @@ In addition to figures, data is also converted to a more convenient format, main
 library(DT)
 
 source("../scripts/descriptive_stats.r", chdir=TRUE)
+source("../scripts/drive_reader.r", chdir=TRUE)
 ```
 
 ```{r}
@@ -41,6 +42,14 @@ print(test_data_file)
 
 ```{r}
 # Parse test input
+
+metabo_data <-standardize_metabo_data(test_data_file)
+
+datatable(metabo_data)
+```
+
+```{r}
+# Get the actual, sensitive data from Drive - execute this only of you have a key
 
 metabo_data <-standardize_metabo_data(test_data_file)
 
