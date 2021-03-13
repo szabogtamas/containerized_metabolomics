@@ -48,7 +48,7 @@ main <- function(opt){
   cat("Reading from Drive\n")
   data <- do.call(read_drive, opt)
   
-  if(!is.null(outFile){
+  if(!is.null(outFile)){
     cat("Saving table\n")
     tab2tsv(data, outFile)
   }
@@ -66,7 +66,7 @@ read_drive <- function(drive_path){
   
   drive_download(
     drive_path,
-    overwrite = TRUE
+    overwrite = TRUE
   )
 
   data_file <- basename(drive_path)
