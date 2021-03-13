@@ -7,14 +7,14 @@ scriptMandatoryArgs <- list(
     abbr="-i",
     readoptions=list(sep="\t", stringsAsFactors=FALSE),
     help="Data table on Drive."
+  ),
+  outFile = list(
+    default=NULL,
+    help="Output location for saving the table locally."
   )
 )
 
 scriptOptionalArgs <- list(
-  outFile = list(
-    default=NULL,
-    help="Output location if we insist on saving the table locally."
-  ),
   commandRpath = list(
     default="commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
@@ -58,10 +58,8 @@ main <- function(opt){
   cat("Reading from Drive\n")
   data <- do.call(read_drive, opt)
   
-  if(!is.null(outFile)){
-    cat("Saving table\n")
-    tab2tsv(data, outFile)
-  }
+  cat("Saving table\n")
+  tab2tsv(data, outFile)
 
   invisible(NULL)
 }
