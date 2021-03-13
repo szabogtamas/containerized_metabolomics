@@ -79,8 +79,8 @@ read_drive <- function(drive_path){
 
   data_file <- basename(drive_path)
   
-  if(tail(unlist(strsplit(data_table, "\\.")), -1) %in% c("xls", "xlsx")){
-    data_table <- readxl(data_file)
+  if(tail(unlist(strsplit(data_file, "\\.")), -1) %in% c("xls", "xlsx")){
+    data_table <- read_excel(data_file)
   } else {
     data_table <- read.csv(data_file, sep = "\t", stringsAsFactors = FALSE)
   }
