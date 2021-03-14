@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-scriptDescription <- "Overrepresentation analysis of a hitlist of metabolites."
+scriptDescription <- "Find top overrepresented pathways in a metabolomics dataset via MetaboAnlyst."
 
 scriptMandatoryArgs <- list(
   inFile = list(
@@ -12,27 +12,49 @@ scriptMandatoryArgs <- list(
 )
 
 scriptOptionalArgs <- list(
-  conditionOrder = list(
-    default=NULL,
-    type="vector",
-    help="Order of conditions in the experimental design formula. Makes sense to put control as first."
+  outFile = list(
+    default="path_ora",
+    help="File path without extension to overrepresented pathways summary figure."
+  ),
+  fileType = list(
+    default="pdf",
+    help="File extension for figure."
+  ),
+  figureType = list(
+    default="volcano",
+    help="Type of plot to save as output."
+  ),
+  tmpLocation = list(
+    default="tmp",
+    help="Path to a temporary folder polluted by mSet."
   ),
   commandRpath = list(
-    default="commandR.r",
+    default="/home/rstudio/git_repo/scripts/commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
   )
 )
+
+if(!exists("opt")){
+  opt <- list()
+}
+
+rg <- commandArgs()
+if("--commandRpath" %in% rg){
+  opt$commandRpath <- rg[[which(rg == "--commandRpath") + 1]]
+}
 
 opt <- list()
 for (rn in names(scriptOptionalArgs)){
   opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
 }
 
-for (pk in c("tidyr", "dplyr", "dplyr", "MetaboAnalystR")){
+for (pk in c("tidyr", "dplyr", "ggplot2", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
 }
+
+source("data_norm.r", local=TRUE)
 
 #' The main function of the script, executed only if called from command line.
 #' Calls subfunctions according to supplied command line arguments.
@@ -42,49 +64,70 @@ for (pk in c("tidyr", "dplyr", "dplyr", "MetaboAnalystR")){
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
   
-  outFile <- "metabolomics_results"
-  opt$outFile <- NULL
-  opt$help <- NULL
-  opt$verbose <- NULL
-
-  cat("Just a test for now\n")
-  results <- do.call(print, opt)
+  cat("Parsing dataset\n")
+  input <- inFile %>%
+    convert_cc_to_mSet(tmpLocation=file.path(opt$tmpLocation, "tmp.csv")) %>%
+    normalize_mSet(tmpLocation=opt$tmpLocation)
   
-  cat("Saving table\n")
-  tab2tsv(results$table, outFile)
+  cat("Calculating ORA on metabolic pathways\n")
+  mSet <- find_metabo_ora(mSet, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
   
   cat("Saving figure\n")
-  fig2pdf(results$figure, outFile, height=8.64, width=7.2)
-
+  if(opt$figureType == "volcano"){
+    
+    mSet %>%
+      plotPathVolcano() %>%
+      fig2pdf(opt$outFile)
+    
+  } else {
+    
+    tmp_wd <- getwd()
+    setwd(dirname(opt$outFile))
+    PlotORA(mSet, basename(opt$outFile), opt$fileType)
+    setwd(tmp_wd)
+    
+  }
+  
   invisible(NULL)
 }
 
 
-#' Carries out overrepresentation analysis of metabolites.
+#' Run PATHORA to find overrepresented pathways in mSet
 #' 
-#' @param hitlist vector. Metabolites that were found to be the top significant ones.
+#' @param norm_data dataframe or mSet. Metabolomics data.
+#' @param tmpLocation string. Path to temporary file for mSet init.
+#' @param keep_mSet logical. If the mSet obeject should be returned or the dataframe only.
+#' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
-#' @return top results and overview plots.
-calc_metabo_ora <- function(hitlist){
-
+#' @return dataframe or mSet  Contains descriptive stats.
+find_metabo_ora <- function(norm_data, tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
+  
+  old_wd <- getwd()
+  if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
+  setwd(tmpLocation)
+  
+  mSet <- mSet %>%
+    CreateMappingResultTable() %>%
+    SetMetabolomeFilter(FALSE) %>%
+    SetCurrentMsetLib("smpdb_pathway", 2) %>%
+    CalculateHyperScore()
+  
+  setwd(old_wd)
+  if(cleanUp) unlink(tmpLocation, recursive=TRUE)
+  
+  invisible(mSet)
+  
 }
 
-
-#' Explores differentially regulated metabolic pathways.
+#' Create a simple Volcano plot with Fold changes and p-values
 #' 
-#' @param in_df dataframe. Metabolomics data with abundance values and standardized compound names 
+#' @param stats_data dataframe or mSet. Metabolomics data with Fold Changes and p-values.
 #' 
-#' @return top results and overview plots.
-find_de_paths <- function(in_df){
-  
-  in_df %>%
-    msea()
-  
+#' @return A ggplot with the Volcano.
+plotPathVolcano <- function(stats_data){
+  print("TODO")
 }
 
-
-# Ensuring command line connectivity by sourcing an argument parser
-source(opt$commandRpath, local=TRUE)
 
 # Ensuring command line connectivity by sourcing an argument parser
 source(opt$commandRpath, local=TRUE)
