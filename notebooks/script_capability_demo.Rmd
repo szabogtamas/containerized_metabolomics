@@ -107,6 +107,14 @@ p
 
 ## Pathway analyses
 
+### Overrepresentation analysis
+
+```{r}
+# Select top metabolites from DE table
+
+selected_compounds <- stat_results[1:50, "compound"]
+```
+
 ```{r}
 # Create a fresh new mSet object from the data
 
