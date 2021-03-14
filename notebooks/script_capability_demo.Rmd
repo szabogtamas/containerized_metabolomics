@@ -48,7 +48,7 @@ metabo_data <-standardize_metabo_data(test_data_file)
 datatable(metabo_data)
 ```
 
-```{r}
+```{r eval = FALSE}
 # Get the actual, sensitive data from Drive - execute this only of you have a key
 
 drive_auth(cache = "/home/rstudio/local_files/.secrets", email = TRUE)
