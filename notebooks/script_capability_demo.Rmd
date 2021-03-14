@@ -22,6 +22,7 @@ library(DT)
 
 source("../scripts/drive_reader.r", chdir=TRUE)
 source("../scripts/descriptive_stats.r", chdir=TRUE)
+source("../scripts/pathway_ora.r", chdir=TRUE)
 ```
 
 ```{r}
@@ -106,9 +107,17 @@ p
 
 ## Pathway analyses
 
+```{r}
+# Create a fresh new mSet object from the data
 
+mSet <- convert_cc_to_mSet(metabo_data)
+```
 
+```{r}
+# Find top overrepresented pathways in the dataset
 
+mSet <- find_metabo_ora(mSet)
+```
 
 
 
