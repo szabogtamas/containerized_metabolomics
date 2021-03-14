@@ -6,6 +6,7 @@
 # Input and output datasets
 data/
 results/
+.secrets/
 
 # User-specific files
 *.rsuser

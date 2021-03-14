@@ -51,6 +51,8 @@ datatable(metabo_data)
 ```{r}
 # Get the actual, sensitive data from Drive - execute this only of you have a key
 
+drive_auth(cache = "/home/rstudio/local_files/.secrets", email = TRUE)
+
 metabo_data <- "~/Datasets/faeces vizsgálat IBD standard.xlsx" %>%
   read_drive() %>%
   pivot_longer(-one_of("Metabolite", "Group")) %>%
