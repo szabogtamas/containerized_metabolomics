@@ -28,7 +28,7 @@ source("../scripts/pathway_ora.r", chdir=TRUE)
 ```{r}
 # Specify output location and create if not existent
 
-local_folder <- "/home/rstudio/local_files/test_output"
+local_folder <- "~/local_files/test_output"
 if(!dir.exists(local_folder)) dir.create(local_folder)
 
 test_data_file <- "~/git_repo/data_examples/test.tsv"
@@ -62,7 +62,7 @@ metabo_data <- "~/Datasets/faeces vizsgálat IBD standard.xlsx" %>%
     Condition = gsub("\\d+_", "", Subject),
     Replicate = paste0(stringr::str_extract(Subject, "\\d+_"), "Batch")
   ) %>%
-  filter(Condition %in% c("Friss_MC", "Friss_UC"))
+  filter(Condition %in% c("CTRL", "Friss_UC"))
 
 datatable(metabo_data)
 ```
@@ -92,7 +92,7 @@ mSet <- PlotSampleNormSummary(mSet, file.path(local_folder, "sampleNorm"), "pdf"
 
 stat_results <- calcMetaboStat(mSet)
 
-head(stat_results$data)
+datatable(stat_results)
 ```
 
 ```{r}
@@ -112,7 +112,8 @@ p
 ```{r}
 # Select top metabolites from DE table
 
-selected_compounds <- stat_results[1:50, "compound"]
+selected_compounds <- stat_results[1:50, "Metabolite"]
+selected_compounds
 ```
 
 ```{r}
@@ -127,8 +128,13 @@ mSet <- convert_cc_to_mSet(metabo_data)
 mSet <- find_metabo_ora(mSet)
 ```
 
+### GSEA-like approach (mSEA)
 
+```{r}
+# Find top overrepresented pathways in the dataset
 
+mSet <- find_metabo_ora(mSet)
+```
 
 
 
