@@ -3,11 +3,11 @@
 scriptDescription <- "Find top overrepresented pathways in a metabolomics dataset via MetaboAnlyst."
 
 scriptMandatoryArgs <- list(
-  inFile = list(
+  hitList= list(
     abbr="-i",
-    type="table",
+    type="vector",
     readoptions=list(sep="\t", stringsAsFactors=FALSE),
-    help="Table of metobolite abundances."
+    help="List of top metabolites."
   )
 )
 
@@ -94,19 +94,27 @@ main <- function(opt){
 
 #' Run PATHORA to find overrepresented pathways in mSet
 #' 
-#' @param norm_data dataframe or mSet. Metabolomics data.
+#' @param hitlist character. Top metabolites.
 #' @param tmpLocation string. Path to temporary file for mSet init.
 #' @param keep_mSet logical. If the mSet obeject should be returned or the dataframe only.
 #' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
 #' @return dataframe or mSet  Contains descriptive stats.
-find_metabo_ora <- function(norm_data, tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
+find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
   
   old_wd <- getwd()
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
   setwd(tmpLocation)
   
-  mSet <- mSet %>%
+  mSet <- NULL
+  mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
+    Setup.MapData(selected_compounds) %>%
+    CrossReferencing("name")
+  
+  mappable_compunds <- mSet$name.map$query.vec[mSet$name.map$match.state == 1]
+  
+  mSet <- NULL
+  mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
     CreateMappingResultTable() %>%
     SetMetabolomeFilter(FALSE) %>%
     SetCurrentMsetLib("smpdb_pathway", 2) %>%
