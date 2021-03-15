@@ -117,16 +117,11 @@ selected_compounds
 ```
 
 ```{r}
-# Create a fresh new mSet object from the data
-
-mSet <- convert_cc_to_mSet(metabo_data)
-```
-
-```{r}
 # Find top overrepresented pathways in the dataset
 
-mSet <- find_metabo_ora(mSet)
+mSet <- find_metabo_ora(selected_compounds)
 ```
+
 
 ### GSEA-like approach (mSEA)
 
