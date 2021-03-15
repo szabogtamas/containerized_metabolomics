@@ -100,7 +100,7 @@ main <- function(opt){
 #' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
 #' @return dataframe or mSet  Contains descriptive stats.
-find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
+find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE, lipid=FALSE){
   
   old_wd <- getwd()
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
@@ -115,6 +115,7 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
   
   mSet <- NULL
   mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
+    Setup.MapData(mappable_compunds) %>%
     CreateMappingResultTable() %>%
     SetMetabolomeFilter(FALSE) %>%
     SetCurrentMsetLib("smpdb_pathway", 2) %>%
