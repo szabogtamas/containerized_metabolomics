@@ -3,6 +3,7 @@ FROM rocker/rstudio:3.6.3
 RUN sudo apt-get update -y
 RUN sudo apt-get install -y libxt-dev
 RUN sudo apt-get install -y libx11-dev
+RUN sudo apt-get install -y curl
 RUN sudo apt-get install -y libmagick++-dev
 RUN sudo apt-get install -y libfontconfig1-dev
 RUN sudo apt-get install -y zlib1g-dev
