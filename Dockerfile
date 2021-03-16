@@ -1,4 +1,4 @@
-FROM rocker/rstudio:3.6.3
+FROM rocker/verse:3.6.3
 
 RUN sudo apt-get update -y
 RUN sudo apt-get install -y libxt-dev
