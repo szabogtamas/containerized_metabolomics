@@ -85,7 +85,9 @@ mSet <- normalize_mSet(mSet)
 ```{r}
 # Save normalization report
 
-mSet <- PlotSampleNormSummary(mSet, file.path(local_folder, "sampleNorm"), "pdf")
+img_path <- file.path(local_folder, "sampleNorm")
+mSet <- PlotSampleNormSummary(mSet, img_path, "pdf")
+include_graphics(paste(img_path, "pdf", sep = "."))
 ```
 
 ```{r}
@@ -153,7 +155,9 @@ mSet2 <- find_metabo_ora(mapped_compounds)
 ```{r}
 # Save normalization report
 
-mSet2 <- PlotORA(mSet2, file.path(local_folder, "ORA_path"), "bar", "pdf")
+img_path <- file.path(local_folder, "ORA_path")
+mSet2 <- PlotORA(mSet2, img_path, "bar", "pdf")
+include_graphics(paste(img_path, "pdf", sep = "."))
 ```
 
 ### GSEA-like approach (mSEA)
