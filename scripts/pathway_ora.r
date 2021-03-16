@@ -64,13 +64,10 @@ source("data_norm.r", local=TRUE)
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
   
-  cat("Parsing dataset\n")
-  input <- inFile %>%
-    convert_cc_to_mSet(tmpLocation=file.path(opt$tmpLocation, "tmp.csv")) %>%
-    normalize_mSet(tmpLocation=opt$tmpLocation)
+  hitList <- opt$hitList
   
   cat("Calculating ORA on metabolic pathways\n")
-  mSet <- find_metabo_ora(mSet, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
+  mSet <- find_metabo_ora(hitList, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
   
   cat("Saving figure\n")
   if(opt$figureType == "volcano"){
@@ -83,7 +80,7 @@ main <- function(opt){
     
     tmp_wd <- getwd()
     setwd(dirname(opt$outFile))
-    PlotORA(mSet, basename(opt$outFile), opt$fileType)
+    PlotORA(mSet, basename(opt$outFile), "bar", opt$fileType)
     setwd(tmp_wd)
     
   }
@@ -92,15 +89,14 @@ main <- function(opt){
 }
 
 
-#' Run PATHORA to find overrepresented pathways in mSet
+#' Map compound names to literature and select only those that could be mapped
 #' 
 #' @param hitlist character. Top metabolites.
 #' @param tmpLocation string. Path to temporary file for mSet init.
-#' @param keep_mSet logical. If the mSet obeject should be returned or the dataframe only.
 #' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
-#' @return dataframe or mSet  Contains descriptive stats.
-find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE, lipid=FALSE){
+#' @return character. Compounds that could be mapped.
+filter_mappable_compounds <- function(hitlist, tmpLocation="tmp", cleanUp=TRUE){
   
   old_wd <- getwd()
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
@@ -113,9 +109,33 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
   
   mappable_compunds <- mSet$name.map$query.vec[mSet$name.map$match.state == 1]
   
+  setwd(old_wd)
+  if(cleanUp) unlink(tmpLocation, recursive=TRUE)
+  
+  return(mappable_compunds)
+  
+}
+
+#' Run PATHORA to find overrepresented pathways in mSet
+#' 
+#' @param hitlist character. Top metabolites.
+#' @param tmpLocation string. Path to temporary file for mSet init.
+#' @param keep_mSet logical. If the mSet obeject should be returned or the dataframe only.
+#' @param cleanUp logical. If temporary files should be removed after execution.
+#' 
+#' @return dataframe or mSet  Contains descriptive stats.
+find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
+  
+  old_wd <- getwd()
+  if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
+  setwd(tmpLocation)
+  
+  mappable_compunds <- filter_mappable_compounds(hitlist)
+  
   mSet <- NULL
   mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
     Setup.MapData(mappable_compunds) %>%
+    CrossReferencing(mSet, "name") %>%
     CreateMappingResultTable() %>%
     SetMetabolomeFilter(FALSE) %>%
     SetCurrentMsetLib("smpdb_pathway", 2) %>%
