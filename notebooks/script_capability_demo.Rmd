@@ -10,7 +10,7 @@ output:
 
 ## Workspace setup
 
-The reason of using wrapper functions instead of directly the native MetaboAnalyst functions is that it provides shortcuts to the most common analysis pipelines we are planning to use.  
+The reason for using wrapper functions instead of directly the native MetaboAnalyst functions is that it provides shortcuts to the most common analysis pipelines we are planning to use.  
 Another point is that much of the outputs are saved to a file in the temporary location, without offering a means to modify the figure and limits options for saving different stages of quality control (spams working directory).
 Some fundamental figures are recreated as ggplots to enhance the above accessibility to figures.
 In addition to figures, data is also converted to a more convenient format, mainly dataframes.
@@ -22,6 +22,7 @@ library(DT)
 
 source("../scripts/drive_reader.r", chdir=TRUE)
 source("../scripts/descriptive_stats.r", chdir=TRUE)
+source("../scripts/multivariate_roc.r", chdir=TRUE)
 source("../scripts/pathway_ora.r", chdir=TRUE)
 ```
 
@@ -104,6 +105,26 @@ fig2pdf(p, file.path(local_folder, "example_metabo_volcano"))
 p
 ```
 
+### Multivariate ROC
+
+```{r}
+# Select top metabolites from DE table
+
+multi_roc <- metabo_data %>%
+  convert_cc_to_mSet(analysis_type="roc") %>%
+  normalize_mSet() %>%
+  calcMultiROC()
+
+multi_roc
+```
+
+```{r}
+mSet<-PlotROC(mSet, imgName = "ROC_all_models", format = "png", dpi = 300, mdl.inx= 0, avg.method = "threshold", show.conf = 0, show.holdout = 0, focus="fpr", cutoff=0.5)
+mSet<-PlotProbView(mSet, imgName = "multi_roc_prob", format = "png", dpi = 300, mdl.inx = -1, show = 0, showPred = 0)
+mSet<-PlotAccuracy(mSet, imgName = "multi_roc_accuracy", format = "png", dpi = 300)
+mSet<-PlotImpVars(mSet, imgName = "multi_roc_impvar", format="png", dpi=300, mdl.inx = -1, measure="freq", feat.num=15)
+```
+
 
 ## Pathway analyses
 
@@ -117,11 +138,23 @@ selected_compounds
 ```
 
 ```{r}
-# Find top overrepresented pathways in the dataset
+# Map compound names to literature
 
-mSet <- find_metabo_ora(selected_compounds)
+mapped_compounds <- filter_mappable_compounds(selected_compounds)
+mapped_compounds
 ```
 
+```{r}
+# Find top overrepresented pathways in the dataset
+
+mSet2 <- find_metabo_ora(mapped_compounds)
+```
+
+```{r}
+# Save normalization report
+
+mSet2 <- PlotORA(mSet2, file.path(local_folder, "ORA_path"), "bar", "pdf")
+```
 
 ### GSEA-like approach (mSEA)
 
