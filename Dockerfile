@@ -94,8 +94,9 @@ RUN install2.r --error \
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
 ADD ./ /home/rstudio/git_repo
-ADD ./.Rprofile ~/.Rprofile
 RUN chmod a+rwx -R /home/rstudio
+ADD ./.Rprofile /home/rstudio/.Rprofile
+ENV R_PROFILE_USER /home/rstudio/.Rprofile
 
 RUN cd /home/rstudio/git_repo
 RUN git init
