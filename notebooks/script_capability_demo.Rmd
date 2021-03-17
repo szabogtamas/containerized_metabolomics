@@ -18,6 +18,7 @@ In addition to figures, data is also converted to a more convenient format, main
 ```{r}
 # Source scripts that bundle MetaboAnalyst functions
 
+library(knitr)
 library(DT)
 
 source("../scripts/drive_reader.r", chdir=TRUE)
@@ -86,8 +87,8 @@ mSet <- normalize_mSet(mSet)
 # Save normalization report
 
 img_path <- file.path(local_folder, "sampleNorm")
-mSet <- PlotSampleNormSummary(mSet, img_path, "pdf")
-include_graphics(paste(img_path, "pdf", sep = "."))
+mSet <- PlotSampleNormSummary(mSet, img_path, "png")
+include_graphics(paste(img_path, "dpi72.png", sep = ""))
 ```
 
 ```{r}
@@ -119,6 +120,11 @@ multi_roc <- metabo_data %>%
 
 multi_roc
 ```
+
+```{r}
+multi_roc$analSet$multiROC
+```
+
 
 ```{r}
 mSet<-PlotROC(mSet, imgName = "ROC_all_models", format = "png", dpi = 300, mdl.inx= 0, avg.method = "threshold", show.conf = 0, show.holdout = 0, focus="fpr", cutoff=0.5)
