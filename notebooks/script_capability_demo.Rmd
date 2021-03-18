@@ -111,7 +111,7 @@ p
 ### Multivariate ROC
 
 ```{r}
-# Select top metabolites from DE table
+# Select most important metabolites by multivariate ROC analysis
 
 multi_roc <- metabo_data %>%
   convert_cc_to_mSet(analysis_type="roc") %>%
@@ -122,15 +122,13 @@ multi_roc
 ```
 
 ```{r}
-multi_roc$analSet$multiROC
+names(multi_roc$analSet$multiROC)
 ```
 
-
 ```{r}
-mSet<-PlotROC(mSet, imgName = "ROC_all_models", format = "png", dpi = 300, mdl.inx= 0, avg.method = "threshold", show.conf = 0, show.holdout = 0, focus="fpr", cutoff=0.5)
-mSet<-PlotProbView(mSet, imgName = "multi_roc_prob", format = "png", dpi = 300, mdl.inx = -1, show = 0, showPred = 0)
-mSet<-PlotAccuracy(mSet, imgName = "multi_roc_accuracy", format = "png", dpi = 300)
-mSet<-PlotImpVars(mSet, imgName = "multi_roc_impvar", format="png", dpi=300, mdl.inx = -1, measure="freq", feat.num=15)
+img_path <- file.path(local_folder, "importanceROC")
+multi_roc <- PlotImpVars(multi_roc, imgName=img_path, format="png", mdl.inx=-1, measure="freq", feat.num=15)
+include_graphics(paste(img_path, "dpi72.png", sep = ""))
 ```
 
 
