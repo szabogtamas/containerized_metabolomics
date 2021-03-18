@@ -138,5 +138,18 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
 }
 
 
+#' Extract feature ranking from multiROC output
+#' 
+#' @param mSet mSet. Metabolomics data after multiROC analysis.
+#' 
+#' @return dataframe Containing feature importance.
+extract_rocstat_from_mSet <- function(mSet){
+  
+  model_predictions <- mSet$analSet$multiROC$pred.list
+  importance_values <- mSet$analSet$multiROC$imp.cv
+  
+}
+
+
 # Ensuring command line connectivity by sourcing an argument parser
 source(opt$commandRpath, local=TRUE)
