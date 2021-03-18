@@ -18,7 +18,7 @@ scriptOptionalArgs <- list(
   ),
   fileType = list(
     default="pdf",
-    help="File extension to fold change summary figure."
+    help="File extension for fold change summary figure."
   ),
   figureType = list(
     default="volcano",
@@ -73,9 +73,28 @@ main <- function(opt){
   mSet <- calcMultiROC(mSet, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
   
   cat("Saving table\n")
-  stats_data <- extract_stat_from_mSet(stats_data)
+  stats_data <- extract_rocstat_from_mSet(mSet)
   tab2tsv(stats_data, opt$outFile)
 
+  
+  cat("Saving figure\n")
+  if(opt$figureType == "volcano"){
+    
+    stats_data %>%
+      plotMetaboVolcano(mSet) %>%
+      fig2pdf(opt$outFile)
+    
+  } else {
+    
+    tmp_wd <- getwd()
+    setwd(dirname(opt$outFile))
+    PlotImpVars(
+      mSet, imgName=basename(opt$outFile), format=opt$fileType,
+      mdl.inx=-1, measure="freq", feat.num=15
+    )
+    setwd(tmp_wd)
+    
+  }
   invisible(NULL)
 }
 
