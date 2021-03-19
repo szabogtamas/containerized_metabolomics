@@ -126,6 +126,8 @@ names(multi_roc$analSet$multiROC)
 ```
 
 ```{r}
+# Save the built-in figure on feature importance
+
 img_path <- file.path(local_folder, "importanceROC")
 multi_roc <- PlotImpVars(multi_roc, imgName=img_path, format="png", mdl.inx=-1, measure="freq", feat.num=15)
 include_graphics(paste(img_path, "dpi72.png", sep = ""))

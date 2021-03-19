@@ -70,12 +70,7 @@ main <- function(opt){
     normalize_mSet(tmpLocation=opt$tmpLocation)
 
   cat("Calculating basic descriptive statistics\n")
-  mSet <- calcMultiROC(mSet, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
-  
-  cat("Saving table\n")
-  stats_data <- extract_rocstat_from_mSet(mSet)
-  tab2tsv(stats_data, opt$outFile)
-
+  mSet <- calcMultiROC(mSet, tmpLocation=opt$tmpLocation, outFile=opt$outFile, fileType=opt$fileType)
   
   cat("Saving figure\n")
   if(opt$figureType == "volcano"){
@@ -84,17 +79,8 @@ main <- function(opt){
       plotMetaboVolcano(mSet) %>%
       fig2pdf(opt$outFile)
     
-  } else {
-    
-    tmp_wd <- getwd()
-    setwd(dirname(opt$outFile))
-    PlotImpVars(
-      mSet, imgName=basename(opt$outFile), format=opt$fileType,
-      mdl.inx=-1, measure="freq", feat.num=15
-    )
-    setwd(tmp_wd)
-    
-  }
+  } 
+  
   invisible(NULL)
 }
 
@@ -108,7 +94,7 @@ main <- function(opt){
 #' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
 #' @return dataframe or mSet  Contains importance of individual metabolites.
-calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
+calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", outFile="feat_importance.tsv", tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE, fileType="pdf"){
     
   if(!is(norm_data, "list")){
     stats_data <- norm_data %>%
@@ -128,7 +114,14 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
     PrepareROCData() %>%
     PerformCV.explore(cls.method = "svm", rank.method = "svm", lvNum = 2)
   
-  #imp.feats <- GetImpFeatureMat(mSet, mSet$analSet$multiROC$imp.cv, 10)
+  # The side effect of the figure is a table we actually need
+  tmp_wd <- getwd()
+  setwd(dirname(opt$outFile))
+  PlotImpVars(
+    mSet, imgName=basename(opt$outFile), format=fileType,
+    mdl.inx=-1, measure="freq", feat.num=15
+  )
+  setwd(tmp_wd)
   
   setwd(old_wd)
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
