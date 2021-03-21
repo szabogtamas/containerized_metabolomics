@@ -115,13 +115,12 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", outFile="feat_i
     PerformCV.explore(cls.method = "svm", rank.method = "svm", lvNum = 2)
   
   # The side effect of the figure is a table we actually need
-  tmp_wd <- getwd()
-  setwd(dirname(opt$outFile))
+  setwd(dirname(outFile))
   PlotImpVars(
-    mSet, imgName=basename(opt$outFile), format=fileType,
+    mSet, imgName=basename(outFile), format=fileType,
     mdl.inx=-1, measure="freq", feat.num=15
   )
-  setwd(tmp_wd)
+  if(figureType == "volcano") unlink(paste(basename(outFile), "dpi72.", fileType, sep="")))
   
   setwd(old_wd)
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
