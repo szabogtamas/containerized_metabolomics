@@ -1,0 +1,5 @@
+{
+    "posix_terminal_shell": "bash",
+    "editor_theme": "Tomorrow Night",
+    "wrap_tab_navigation": false
+}

@@ -95,8 +95,7 @@ RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build
 
 ADD ./ /home/rstudio/git_repo
 RUN chmod a+rwx -R /home/rstudio
-ADD ./.Rprofile /home/rstudio/.Rprofile
-ENV R_PROFILE_USER /home/rstudio/.Rprofile
+ADD ./rstudio-prefs.json /home/rstudio/.config/rstudio/rstudio-prefs.json
 
 RUN cd /home/rstudio/git_repo
 RUN git init
