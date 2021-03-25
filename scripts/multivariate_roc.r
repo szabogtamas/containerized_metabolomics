@@ -77,7 +77,7 @@ main <- function(opt){
 
     cat("Drawing volcano plot\n")
     featureMat %>%
-      plotMetaboVolcano() %>%
+      plotROCVolcano() %>%
       fig2pdf(opt$outFile)
     
   } else {
@@ -143,6 +143,21 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
   
   invisible(mSet)
 
+}
+
+
+#' Create a simple Volcano plot with Fold changes and p-values
+#' 
+#' @param stats_data dataframe. MultiROC data.
+#' 
+#' @return A ggplot with the Volcano.
+plotROCVolcano <- function(stats_data){
+
+  stats_data %>%
+    mutate(
+      p.value = ifelse(is.na(AUC.value), 1, 1 - AUC.value),
+    )
+  
 }
 
 
