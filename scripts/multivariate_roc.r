@@ -66,20 +66,26 @@ main <- function(opt){
 
   cat("Parsing dataset\n")
   input <- inFile %>%
-    convert_cc_to_mSet(tmpLocation=file.path(opt$tmpLocation, "tmp.csv"), analysis_type="roc") %>%
+    convert_cc_to_mSet(
+      tmpLocation=file.path(opt$tmpLocation, "tmp.csv"), analysis_type="roc"
+    ) %>%
     normalize_mSet(tmpLocation=opt$tmpLocation)
 
-  cat("Calculating basic descriptive statistics\n")
-  mSet <- calcMultiROC(mSet, tmpLocation=opt$tmpLocation, outFile=opt$outFile, fileType=opt$fileType)
-  
-  cat("Saving figure\n")
   if(opt$figureType == "volcano"){
-    
-    stats_data %>%
-      plotMetaboVolcano(mSet) %>%
+
+    featureMat <- calcMultiROC(input)
+
+    cat("Drawing volcano plot\n")
+    featureMat %>%
+      plotMetaboVolcano() %>%
       fig2pdf(opt$outFile)
     
-  } 
+  } else {
+    mSet <- calcMultiROC(
+      input, tmpLocation=opt$tmpLocation, outFile=opt$outFile, fileType=opt$fileType
+    )
+  
+  }
   
   invisible(NULL)
 }
@@ -90,11 +96,13 @@ main <- function(opt){
 #' @param norm_data dataframe or mSet. Metabolomics data with Fold Changes and p-values.
 #' @param norm_path string. Path to the normalization set.
 #' @param tmpLocation string. Path to temporary file for mSet init.
+#' @param figureLocation string. Path where figure should be saved (if wanted).
+#' @param fileType string. Figure file format.
 #' @param keep_mSet logical. If the mSet obeject should be returned or the dataframe only.
 #' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
 #' @return dataframe or mSet  Contains importance of individual metabolites.
-calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", outFile="feat_importance.tsv", tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE, fileType="pdf"){
+calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tmp", figureLocation=NULL, fileType="pdf", keep_mSet=FALSE, cleanUp=TRUE){
     
   if(!is(norm_data, "list")){
     stats_data <- norm_data %>%
@@ -114,35 +122,27 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", outFile="feat_i
     PrepareROCData() %>%
     PerformCV.explore(cls.method = "svm", rank.method = "svm", lvNum = 2)
   
-  # The side effect of the figure is a table we actually need
-  setwd(dirname(outFile))
-  PlotImpVars(
-    mSet, imgName=basename(outFile), format=fileType,
-    mdl.inx=-1, measure="freq", feat.num=15
-  )
-  if(figureType == "volcano") unlink(paste(basename(outFile), "dpi72.", fileType, sep="")))
-  
+  if(!keep_mSet){
+    PlotImpVars( # The side effect of the figure is a table we actually need
+      mSet, imgName="multiROC_importance", format=fileType,
+      mdl.inx=-1, measure="freq", feat.num=15
+    )
+    mSet <- read.csv("imp_features_cv.csv")
+  }
+
   setwd(old_wd)
+
+  if(!is.null(figureLocation)){
+    "multiROC_importance" %>%
+      paste0("72dpi.", fileType) %>%
+      file.path(tmpLocation, .) %>%
+      file.copy(figureLocation)
+  }
+
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
   
   invisible(mSet)
 
-}
-
-
-#' Extract feature ranking from multiROC output
-#' 
-#' @param tmpLocation string. Path to temporary file for mSet init.
-#' 
-#' @return dataframe Containing feature importance.
-extract_rocstat <- function(tmpLocation){
-
-  imp_feat <- tmpLocation %>%
-    file.path("imp_features_cv.csv") %>%
-    read.csv()
-
-  return(imp_feat)
-  
 }
 
 
