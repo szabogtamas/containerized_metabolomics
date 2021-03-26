@@ -21,7 +21,7 @@ scriptOptionalArgs <- list(
     help="File extension for fold change summary figure."
   ),
   figureType = list(
-    default="volcano",
+    default="boxes",
     help="Type of plot to save as output."
   ),
   tmpLocation = list(
@@ -48,7 +48,7 @@ for (rn in names(scriptOptionalArgs)){
   opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
 }
 
-for (pk in c("tidyr", "dplyr", "ggplot2", "MetaboAnalystR")){
+for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
@@ -71,13 +71,13 @@ main <- function(opt){
     ) %>%
     normalize_mSet(tmpLocation=opt$tmpLocation)
 
-  if(opt$figureType == "volcano"){
+  if(opt$figureType == "boxes"){
 
     featureMat <- calcMultiROC(input)
 
-    cat("Drawing volcano plot\n")
+    cat("Drawing ggplot\n")
     featureMat %>%
-      plotROCVolcano() %>%
+      plotROCfeat() %>%
       fig2pdf(opt$outFile)
     
   } else {
@@ -120,14 +120,27 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
   mSet <- norm_data %>%
     SetAnalysisMode("explore") %>%
     PrepareROCData() %>%
-    PerformCV.explore(cls.method = "svm", rank.method = "svm", lvNum = 2)
-  
-  if(!keep_mSet){
+    PerformCV.explore(cls.method = "svm", rank.method = "svm", lvNum = 2) %>%
     PlotImpVars( # The side effect of the figure is a table we actually need
       mSet, imgName="multiROC_importance", format=fileType,
       mdl.inx=-1, measure="freq", feat.num=15
     )
-    mSet <- read.csv("imp_features_cv.csv")
+
+  rocStats <- "imp_features_cv.csv" %>%
+    read.csv() %>%
+    select(Metabolite=X, Importance)
+
+  rocSummary <- mSet %>%
+    .$dataSet %>%
+    .$norm %>%
+    data.frame() %>%
+    rownames_to_column("Sample") %>%
+    pivot_longer(-Sample) %>%
+    rename(Metabolite=name, Normalized_value=value) %>%
+    right_join(rocStats)
+
+  if(!keep_mSet){
+    mSet <- rocSummary
   }
 
   setwd(old_wd)
@@ -146,12 +159,12 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
 }
 
 
-#' Create a simple Volcano plot with Fold changes and p-values
+#' Show distribution of top metabolites in multiROC by group
 #' 
 #' @param stats_data dataframe. MultiROC data.
 #' 
 #' @return A ggplot with the Volcano.
-plotROCVolcano <- function(stats_data){
+plotROCfeat <- function(stats_data){
 
   stats_data %>%
     mutate(

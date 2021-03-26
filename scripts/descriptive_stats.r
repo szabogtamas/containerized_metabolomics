@@ -189,7 +189,7 @@ plotMetaboVolcano <- function(stats_data){
       ),
       Effect = factor(Effect, levels=c("Significant change", "Small change", "Insignificant change"))
     ) %>%
-    ggplot(aes(x=log2(FC), y=-log10(p.value), color=Effect)) +
+    ggplot(aes(x=log2(FC), y=-log10(p.value), color=Effect, label=Metabolite)) +
     geom_point(size=2) +
     scale_color_manual(values=c("#E64B35B2", "#4DBBD5B2", "#00A087B2"), drop=FALSE) +
     theme_bw() +
