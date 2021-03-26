@@ -20,6 +20,7 @@ In addition to figures, data is also converted to a more convenient format, main
 
 library(knitr)
 library(DT)
+library(plotly)
 
 source("../scripts/drive_reader.r", chdir=TRUE)
 source("../scripts/descriptive_stats.r", chdir=TRUE)
@@ -75,7 +76,7 @@ datatable(metabo_data)
 mSet <- convert_cc_to_mSet(metabo_data)
 ```
 
-### Key steps to differential met boudled together
+### Key steps to differential met boundled together
 
 ```{r}
 # Normalize input data
@@ -105,7 +106,7 @@ datatable(stat_results)
 p <- plotMetaboVolcano(stat_results)
 fig2pdf(p, file.path(local_folder, "example_metabo_volcano"))
 
-p
+ggplotly(p)
 ```
 
 ### Multivariate ROC
@@ -116,21 +117,25 @@ p
 multi_roc <- metabo_data %>%
   convert_cc_to_mSet(analysis_type="roc") %>%
   normalize_mSet() %>%
-  calcMultiROC()
-
-multi_roc
+  calcMultiROC(figureLocation=img_path, fileType="png")
 ```
 
 ```{r}
-names(multi_roc$analSet$multiROC)
+# Show multiroc results in a tabular format
+
+datatable(multi_roc)
 ```
 
 ```{r}
 # Save the built-in figure on feature importance
 
-img_path <- file.path(local_folder, "importanceROC")
-multi_roc <- PlotImpVars(multi_roc, imgName=img_path, format="png", mdl.inx=-1, measure="freq", feat.num=15)
 include_graphics(paste(img_path, "dpi72.png", sep = ""))
+```
+
+```{r}
+# Show top metabolites
+
+plotROCfeat(multi_roc)
 ```
 
 
