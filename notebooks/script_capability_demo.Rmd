@@ -106,7 +106,7 @@ datatable(stat_results)
 p <- plotMetaboVolcano(stat_results)
 fig2pdf(p, file.path(local_folder, "example_metabo_volcano"))
 
-ggplotly(p)
+ggplotly(p, tooltip = c("label", "x", "y"))
 ```
 
 ### Multivariate ROC
