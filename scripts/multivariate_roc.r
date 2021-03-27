@@ -162,14 +162,15 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
 #' Show distribution of top metabolites in multiROC by group
 #' 
 #' @param stats_data dataframe. MultiROC data.
+#' @param num_feat integer. Number of features to be shown on plot.
 #' 
 #' @return A ggplot showing distributions.
-plotROCfeat <- function(stats_data){
+plotROCfeat <- function(stats_data, num_feat=15){
 
   top_mroc_mtb <- stats_data %>%
     distinct(Metabolite, Importance) %>%
     arrange(desc(Importance)) %>%
-    head(15) %>%
+    head(num_feat) %>%
     .$Metabolite
 
   stats_data %>%
