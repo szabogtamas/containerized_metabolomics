@@ -135,6 +135,7 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
     .$norm %>%
     data.frame() %>%
     rownames_to_column("Sample") %>%
+    mutate(Condition = mSet$dataSet$cls) %>%
     pivot_longer(-Sample) %>%
     rename(Metabolite=name, Normalized_value=value) %>%
     right_join(rocStats)
