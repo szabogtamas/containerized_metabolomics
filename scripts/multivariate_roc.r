@@ -103,7 +103,7 @@ main <- function(opt){
 #' 
 #' @return dataframe or mSet  Contains importance of individual metabolites.
 calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tmp", figureLocation=NULL, fileType="pdf", keep_mSet=FALSE, cleanUp=TRUE){
-    browser()
+  
   if(!is(norm_data, "list")){
     stats_data <- norm_data %>%
       convert_cc_to_mSet(tmpLocation=file.path(tmpLocation, "tmp.csv")) %>%
@@ -163,13 +163,28 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
 #' 
 #' @param stats_data dataframe. MultiROC data.
 #' 
-#' @return A ggplot with the Volcano.
+#' @return A ggplot showing distributions.
 plotROCfeat <- function(stats_data){
 
+  top_mroc_mtb <- stats_data %>%
+    distinct(Metabolite, Importance) %>%
+    arrange(desc(Importance)) %>%
+    head(15) %>%
+    .$Metabolite
+
   stats_data %>%
+    filter(Metabolite %in% top_mroc_mtb) %>%
     mutate(
-      p.value = ifelse(is.na(AUC.value), 1, 1 - AUC.value),
-    )
+      Metabolite = factor(Metabolite, levels=top_mroc_mtb)
+    ) %>%
+    ggplot(aes(x = Metabolite, y = Normalized_value, color = Condition)) + 
+    geom_boxplot(outlier.shape=NA) +
+    geom_point(size=0.5, position=position_jitterdodge()) +
+    theme_bw() +
+    theme(
+      axis.text.x = element_text(angle=30, hjust=1)
+    ) +
+    labs(x = "", y = "Importance in multiROC")
   
 }
 
