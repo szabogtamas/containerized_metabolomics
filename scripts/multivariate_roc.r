@@ -103,7 +103,7 @@ main <- function(opt){
 #' 
 #' @return dataframe or mSet  Contains importance of individual metabolites.
 calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tmp", figureLocation=NULL, fileType="pdf", keep_mSet=FALSE, cleanUp=TRUE){
-    
+    browser()
   if(!is(norm_data, "list")){
     stats_data <- norm_data %>%
       convert_cc_to_mSet(tmpLocation=file.path(tmpLocation, "tmp.csv")) %>%
@@ -122,7 +122,7 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
     PrepareROCData() %>%
     PerformCV.explore(cls.method = "svm", rank.method = "svm", lvNum = 2) %>%
     PlotImpVars( # The side effect of the figure is a table we actually need
-      mSet, imgName="multiROC_importance", format=fileType,
+      imgName="multiROC_importance", format=fileType,
       mdl.inx=-1, measure="freq", feat.num=15
     )
 
