@@ -114,6 +114,8 @@ ggplotly(p, tooltip = c("label", "x", "y"))
 ```{r}
 # Select most important metabolites by multivariate ROC analysis
 
+img_path <- file.path(local_folder, "multiROC")
+
 multi_roc <- metabo_data %>%
   convert_cc_to_mSet(analysis_type="roc") %>%
   normalize_mSet() %>%
