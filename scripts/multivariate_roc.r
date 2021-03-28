@@ -126,9 +126,15 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
       mdl.inx=-1, measure="freq", feat.num=15
     )
 
+  metab_names <- mSet %>%
+    .$dataSet %>%
+    .$orig.var.nms %>%
+    enframe(name="Metabolite_std", value="Metabolite")
+
   rocStats <- "imp_features_cv.csv" %>%
     read.csv() %>%
-    select(Metabolite=X, Importance)
+    select(Metabolite_std=X, Importance) %>%
+    left_join(metab_names, by = "Metabolite_std")
 
   rocSummary <- mSet %>%
     .$dataSet %>%
@@ -137,8 +143,8 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
     rownames_to_column("Sample") %>%
     mutate(Condition = mSet$dataSet$cls) %>%
     pivot_longer(-one_of("Sample", "Condition")) %>%
-    rename(Metabolite=name, Normalized_value=value) %>%
-    right_join(rocStats)
+    rename(Metabolite_std=name, Normalized_value=value) %>%
+    right_join(rocStats, by = "Metabolite_std")
 
   if(!keep_mSet){
     mSet <- rocSummary
