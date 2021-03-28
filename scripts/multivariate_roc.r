@@ -103,7 +103,7 @@ main <- function(opt){
 #' 
 #' @return dataframe or mSet  Contains importance of individual metabolites.
 calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tmp", figureLocation=NULL, fileType="pdf", keep_mSet=FALSE, cleanUp=TRUE){
-  browser()
+ 
   if(!is(norm_data, "list")){
     norm_data <- norm_data %>%
       convert_cc_to_mSet(tmpLocation=file.path(tmpLocation, "tmp.csv")) %>%
@@ -122,7 +122,7 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
     PrepareROCData() %>%
     PerformCV.explore(cls.method = "svm", rank.method = "svm", lvNum = 2) %>%
     PlotImpVars( # The side effect of the figure is a table we actually need
-      imgName="multiROC_importance", format=fileType,
+      imgName="multiROC_importance_", format=fileType,
       mdl.inx=-1, measure="freq", feat.num=15
     )
 
@@ -136,7 +136,7 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
     data.frame() %>%
     rownames_to_column("Sample") %>%
     mutate(Condition = mSet$dataSet$cls) %>%
-    pivot_longer(-Sample) %>%
+    pivot_longer(-one_of("Sample", "Condition")) %>%
     rename(Metabolite=name, Normalized_value=value) %>%
     right_join(rocStats)
 
@@ -148,9 +148,9 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
 
   if(!is.null(figureLocation)){
     "multiROC_importance" %>%
-      paste0("72dpi.", fileType) %>%
+      paste0("dpi72.", fileType) %>%
       file.path(tmpLocation, .) %>%
-      file.copy(figureLocation)
+      file.copy(paste(figureLocation, fileType, sep="."))
   }
 
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
