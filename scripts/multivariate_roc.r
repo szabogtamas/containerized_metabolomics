@@ -103,9 +103,9 @@ main <- function(opt){
 #' 
 #' @return dataframe or mSet  Contains importance of individual metabolites.
 calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tmp", figureLocation=NULL, fileType="pdf", keep_mSet=FALSE, cleanUp=TRUE){
-  
+  browser()
   if(!is(norm_data, "list")){
-    stats_data <- norm_data %>%
+    norm_data <- norm_data %>%
       convert_cc_to_mSet(tmpLocation=file.path(tmpLocation, "tmp.csv")) %>%
       normalize_mSet(tmpLocation=tmpLocation)
   }
