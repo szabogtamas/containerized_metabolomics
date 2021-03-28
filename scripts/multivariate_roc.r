@@ -187,7 +187,7 @@ plotROCfeat <- function(stats_data, num_feat=15){
     ) %>%
     ggplot(aes(x = Metabolite, y = Normalized_value, color = Condition)) + 
     geom_boxplot(outlier.shape=NA) +
-    geom_point(size=0.5, position=position_jitterdodge()) +
+    geom_point(size=1, position=position_jitterdodge()) +
     theme_bw() +
     theme(
       axis.text.x = element_text(angle=30, hjust=1)

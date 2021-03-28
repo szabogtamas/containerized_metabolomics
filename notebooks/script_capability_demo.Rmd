@@ -22,10 +22,16 @@ library(knitr)
 library(DT)
 library(plotly)
 
-source("../scripts/drive_reader.r", chdir=TRUE)
-source("../scripts/descriptive_stats.r", chdir=TRUE)
-source("../scripts/multivariate_roc.r", chdir=TRUE)
-source("../scripts/pathway_ora.r", chdir=TRUE)
+script_folder <- "../scripts"
+source(file.path(script_folder, "drive_reader.r"), chdir=TRUE)
+source(file.path(script_folder, "descriptive_stats.r"), chdir=TRUE)
+source(file.path(script_folder, "multivariate_roc.r"), chdir=TRUE)
+source(file.path(script_folder, "pathway_ora.r"), chdir=TRUE)
+
+color_names <- c(
+  "#E64B35FF", "#4DBBD5FF", "#00A087FF", "#3C5488FF",
+  "#F39B7FFF", "#8491B4FF", "#91D1C2FF", "#DC0000FF"
+)
 ```
 
 ```{r}
@@ -133,7 +139,8 @@ include_graphics(paste(img_path, "dpi72.png", sep = ""))
 ```{r}
 # Show top metabolites
 
-plotROCfeat(multi_roc)
+plotROCfeat(multi_roc) +
+  scale_color_manual(values=color_names)
 ```
 
 
