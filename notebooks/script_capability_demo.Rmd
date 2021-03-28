@@ -133,7 +133,7 @@ datatable(multi_roc)
 ```{r}
 # Save the built-in figure on feature importance
 
-include_graphics(paste(img_path, "dpi72.png", sep = ""))
+include_graphics(paste(img_path, "png", sep = "."))
 ```
 
 ```{r}

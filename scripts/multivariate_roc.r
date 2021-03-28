@@ -153,7 +153,7 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
   setwd(old_wd)
 
   if(!is.null(figureLocation)){
-    "multiROC_importance" %>%
+    "multiROC_importance_" %>%
       paste0("dpi72.", fileType) %>%
       file.path(tmpLocation, .) %>%
       file.copy(paste(figureLocation, fileType, sep="."))
