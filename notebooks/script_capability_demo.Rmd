@@ -176,7 +176,7 @@ metabo_data %>%
 ```{r}
 # Select top metabolites from DE table
 
-selected_compounds <- stat_results[1:50, "Metabolite"]
+selected_compounds <- stat_results[1:100, "Metabolite"]
 selected_compounds
 ```
 
@@ -184,6 +184,12 @@ selected_compounds
 # Map compound names to literature
 
 mapped_compounds <- filter_mappable_compounds(selected_compounds)
+```
+
+```{r}
+# Show what compund names could be mapped
+
+print(paste(length(mapped_compounds), "compounds could be mapped."))
 mapped_compounds
 ```
 
