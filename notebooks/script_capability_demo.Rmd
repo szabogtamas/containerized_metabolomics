@@ -143,6 +143,31 @@ plotROCfeat(multi_roc) +
   scale_color_manual(values=color_names)
 ```
 
+```{r}
+# Show non-normalized values for top metabolites
+
+top_roc_metab <- multi_roc %>%
+  distinct(Metabolite, Importance) %>%
+  arrange(desc(Importance)) %>%
+  head(15) %>%
+  .$Metabolite
+  
+metabo_data %>%
+  filter(Metabolite %in% top_roc_metab) %>%
+  mutate(
+    Metabolite = factor(Metabolite, levels=top_roc_metab)
+  ) %>%
+  ggplot(aes(x = Metabolite, y = value, color = Condition)) + 
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(size=1, position=position_jitterdodge()) +
+  theme_bw() +
+  theme(
+    axis.text.x = element_text(angle=30, hjust=1)
+  ) +
+  labs(x = "", y = "Raw value") +
+  scale_y_continuous(trans='log10') +
+  scale_color_manual(values=color_names)
+```
 
 ## Pathway analyses
 
