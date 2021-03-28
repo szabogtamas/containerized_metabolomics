@@ -1,0 +1,93 @@
+---
+title: "Scratch notebook to test and develop Pathway funtcions"
+output: html_notebook
+---
+
+```{r}
+# Based on tutorials at https://drive.google.com/file/d/1CXluzyYqNoPqu1DI3HwvDAmRVGMe825m/view and https://drive.google.com/file/d/1bLHQC8G7n9XyBG4Vim63hhICb4Qtw36M/view
+
+library(MetaboAnalystR)
+
+library(dplyr)
+library(tidyr)
+library(stringr)
+```
+
+```{r}
+# Specify output location and create if not existent
+
+local_folder <- "~/local_files/test_output"
+if(!dir.exists(local_folder)) dir.create(local_folder)
+
+test_data_file <- "~/git_repo/data_examples/test.tsv"
+
+print("Test data is given to be:")
+print(test_data_file)
+
+drive_auth(cache = "/home/rstudio/local_files/.secrets", email = TRUE)
+
+metabo_data <- "~/Datasets/faeces vizsgálat IBD standard.xlsx" %>%
+  read_drive() %>%
+  pivot_longer(-one_of("Metabolite", "Group")) %>%
+  rename(MetaboGroup = Group, Subject = name) %>%
+  mutate(
+    Condition = gsub("\\d+_", "", Subject),
+    Replicate = paste0(stringr::str_extract(Subject, "\\d+_"), "Batch")
+  ) %>%
+  filter(Condition %in% c("CTRL", "Friss_UC"))
+
+head(metabo_data)
+```
+
+```{r}
+top_stat_m <- c(
+  'PEA', 'Histamine', 'Serotonin', 'Carnosine', 'BABA', 'CDCA',
+  'Anserine', 'CA', 'Kynurenine', '3-IAA', 'Taurine', 'His',
+  'AA', 'DHA', 'Trigonelline', 'Gly'
+)
+
+top_roc_m <- c(
+  'DG(18:2_20:0)', 'SM C16:1', 'SM C26:1', 'TG(20:1_31:0)', 'PC ae C34:0', 'AA',
+  'SM C24:1', 'DG(18:1_20:0)', 'Histamine', 'SM C16:0', 'PEA', 'DG(22:1_22:2)',
+  'ProBetaine', 'alpha-AAA', 'SM (OH) C24:1', 'CE(20:4)', 'TG(18:2_33:2)',
+  'DG(16:1_20:0)', 'DG(16:1_18:2)', 'SM (OH) C22:2', 'Hex2Cer(d18:1/24:1)',
+  'Hex2Cer(d18:1/26:1)', 'lysoPC a C18:0', 'PC ae C32:1', 'DHA', 'p-Cresol-SO4',
+  'Hex2Cer(d18:1/14:0)', 'TG(18:2_35:1)', 'Hex2Cer(d18:1/16:0)', 'TG(16:0_36:5)', 
+  'PC aa C30:0', 'Carnosine', 'Hex2Cer(d18:1/22:0)', 'FA(18:2)', 'C16', 'SM (OH) C14:1',
+  'SM (OH) C16:1', 'SM (OH) C22:1', 'PC aa C32:0', 'SM C24:0', 'TG(16:1_34:3)',
+  'Spermidine', 'Cer(d18:2/24:1)', 'DG(18:1_20:1)', 'TG(18:1_36:5)', 'DG(18:2_18:3)',
+  'Hex2Cer(d18:1/24:0)', 'CE(22:6)', 'PC aa C34:2', 'PC aa C38:3', 'TG(18:2_36:5)',
+  'CE(18:2)', 'PC ae C34:1', 'Cer(d16:1/22:0)', 'TG(18:3_34:2)', 'DG(16:1_18:1)',
+  'Cer(d18:2/24:0)', 'PC ae C40:1', 'TG(18:0_36:3)', 'Xanthine', 'lysoPC a C17:0',
+  'TG(14:0_32:2)', 'PC ae C38:4', 'PC aa C34:1', 'SM C18:0', 'PC aa C32:1',
+  'C3-DC (C4-OH)', 'Phe', 'PC ae C36:0', 'PC ae C40:5', 'Cer(d18:0/26:1(OH))', 
+  'Anserine', 'Serotonin', 'lysoPC a C16:0', 'TG(18:1_35:2)', 'DG(18:3_18:3)',
+  'PC ae C34:2', 'SM C18:1', 'TG(18:2_31:0)', 'PC ae C42:2', 'PC ae C36:1',
+  'PC ae C36:3', 'PC ae C36:2', 'DG(18:1_20:3)', 'BABA', 'PC aa C38:6',
+  'TG(18:0_32:1)', 'Cer(d18:1/24:1)', 'PC aa C38:4', 'AABA', 'Cer(d18:1/16:0)',
+  'PC ae C38:1', 'Cer(d18:0/26:1)', 'PC aa C36:1', 'Cer(d16:1/23:0)',
+  'TG(17:1_34:1)', 'lysoPC a C20:4', 'Hex2Cer(d18:1/18:0)', 'DG(18:2_18:2)',
+  'TG(18:1_26:0)'
+)
+```
+
+```{r}
+mSet <- NULL
+mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
+  Setup.MapData(selected_compounds) %>%
+  CrossReferencing("name")
+
+mappable_compunds <- mSet$name.map$query.vec[mSet$name.map$match.state == 1]
+mappable_compunds
+```
+
+```{r}
+mSet <- NULL
+mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
+  Setup.MapData(mappable_compunds) %>%
+  CrossReferencing(mSet, "name") %>%
+  CreateMappingResultTable() %>%
+  SetMetabolomeFilter(FALSE) %>%
+  SetCurrentMsetLib("kegg_pathway", 2) %>% #"smpdb_pathway", 2) %>%
+  CalculateHyperScore()
+```

@@ -26,7 +26,7 @@ scriptOptionalArgs <- list(
   ),
   tmpLocation = list(
     default="tmp",
-    help="Path to a temporary folder polluted by mSet."
+    help="Path to a temporary folder where mSet side effects are dumped."
   ),
   commandRpath = list(
     default="/home/rstudio/git_repo/scripts/commandR.r",
@@ -138,9 +138,9 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
     CrossReferencing(mSet, "name") %>%
     CreateMappingResultTable() %>%
     SetMetabolomeFilter(FALSE) %>%
-    SetCurrentMsetLib("smpdb_pathway", 2) %>%
+    SetCurrentMsetLib("kegg_pathway", 2) %>% #"smpdb_pathway", 2) %>%
     CalculateHyperScore()
-  
+    
   setwd(old_wd)
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
   
