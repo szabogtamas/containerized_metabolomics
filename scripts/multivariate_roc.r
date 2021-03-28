@@ -134,17 +134,25 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
   rocStats <- "imp_features_cv.csv" %>%
     read.csv() %>%
     select(Metabolite_std=X, Importance) %>%
-    left_join(metab_names, by = "Metabolite_std")
+    left_join(metab_names, by="Metabolite_std")
+
+  sample_class_labels <- data.frame(
+    Sample = rownames(mSet$dataSet$norm),
+    Condition = mSet$dataSet$cls
+  )
 
   rocSummary <- mSet %>%
     .$dataSet %>%
     .$norm %>%
+    t() %>%
+    `colnames<-`(paste("SAMPLE", colnames(.), sep="_")) %>%
     data.frame() %>%
-    rownames_to_column("Sample") %>%
-    mutate(Condition = mSet$dataSet$cls) %>%
-    pivot_longer(-one_of("Sample", "Condition")) %>%
-    rename(Metabolite_std=name, Normalized_value=value) %>%
-    right_join(rocStats, by = "Metabolite_std")
+    rownames_to_column("Metabolite_std") %>%
+    pivot_longer(-Metabolite_std) %>%
+    rename(Sample=name, Normalized_value=value) %>%
+    mutate(Sample = str_replace(Sample, "^SAMPLE_", "")) %>%
+    left_join(sample_class_labels, by="Sample") %>%
+    right_join(rocStats, by="Metabolite_std")
 
   if(!keep_mSet){
     mSet <- rocSummary
@@ -192,7 +200,7 @@ plotROCfeat <- function(stats_data, num_feat=15){
     theme(
       axis.text.x = element_text(angle=30, hjust=1)
     ) +
-    labs(x = "", y = "Importance in multiROC")
+    labs(x = "", y = "Normalized value")
   
 }
 
