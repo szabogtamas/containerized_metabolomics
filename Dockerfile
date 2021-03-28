@@ -88,6 +88,7 @@ RUN install2.r --error \
     glasso \
     huge \
     plotly \
+    ggsci \
     readxl \
     googledrive
 
