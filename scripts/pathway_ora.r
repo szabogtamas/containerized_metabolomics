@@ -21,7 +21,7 @@ scriptOptionalArgs <- list(
     help="File extension for figure."
   ),
   figureType = list(
-    default="volcano",
+    default="dotplot",
     help="Type of plot to save as output."
   ),
   tmpLocation = list(
@@ -64,24 +64,34 @@ source("data_norm.r", local=TRUE)
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
   
-  hitList <- opt$hitList
-  
   cat("Calculating ORA on metabolic pathways\n")
-  mSet <- find_metabo_ora(hitList, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
+  mSet <- find_metabo_ora(opt$hitList, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
   
   cat("Saving figure\n")
-  if(opt$figureType == "volcano"){
+  if(opt$figureType == "dotplot"){
     
     mSet %>%
-      plotPathVolcano() %>%
+      plotPathHits() %>%
       fig2pdf(opt$outFile)
+    
+    file.rename
     
   } else {
     
-    tmp_wd <- getwd()
+    old_wd <- getwd()
     setwd(dirname(opt$outFile))
-    PlotORA(mSet, basename(opt$outFile), "bar", opt$fileType)
-    setwd(tmp_wd)
+    
+    if(opt$figureType == "bar"){
+      PlotORA(mSet, basename(opt$outFile), "bar", opt$fileType)
+    } else {
+      PlotORA(mSet, basename(opt$outFile), "net", opt$fileType)
+    }
+    file.rename(
+      paste(basename(opt$outFile), "dpi72.", opt$fileType, sep=""),
+      paste(basename(opt$outFile), opt$fileType, sep=""),
+    )
+    
+    setwd(old_wd)
     
   }
   
@@ -159,7 +169,13 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
     data.frame() %>%
     rownames_to_column("Pathway") %>%
     left_join(pw_hit_link, by="Pathway")
-    
+  
+  if(keep_mSet){
+    mSet$summary_df <- pathway_data
+  } else {
+    mSet <- pathway_data
+  }
+  
   setwd(old_wd)
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
   
