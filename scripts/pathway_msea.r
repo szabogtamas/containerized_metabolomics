@@ -101,7 +101,7 @@ main <- function(opt){
 }
 
 
-#' Run PATHORA to find overrepresented pathways in mSet
+#' Run msea/QEA to find enriched pathways in mSet
 #' 
 #' @param hitlist character. Top metabolites.
 #' @param tmpLocation string. Path to temporary file for mSet init.
@@ -109,7 +109,7 @@ main <- function(opt){
 #' @param cleanUp logical. If temporary files should be removed after execution.
 #' 
 #' @return dataframe or mSet  Contains descriptive stats.
-find_metabo_mset <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
+find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, cleanUp=TRUE){
   
   old_wd <- getwd()
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
@@ -117,13 +117,16 @@ find_metabo_mset <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
   
   mappable_compunds <- filter_mappable_compounds(hitlist)
   
-  mSet <- NULL
-  mSet <- InitDataObjects("conc", "msetqea") %>%
-    Read.TextData(analyst_compatible_data, "rowu") %>%
+  if(!is(metabo_change, "list")){
+    mSet <- metabo_change %>%
+      convert_cc_to_mSet(tmpLocation="tmp.csv", analysis_type="msetqea") %>%
+      normalize_mSet(tmpLocation=tmpLocation)
+  }
+  
+  mSet <- mSet %>%
     CrossReferencing("name") %>%
     CreateMappingResultTable() %>%
-    SanityCheckData() %>%
-    ReplaceMin(mSet) %>%
+    ReplaceMin() %>%
     PreparePrenormData() %>%
     Normalization("NULL", "NULL", "NULL", "PIF_178", ratio=FALSE, ratioNum=20) %>%
     SetMetabolomeFilter(FALSE) %>%
