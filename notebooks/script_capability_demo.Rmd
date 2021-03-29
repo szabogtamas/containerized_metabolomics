@@ -196,15 +196,39 @@ mapped_compounds
 ```{r}
 # Find top overrepresented pathways in the dataset
 
-mSet2 <- find_metabo_ora(mapped_compounds)
+mSet2 <- find_metabo_ora(mapped_compounds, keep_mSet=TRUE)
+path_ora_stats <- mSet$summary_df
 ```
 
 ```{r}
-# Save normalization report
+# Show stats for each pathway hit
 
-img_path <- file.path(local_folder, "ORA_path")
-mSet2 <- PlotORA(mSet2, img_path, "bar", "pdf")
-include_graphics(paste(img_path, "pdf", sep = "."))
+datatable(path_ora_stats)
+```
+
+```{r}
+# Show dot-plot-like figre
+
+p <- plotPathHits(path_ora_stats)
+fig2pdf(p, file.path(local_folder, "example_metabo_volcano"))
+
+p
+```
+
+```{r}
+# Show built-in figure
+
+img_path <- file.path(local_folder, "ORA_path_")
+mSet2 <- PlotORA(mSet2, img_path, "bar", "png")
+include_graphics(paste(img_path, "dpi72.png", sep=""))
+```
+
+```{r}
+# Sow an alternative built-in report
+
+img_path <- file.path(local_folder, "ORA_net_")
+mSet2 <- PlotORA(mSet2, img_path, "net", "png")
+include_graphics(paste(img_path, "dpi72.png", sep=""))
 ```
 
 ### GSEA-like approach (mSEA)
@@ -214,14 +238,5 @@ include_graphics(paste(img_path, "pdf", sep = "."))
 
 mSet <- find_metabo_ora(mSet)
 ```
-
-
-
-
-
-
-
-
-
 
 
