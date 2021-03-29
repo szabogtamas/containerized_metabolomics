@@ -48,7 +48,7 @@ for (rn in names(scriptOptionalArgs)){
   opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
 }
 
-for (pk in c("tidyr", "dplyr", "ggplot2", "MetaboAnalystR")){
+for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
@@ -140,6 +140,25 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
     SetMetabolomeFilter(FALSE) %>%
     SetCurrentMsetLib("smpdb_pathway", 2) %>%
     CalculateHyperScore()
+  
+  pw_hit_link <- mSet %>%
+    .$analSet %>%
+    .$ora.hits %>%
+    enframe(name="Pathway", value="Hits") %>%
+    unnest(Hits) %>%
+    group_by(Pathway) %>%
+    mutate(
+      Hits = paste(Hits, collapse="; ")
+    ) %>%
+    ungroup() %>%
+    distinct()
+  
+  pathway_data <- mSet %>%
+    .$analSet %>%
+    .$ora.mat %>%
+    data.frame() %>%
+    rownames_to_column("Pathway") %>%
+    left_join(pw_hit_link, by="Pathway")
     
   setwd(old_wd)
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
