@@ -93,6 +93,58 @@ top_roc_m <- c(
 ```
 
 ```{r}
+convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_type="stat", input_format="rowu", cleanUp=FALSE){
+
+  old_wd <- getwd()
+  tmp_dir <- dirname(tmpLocation)
+  preexisted_dir <- dir.exists(tmp_dir)
+  tmpLocation <- basename(tmpLocation)
+  
+  if(!preexisted_dir) dir.create(tmp_dir)
+  setwd(tmp_dir)
+
+  write_metabodf_tmp(input_data, tmp_out_file=tmpLocation)
+  mSet <- populate_mSet(tmpLocation, analysis_type, input_format)
+  
+  setwd(old_wd)
+  if(preexisted_dir){
+    if(cleanUp) unlink(tmpLocation)
+  } else {
+    if(cleanUp) unlink(tmp_dir, recursive=TRUE, force=TRUE)
+  }
+  
+  invisible(mSet)
+}
+
+write_metabodf_tmp <- function(metab_data, subject="Subject", condition="Condition", metabolite="Metabolite", value="value", tmp_out_file="tmp.csv"){
+  
+  metab_data %>%
+    select(
+      !!sym(subject), !!sym(condition), !!sym(metabolite), !!sym(value)
+    )  %>%
+    rename(
+      Subject = !!sym(subject), Condition = !!sym(condition),
+      Metabolite = !!sym(metabolite), value = !!sym(value)
+    )  %>%
+    pivot_wider(names_from=Metabolite) %>%
+    write.csv(tmp_out_file, row.names=FALSE)
+
+}
+
+populate_mSet <- function(analyst_compatible_data, analysis_type="stat", input_format="rowu"){
+  
+  mSet <- NULL # Have to reset otherwise the app resurrects old instance from global when chunk is rerun
+  anal.type <- "stat"
+  msg.vec <- list()
+
+  InitDataObjects("conc", analysis_type) %>%
+    Read.TextData(analyst_compatible_data, input_format) %>%
+    SanityCheckData()
+
+}
+```
+
+```{r}
 mSet <- NULL
 anal.type <- "msetora"
 mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
@@ -169,7 +221,26 @@ pathway_data %>%
   labs(x="", y="")
 ```
 
+```{r}
+mSet <- NULL
+mSet <- convert_cc_to_mSet(metabo_data, tmpLocation=file.path(tmpLocation, "tmp.csv"))
+```
 
+
+```{r}
+mSet <- NULL
+mSet <- InitDataObjects("conc", "msetqea") %>%
+  Read.TextData(analyst_compatible_data, "rowu") %>%
+  CrossReferencing("name") %>%
+  CreateMappingResultTable() %>%
+  SanityCheckData() %>%
+  ReplaceMin(mSet) %>%
+  PreparePrenormData() %>%
+  Normalization("NULL", "NULL", "NULL", "PIF_178", ratio=FALSE, ratioNum=20) %>%
+  SetMetabolomeFilter(FALSE) %>%
+  SetCurrentMsetLib("smpdb_pathway", 2) %>%
+  CalculateGlobalTestScore()
+```
 
 
 
