@@ -135,10 +135,10 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
   mSet <- NULL
   mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
     Setup.MapData(mappable_compunds) %>%
-    CrossReferencing(mSet, "name") %>%
+    CrossReferencing("name") %>%
     CreateMappingResultTable() %>%
     SetMetabolomeFilter(FALSE) %>%
-    SetCurrentMsetLib("kegg_pathway", 2) %>% #"smpdb_pathway", 2) %>%
+    SetCurrentMsetLib("smpdb_pathway", 2) %>%
     CalculateHyperScore()
     
   setwd(old_wd)
@@ -148,12 +148,12 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
   
 }
 
-#' Create a simple Volcano plot with Fold changes and p-values
+#' Create a dotplot showing how significant the association between hits and top pathways is
 #' 
-#' @param stats_data dataframe or mSet. Metabolomics data with Fold Changes and p-values.
+#' @param paths_data dataframe or mSet. Metabolomics data with hits on a pathway and p-values.
 #' 
-#' @return A ggplot with the Volcano.
-plotPathVolcano <- function(stats_data){
+#' @return A ggplot with the dotplot showing association with top pathways.
+plotPathHits <- function(paths){
   print("TODO")
 }
 
