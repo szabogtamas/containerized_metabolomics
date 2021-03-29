@@ -170,10 +170,32 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
 #' Create a dotplot showing how significant the association between hits and top pathways is
 #' 
 #' @param paths_data dataframe or mSet. Metabolomics data with hits on a pathway and p-values.
+#' @param numPath integer. Number of pathways to be shown on plot.
 #' 
 #' @return A ggplot with the dotplot showing association with top pathways.
-plotPathHits <- function(paths){
-  print("TODO")
+plotPathHits <- function(paths, numPath=15){
+  
+  if(!("Group" %in% colnames(paths_data))) paths_data$Group <- ""
+  
+  paths_data %>%
+    head(numPath) %>%
+    arrange(desc(Raw.p)) %>%
+    mutate(
+      Pathway = factor(Pathway, levels=unique(.$Pathway))
+    ) %>%
+    ggplot(aes(x=Group, y=Pathway, size=hits, color=Raw.p)) +
+    geom_point() +
+    scale_color_gradientn(
+      colors=rev(c('#2b8cbe', 'grey', '#e38071', '#e34a33', '#e31e00')),
+      breaks=c(0.05, 0.01, 0.001, 0.0001),
+      limits=c(0.00001, 1), trans='log10', oob = scales::squish
+    ) +
+    theme_bw() +
+    theme(
+      axis.text.x=element_text(angle=30, hjust=1),
+      axis.text.y=element_text(size=10)
+    ) +
+    labs(x="", y="")
 }
 
 
