@@ -139,8 +139,12 @@ include_graphics(paste(img_path, "png", sep = "."))
 ```{r}
 # Show top metabolites
 
-plotROCfeat(multi_roc) +
+p <- plotROCfeat(multi_roc) +
   scale_color_manual(values=color_names)
+
+fig2pdf(p, file.path(local_folder, "example_metabo_mroc_box"))
+
+p
 ```
 
 ```{r}
@@ -210,7 +214,7 @@ datatable(path_ora_stats)
 # Show dot-plot-like figre
 
 p <- plotPathHits(path_ora_stats)
-fig2pdf(p, file.path(local_folder, "example_metabo_volcano"))
+fig2pdf(p, file.path(local_folder, "example_metabo_ora_dot"))
 
 p
 ```
