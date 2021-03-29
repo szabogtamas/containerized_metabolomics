@@ -11,6 +11,9 @@ library(MetaboAnalystR)
 library(dplyr)
 library(tidyr)
 library(stringr)
+library(googledrive)
+library(readxl)
+library(tibble)
 ```
 
 ```{r}
@@ -20,11 +23,28 @@ local_folder <- "~/local_files/test_output"
 if(!dir.exists(local_folder)) dir.create(local_folder)
 
 test_data_file <- "~/git_repo/data_examples/test.tsv"
-
-print("Test data is given to be:")
-print(test_data_file)
-
 drive_auth(cache = "/home/rstudio/local_files/.secrets", email = TRUE)
+
+read_drive <- function(drive_path){
+  
+  drive_download(
+    drive_path,
+    overwrite = TRUE
+  )
+
+  data_file <- basename(drive_path)
+  
+  if(tail(unlist(strsplit(data_file, "\\.")), -1) %in% c("xls", "xlsx")){
+    data_table <- read_excel(data_file)
+  } else {
+    data_table <- read.csv(data_file, sep = "\t", stringsAsFactors = FALSE)
+  }
+  
+  unlink(data_file)
+
+  return(data_table)
+  
+}
 
 metabo_data <- "~/Datasets/faeces vizsgálat IBD standard.xlsx" %>%
   read_drive() %>%
@@ -73,8 +93,9 @@ top_roc_m <- c(
 
 ```{r}
 mSet <- NULL
+anal.type <- "msetora"
 mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
-  Setup.MapData(selected_compounds) %>%
+  Setup.MapData(top_roc_m) %>%
   CrossReferencing("name")
 
 mappable_compunds <- mSet$name.map$query.vec[mSet$name.map$match.state == 1]
@@ -85,9 +106,49 @@ mappable_compunds
 mSet <- NULL
 mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
   Setup.MapData(mappable_compunds) %>%
-  CrossReferencing(mSet, "name") %>%
+  CrossReferencing("name") %>%
   CreateMappingResultTable() %>%
-  SetMetabolomeFilter(FALSE) %>%
-  SetCurrentMsetLib("kegg_pathway", 2) %>% #"smpdb_pathway", 2) %>%
+  SetMetabolomeFilter(FALSE)
+```
+
+
+```{r}
+mSet <- mSet %>%
+  SetCurrentMsetLib("smpdb_pathway", 2) %>%
   CalculateHyperScore()
 ```
+
+```{r}
+pw_hit_link <- mSet %>%
+  .$analSet %>%
+  .$ora.hits %>%
+  enframe(name="Pathway", value="Hits") %>%
+  unnest(Hits) %>%
+  group_by(Pathway) %>%
+  mutate(
+    Hits = paste(Hits, collapse="; ")
+  ) %>%
+  ungroup() %>%
+  distinct()
+
+pw_hit_link
+```
+
+```{r}
+pathway_data <- mSet %>%
+  .$analSet %>%
+  .$ora.mat %>%
+  data.frame() %>%
+  rownames_to_column("Pathway") %>%
+  left_join(pw_hit_link, by="Pathway")
+
+pathway_data
+```
+
+
+
+
+
+
+
+
