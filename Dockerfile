@@ -88,7 +88,7 @@ RUN install2.r --error \
     glasso \
     huge \
     plotly \
-    #ggsci \
+    ggsci \
     readxl \
     googledrive
 
@@ -100,7 +100,7 @@ ADD ./rstudio-prefs.json /home/rstudio/.config/rstudio/rstudio-prefs.json
 ADD ./.Rprofile /home/rstudio/.config/rstudio/.Rprofile
 ENV R_PROFILE_USER /home/rstudio/.config/rstudio/.Rprofile
 
-RUN cd /home/rstudio/git_repo
+RUN cd /home/rstudio/repo_files
 RUN git init
 RUN git remote add origin https://github.com/szabogtamas/containerized_metabolomics.git
 RUN git fetch origin && git checkout --track origin/dev
