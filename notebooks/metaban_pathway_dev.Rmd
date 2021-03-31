@@ -200,8 +200,8 @@ pathway_data
 
 ```{r}
 pathway_data %>%
-  head(15) %>%
   arrange(desc(Raw.p)) %>%
+  head(15) %>%
   mutate(
     Group = "",
     Pathway = factor(Pathway, levels=unique(.$Pathway))
@@ -223,23 +223,104 @@ pathway_data %>%
 
 ```{r}
 mSet <- NULL
-mSet <- convert_cc_to_mSet(metabo_data, tmpLocation=file.path(tmpLocation, "tmp.csv"))
+mSet <- convert_cc_to_mSet(metabo_data, analysis_type="msetqea", tmpLocation="./tmp.csv")
 ```
 
 
 ```{r}
-mSet <- NULL
-mSet <- InitDataObjects("conc", "msetqea") %>%
-  Read.TextData(analyst_compatible_data, "rowu") %>%
+normalize_mSet <- function(inSet, tmpLocation="tmp", cleanUp=FALSE){
+  
+  old_wd <- getwd()
+  if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
+  setwd(tmpLocation)
+
+  out <- inSet %>%
+    ReplaceMin() %>%
+    FilterVariable("iqr", "F", 25) %>%
+    PreparePrenormData() %>%
+    Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
+  
+  setwd(old_wd)
+  if(cleanUp) unlink(norm_path)
+
+  invisible(out)
+}
+
+mSet <- normalize_mSet(mSet)
+```
+
+
+```{r}
+mSet <- mSet %>%
+  ReplaceMin() %>%
+  PreparePrenormData() %>%
+  Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
+```
+
+```{r}
+mSet <- mSet %>%
   CrossReferencing("name") %>%
   CreateMappingResultTable() %>%
-  SanityCheckData() %>%
-  ReplaceMin(mSet) %>%
-  PreparePrenormData() %>%
-  Normalization("NULL", "NULL", "NULL", "PIF_178", ratio=FALSE, ratioNum=20) %>%
   SetMetabolomeFilter(FALSE) %>%
   SetCurrentMsetLib("smpdb_pathway", 2) %>%
   CalculateGlobalTestScore()
+```
+
+```{r}
+pw_hit_link <- mSet %>%
+  .$analSet %>%
+  .$qea.hits %>%
+  sapply(paste, collapse="; ") %>%
+  enframe(name="Pathway", value="Hits")
+
+pathway_data <- mSet %>%
+  .$analSet %>%
+  .$qea.mat %>%
+  data.frame() %>%
+  rownames_to_column("Pathway") %>%
+  rename(nHits = Hits) %>%
+  left_join(pw_hit_link, by="Pathway")
+
+pathway_data
+```
+
+```{r}
+pathway_data %>%
+  arrange(desc(Raw.p)) %>%
+  head(15) %>%
+  mutate(
+    Group = "",
+    Pathway = factor(Pathway, levels=unique(.$Pathway))
+  ) %>%
+  ggplot(aes(x=Group, y=Pathway, size=nHits, color=Raw.p)) +
+  geom_point() +
+  scale_color_gradientn(
+    colors=rev(c('#2b8cbe', 'grey', '#e38071', '#e34a33', '#e31e00')),
+    breaks=c(0.05, 0.01, 0.001, 0.0001),
+    limits=c(0.00001, 1), trans='log10', oob = scales::squish
+  ) +
+  theme_bw() +
+  theme(
+    axis.text.x=element_text(angle=30, hjust=1),
+    axis.text.y=element_text(size=10)
+  ) +
+  labs(x="", y="")
+```
+
+```{r}
+PlotQEA.Overview(mSet, "msea_bar", "bar", "pdf")
+```
+
+```{r}
+PlotQEA.Overview(mSet, "msea_net", "net", "pdf")
+```
+
+```{r}
+api.base <- NULL
+mSet <- mSet %>%
+  SetKEGG.PathLib("hsa", "current") %>%
+  SetMetabolomeFilter(FALSE) %>%
+  CalculateOraScore("rbc", "hyperg")
 ```
 
 
