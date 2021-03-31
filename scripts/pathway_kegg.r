@@ -116,12 +116,9 @@ find_metabo_kegg <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
       normalize_mSet(tmpLocation=tmpLocation)
   }
   
-  mSet %>%
+  pathway_data <- mSet %>%
     CrossReferencing("name") %>%
     CreateMappingResultTable() %>%
-    SanityCheckData() %>%
-    ReplaceMin(mSet) %>%
-    PreparePrenormData() %>%
     SetKEGG.PathLib("hsa", "current") %>%
     SetMetabolomeFilter(FALSE) %>%
     CalculateOraScore("rbc", "hyperg")

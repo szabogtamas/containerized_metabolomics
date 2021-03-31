@@ -123,12 +123,9 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
       normalize_mSet(tmpLocation=tmpLocation)
   }
   
-  mSet <- mSet %>%
+  pathway_data <- mSet %>%
     CrossReferencing("name") %>%
     CreateMappingResultTable() %>%
-    ReplaceMin() %>%
-    PreparePrenormData() %>%
-    Normalization("NULL", "NULL", "NULL", "PIF_178", ratio=FALSE, ratioNum=20) %>%
     SetMetabolomeFilter(FALSE) %>%
     SetCurrentMsetLib("smpdb_pathway", 2) %>%
     CalculateGlobalTestScore()
