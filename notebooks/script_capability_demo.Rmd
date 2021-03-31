@@ -22,7 +22,7 @@ library(knitr)
 library(DT)
 library(plotly)
 
-script_folder <- "../scripts"
+script_folder <- "~/local_files/scripts"
 source(file.path(script_folder, "drive_reader.r"), chdir=TRUE)
 source(file.path(script_folder, "descriptive_stats.r"), chdir=TRUE)
 source(file.path(script_folder, "multivariate_roc.r"), chdir=TRUE)
@@ -40,7 +40,7 @@ color_names <- c(
 local_folder <- "~/local_files/test_output"
 if(!dir.exists(local_folder)) dir.create(local_folder)
 
-test_data_file <- "~/git_repo/data_examples/test.tsv"
+test_data_file <- "~/repo_files/data_examples/test.tsv"
 
 print("Test data is given to be:")
 print(test_data_file)
@@ -61,7 +61,7 @@ datatable(metabo_data)
 ```{r eval = FALSE}
 # Get the actual, sensitive data from Drive - execute this only of you have a key
 
-drive_auth(cache = "/home/rstudio/local_files/.secrets", email = TRUE)
+drive_auth(cache = "~/local_files/.secrets", email = TRUE)
 
 metabo_data <- "~/Datasets/faeces vizsgálat IBD standard.xlsx" %>%
   read_drive() %>%
