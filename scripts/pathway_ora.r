@@ -29,7 +29,7 @@ scriptOptionalArgs <- list(
     help="Path to a temporary folder where mSet side effects are dumped."
   ),
   commandRpath = list(
-    default="/home/rstudio/git_repo/scripts/commandR.r",
+    default="/home/rstudio/repo_files/scripts/commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
   )
 )

@@ -25,7 +25,7 @@ scriptOptionalArgs <- list(
     help="Format code used by MetaboAnalyser to parse input."
   ),
   commandRpath = list(
-    default="/home/rstudio/git_repo/scripts/commandR.r",
+    default="/home/rstudio/repo_files/scripts/commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
   )
 )
