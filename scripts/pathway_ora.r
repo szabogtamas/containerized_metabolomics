@@ -168,6 +168,7 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
     .$ora.mat %>%
     data.frame() %>%
     rownames_to_column("Pathway") %>%
+    rename(nHits = hits) %>%
     left_join(pw_hit_link, by="Pathway")
   
   if(keep_mSet){
@@ -194,12 +195,12 @@ plotPathHits <- function(paths, numPath=15){
   if(!("Group" %in% colnames(paths_data))) paths_data$Group <- ""
   
   paths_data %>%
-    head(numPath) %>%
     arrange(desc(Raw.p)) %>%
+    head(numPath) %>%
     mutate(
       Pathway = factor(Pathway, levels=unique(.$Pathway))
     ) %>%
-    ggplot(aes(x=Group, y=Pathway, size=hits, color=Raw.p)) +
+    ggplot(aes(x=Group, y=Pathway, size=nHits, color=Raw.p)) +
     geom_point() +
     scale_color_gradientn(
       colors=rev(c('#2b8cbe', 'grey', '#e38071', '#e34a33', '#e31e00')),

@@ -123,12 +123,26 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
       normalize_mSet(tmpLocation=tmpLocation)
   }
   
-  pathway_data <- mSet %>%
+  mSet <- mSet %>%
     CrossReferencing("name") %>%
     CreateMappingResultTable() %>%
     SetMetabolomeFilter(FALSE) %>%
     SetCurrentMsetLib("smpdb_pathway", 2) %>%
     CalculateGlobalTestScore()
+  
+  pw_hit_link <- mSet %>%
+    .$analSet %>%
+    .$qea.hits %>%
+    sapply(paste, collapse="; ") %>%
+    enframe(name="Pathway", value="Hits")
+  
+  pathway_data <- mSet %>%
+    .$analSet %>%
+    .$qea.mat %>%
+    data.frame() %>%
+    rownames_to_column("Pathway") %>%
+    rename(nHits = Hits) %>%
+    left_join(pw_hit_link, by="Pathway")
   
   if(keep_mSet){
     mSet$summary_df <- pathway_data
