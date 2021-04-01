@@ -190,7 +190,7 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
 #' @param numPath integer. Number of pathways to be shown on plot.
 #' 
 #' @return A ggplot with the dotplot showing association with top pathways.
-plotPathHits <- function(paths, numPath=15){
+plotPathHits <- function(paths_data, numPath=15){
   
   if(!("Group" %in% colnames(paths_data))) paths_data$Group <- ""
   

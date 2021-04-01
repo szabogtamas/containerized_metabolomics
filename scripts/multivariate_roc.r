@@ -129,11 +129,13 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
   metab_names <- mSet %>%
     .$dataSet %>%
     .$orig.var.nms %>%
-    enframe(name="Metabolite_std", value="Metabolite")
+    enframe(name="Metabolite_std", value="Metabolite") %>%
+    mutate(Metabolite_std = as.character(Metabolite_std))
 
   rocStats <- "imp_features_cv.csv" %>%
     read.csv() %>%
     select(Metabolite_std=X, Importance) %>%
+    mutate(Metabolite_std = as.character(Metabolite_std)) %>%
     left_join(metab_names, by="Metabolite_std")
 
   sample_class_labels <- data.frame(
