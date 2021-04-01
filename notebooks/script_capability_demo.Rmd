@@ -27,6 +27,8 @@ source(file.path(script_folder, "drive_reader.r"), chdir=TRUE)
 source(file.path(script_folder, "descriptive_stats.r"), chdir=TRUE)
 source(file.path(script_folder, "multivariate_roc.r"), chdir=TRUE)
 source(file.path(script_folder, "pathway_ora.r"), chdir=TRUE)
+source(file.path(script_folder, "pathway_msea.r"), chdir=TRUE)
+source(file.path(script_folder, "pathway_kegg.r"), chdir=TRUE)
 
 color_names <- c(
   "#E64B35FF", "#4DBBD5FF", "#00A087FF", "#3C5488FF",
@@ -238,9 +240,23 @@ include_graphics(paste(img_path, "dpi72.png", sep=""))
 ### GSEA-like approach (mSEA)
 
 ```{r}
-# Find top overrepresented pathways in the dataset
+# Re-initialize mSet
 
-mSet <- find_metabo_ora(mSet)
+mSet <- convert_cc_to_mSet(metabo_data) %>%
+  normalize_mSet()
 ```
 
+```{r}
+# Find top enriched pathways in the dataset
+
+mSet <- find_metabo_msea(mSet)
+```
+
+### Overrepresentation in KEGG
+
+```{r}
+# Find top enriched pathways in the dataset
+
+mSet <- find_metabo_kegg(mSet)
+```
 
