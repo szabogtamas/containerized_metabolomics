@@ -102,7 +102,7 @@ normalize_mSet <- function(inSet, tmpLocation="tmp", cleanUp=FALSE){
 
   out <- inSet %>%
     ReplaceMin() %>%
-    FilterVariable("iqr", "F", 25) %>%
+    #FilterVariable("iqr", "F", 25) %>% # Not working since update
     PreparePrenormData() %>%
     Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
   
