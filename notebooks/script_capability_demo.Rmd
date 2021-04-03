@@ -146,7 +146,7 @@ p <- plotROCfeat(multi_roc) +
 
 fig2pdf(p, file.path(local_folder, "example_metabo_mroc_box"))
 
-p
+ggplotly(p, tooltip = c("label", "x", "y"))
 ```
 
 ```{r}
@@ -218,7 +218,7 @@ datatable(path_ora_stats)
 p <- plotPathHits(path_ora_stats)
 fig2pdf(p, file.path(local_folder, "example_metabo_ora_dot"))
 
-p
+ggplotly(p, tooltip = c("label", "x", "y"))
 ```
 
 ```{r}
