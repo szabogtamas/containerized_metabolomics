@@ -205,7 +205,7 @@ mapped_compounds
 # Find top overrepresented pathways in the dataset
 
 mSet2 <- find_metabo_ora(mapped_compounds, keep_mSet=TRUE)
-path_ora_stats <- mSet$summary_df
+path_ora_stats <- mSet2$summary_df
 ```
 
 ```{r}
@@ -220,22 +220,14 @@ datatable(path_ora_stats)
 p <- plotPathHits(path_ora_stats)
 fig2pdf(p, file.path(local_folder, "example_metabo_ora_dot"))
 
-ggplotly(p, tooltip = c("label", "x", "y"))
+ggplotly(p)
 ```
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 # Show built-in figure
 
 img_path <- file.path(local_folder, "ORA_path_")
 mSet2 <- PlotORA(mSet2, img_path, "bar", "png")
-include_graphics(paste(img_path, "dpi72.png", sep=""))
-```
-
-```{r}
-# Sow an alternative built-in report
-
-img_path <- file.path(local_folder, "ORA_net_")
-mSet2 <- PlotORA(mSet2, img_path, "net", "png")
 include_graphics(paste(img_path, "dpi72.png", sep=""))
 ```
 
