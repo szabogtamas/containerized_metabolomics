@@ -146,10 +146,10 @@ p <- plotROCfeat(multi_roc) +
 
 fig2pdf(p, file.path(local_folder, "example_metabo_mroc_box"))
 
-ggplotly(p, tooltip = c("label", "x", "y"))
+ggplotly(p)
 ```
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 # Show non-normalized values for top metabolites
 
 top_roc_metab <- multi_roc %>%
@@ -158,7 +158,7 @@ top_roc_metab <- multi_roc %>%
   head(15) %>%
   .$Metabolite
   
-metabo_data %>%
+p <- metabo_data %>%
   filter(Metabolite %in% top_roc_metab) %>%
   mutate(
     Metabolite = factor(Metabolite, levels=top_roc_metab)
@@ -173,6 +173,8 @@ metabo_data %>%
   labs(x = "", y = "Raw value") +
   scale_y_continuous(trans='log10') +
   scale_color_manual(values=color_names)
+
+ggplotly(p)
 ```
 
 ## Pathway analyses
