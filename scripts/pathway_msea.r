@@ -127,7 +127,6 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
   mSet$analSet$msetlibname <- "smpdb_pathway" # Patch an odd bug in SetCurrentMsetLib
 
   mSet <- mSet %>%
-    Setup.MapData(mappable_compunds) %>%
     CrossReferencing("name") %>%
     CreateMappingResultTable() %>%
     SetMetabolomeFilter(FALSE) %>%

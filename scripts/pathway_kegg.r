@@ -112,6 +112,7 @@ find_metabo_kegg <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
   
   if(!is(metabo_change, "list")){
     mSet <- metabo_change %>%
+      filter(Metabolite %in% mappable_compunds) %>%
       convert_cc_to_mSet(tmpLocation="tmp.csv", analysis_type="pathora") %>%
       normalize_mSet(tmpLocation=tmpLocation)
   }
