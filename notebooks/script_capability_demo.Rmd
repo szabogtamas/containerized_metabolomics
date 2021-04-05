@@ -283,6 +283,11 @@ mSet <- convert_cc_to_mSet(metabo_data) %>%
 # Find top enriched KEGG pathways in the dataset
 
 mSet <- find_metabo_kegg(mSet, keep_mSet=TRUE)
-path_msea_stats <- mSet$summary_df
+path_kegg_stats <- mSet$summary_df
 ```
 
+```{r}
+# Show stats for each pathway hit
+
+datatable(path_kegg_stats)
+```
