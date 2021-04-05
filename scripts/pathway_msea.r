@@ -146,6 +146,7 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
     data.frame() %>%
     rownames_to_column("Pathway") %>%
     rename(nHits = Hits) %>%
+    mutate(hitRatio = nHits/Total.Cmpd) %>%
     left_join(pw_hit_link, by="Pathway")
   
   if(keep_mSet){
