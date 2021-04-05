@@ -262,6 +262,14 @@ fig2pdf(p, file.path(local_folder, "example_metabo_msea_dot"))
 ggplotly(p)
 ```
 
+```{r message = FALSE, warning = FALSE}
+# Show built-in figure
+
+img_path <- file.path(local_folder, "MSEA_path_")
+mSet <- PlotQEA.Overview(mSet, img_path, "bar", "png")
+include_graphics(paste(img_path, "dpi72.png", sep=""))
+```
+
 ### Overrepresentation in KEGG
 
 ```{r}
