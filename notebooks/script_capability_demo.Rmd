@@ -291,3 +291,28 @@ path_kegg_stats <- mSet$summary_df
 
 datatable(path_kegg_stats)
 ```
+
+```{r}
+# Show dot-plot-like figre
+
+p <- plotPathHits(path_msea_stats)
+fig2pdf(p, file.path(local_folder, "example_metabo_msea_dot"))
+
+ggplotly(p)
+```
+
+```{r message = FALSE, warning = FALSE}
+# Show built-in figure
+
+img_path <- file.path(local_folder, "KEGG_summary_")
+mSet <- PlotPathSummary(mSet, img_path, "png")
+include_graphics(paste(img_path, "dpi72.png", sep=""))
+```
+
+```{r message = FALSE, warning = FALSE}
+# Show built-in figure
+
+img_path <- file.path(local_folder, "KEGG_hsa00970_")
+mSet <- PlotKEGGPath(mSet, "hsa00970", 528, 480, "png", NULL)
+include_graphics(paste(img_path, "dpi72.png", sep=""))
+```
