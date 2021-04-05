@@ -84,7 +84,7 @@ datatable(metabo_data)
 mSet <- convert_cc_to_mSet(metabo_data)
 ```
 
-### Key steps to differential met boundled together
+### Key steps to differential metabolomics boundled together
 
 ```{r}
 # Normalize input data
@@ -243,7 +243,23 @@ mSet <- convert_cc_to_mSet(metabo_data) %>%
 ```{r}
 # Find top enriched pathways in the dataset
 
-mSet <- find_metabo_msea(mSet)
+mSet <- find_metabo_msea(mSet, keep_mSet=TRUE)
+path_msea_stats <- mSet$summary_df
+```
+
+```{r}
+# Show stats for each pathway hit
+
+datatable(path_msea_stats)
+```
+
+```{r}
+# Show dot-plot-like figre
+
+p <- plotPathHits(path_msea_stats)
+fig2pdf(p, file.path(local_folder, "example_metabo_msea_dot"))
+
+ggplotly(p)
 ```
 
 ### Overrepresentation in KEGG
