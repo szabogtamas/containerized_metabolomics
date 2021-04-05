@@ -273,8 +273,16 @@ include_graphics(paste(img_path, "dpi72.png", sep=""))
 ### Overrepresentation in KEGG
 
 ```{r}
-# Find top enriched pathways in the dataset
+# Re-initialize mSet
 
-mSet <- find_metabo_kegg(mSet)
+mSet <- convert_cc_to_mSet(metabo_data) %>%
+  normalize_mSet()
+```
+
+```{r}
+# Find top enriched KEGG pathways in the dataset
+
+mSet <- find_metabo_kegg(mSet, keep_mSet=TRUE)
+path_msea_stats <- mSet$summary_df
 ```
 
