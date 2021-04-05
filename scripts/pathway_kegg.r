@@ -117,13 +117,33 @@ find_metabo_kegg <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
       normalize_mSet(tmpLocation=tmpLocation)
   }
   
-  pathway_data <- mSet %>%
+  mSet <- mSet %>%
     CrossReferencing("name") %>%
     CreateMappingResultTable() %>%
     SetKEGG.PathLib("hsa", "current") %>%
     SetMetabolomeFilter(FALSE) %>%
     CalculateOraScore("rbc", "hyperg")
   
+  pw_hit_link <- mSet %>%
+    .$analSet %>%
+    .$ora.hits %>%
+    enframe(name="Pathway", value="Hits") %>%
+    unnest(Hits) %>%
+    group_by(Pathway) %>%
+    mutate(
+      Hits = paste(Hits, collapse="; ")
+    ) %>%
+    ungroup() %>%
+    distinct()
+  
+  pathway_data <- mSet %>%
+    .$analSet %>%
+    .$ora.mat %>%
+    data.frame() %>%
+    rownames_to_column("Pathway") %>%
+    rename(nHits = Hits) %>%
+    mutate(hitRatio = nHits/Total) %>%
+    left_join(pw_hit_link, by="Pathway")
   
   if(keep_mSet){
     mSet$summary_df <- pathway_data
