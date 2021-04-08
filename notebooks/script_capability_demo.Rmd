@@ -236,7 +236,8 @@ include_graphics(paste(img_path, "dpi72.png", sep=""))
 ```{r}
 # Re-initialize mSet
 
-mSet <- convert_cc_to_mSet(metabo_data) %>%
+mSet <- NULL
+mSet <- convert_cc_to_mSet(metabo_data, analysis_type="msetqea") %>%
   normalize_mSet()
 ```
 
@@ -275,7 +276,8 @@ include_graphics(paste(img_path, "dpi72.png", sep=""))
 ```{r}
 # Re-initialize mSet
 
-mSet <- convert_cc_to_mSet(metabo_data) %>%
+mSet <- NULL
+mSet <- convert_cc_to_mSet(metabo_data, analysis_type="pathora") %>%
   normalize_mSet()
 ```
 
@@ -295,7 +297,7 @@ datatable(path_kegg_stats)
 ```{r}
 # Show dot-plot-like figre
 
-p <- plotPathHits(path_msea_stats)
+p <- plotPathHits(path_kegg_stats)
 fig2pdf(p, file.path(local_folder, "example_metabo_msea_dot"))
 
 ggplotly(p)
@@ -305,7 +307,7 @@ ggplotly(p)
 # Show built-in figure
 
 img_path <- file.path(local_folder, "KEGG_summary_")
-mSet <- PlotPathSummary(mSet, img_path, "png")
+mSet <- PlotPathSummary(mSet, TRUE, img_path, "png")
 include_graphics(paste(img_path, "dpi72.png", sep=""))
 ```
 
@@ -313,6 +315,6 @@ include_graphics(paste(img_path, "dpi72.png", sep=""))
 # Show built-in figure
 
 img_path <- file.path(local_folder, "KEGG_hsa00970_")
-mSet <- PlotKEGGPath(mSet, "hsa00970", 528, 480, "png", NULL)
+mSet <- PlotKEGGPath(mSet, "Aminoacyl-tRNA biosynthesis")
 include_graphics(paste(img_path, "dpi72.png", sep=""))
 ```
