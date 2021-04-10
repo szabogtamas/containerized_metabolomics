@@ -323,6 +323,50 @@ mSet <- mSet %>%
   CalculateOraScore("rbc", "hyperg")
 ```
 
+## Debug KEGG
 
+```{r}
+# Re-initialize mSet
 
+mSet <- NULL
+mSet <- convert_cc_to_mSet(metabo_data, analysis_type="pathora") %>%
+  normalize_mSet()
+```
 
+```{r}
+# Find top enriched KEGG pathways in the dataset
+
+mSet <- find_metabo_kegg(mSet, keep_mSet=TRUE)
+path_kegg_stats <- mSet$summary_df
+```
+
+```{r}
+# Show stats for each pathway hit
+
+datatable(path_kegg_stats)
+```
+
+```{r}
+# Show dot-plot-like figre
+
+p <- plotPathHits(path_kegg_stats)
+fig2pdf(p, file.path(local_folder, "example_metabo_msea_dot"))
+
+ggplotly(p)
+```
+
+```{r message = FALSE, warning = FALSE}
+# Show built-in figure
+
+img_path <- file.path(local_folder, "KEGG_summary_")
+mSet <- PlotPathSummary(mSet, TRUE, img_path, "png")
+include_graphics(paste(img_path, "dpi72.png", sep=""))
+```
+
+```{r message = FALSE, warning = FALSE}
+# Show built-in figure
+
+img_path <- file.path(local_folder, "KEGG_hsa00970_")
+mSet <- PlotKEGGPath(mSet, "Aminoacyl-tRNA biosynthesis")
+include_graphics(paste(img_path, "dpi72.png", sep=""))
+```
