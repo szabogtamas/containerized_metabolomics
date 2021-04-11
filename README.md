@@ -18,10 +18,10 @@ To run the example notebook, simply pull the Docker container with
 docker pull  szabogtamas/containerized_metabolomics:latest
 ```
 
-Then start the RStudio server:
+Then start the RStudio server with something like:
 
 ```
-docker run --rm -p 127.0.0.1:7787:8787 -v $PWD:/home/rstudio/local_files -e USERID=$UID -e DISABLE_AUTH=true szabogtamas/containerized_metabolomics
+docker run --rm -p 127.0.0.1:8787:8787 -v $PWD:/home/rstudio/local_files -e USERID=$UID -e DISABLE_AUTH=true szabogtamas/containerized_metabolomics
 ```
 
 Your work will only get saved if it is in the `local_files` directory of the container (attached to the folder from where you ran the above command).  
