@@ -237,7 +237,7 @@ include_graphics(paste(img_path, "dpi72.png", sep=""))
 # Re-initialize mSet
 
 mSet3 <- NULL
-mSet <- convert_cc_to_mSet(metabo_data, analysis_type="msetqea") %>%
+mSet3 <- convert_cc_to_mSet(metabo_data, analysis_type="msetqea") %>%
   normalize_mSet()
 ```
 
