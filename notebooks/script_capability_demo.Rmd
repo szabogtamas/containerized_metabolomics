@@ -236,7 +236,6 @@ include_graphics(paste(img_path, "dpi72.png", sep=""))
 ```{r}
 # Re-initialize mSet
 
-mSet3 <- NULL
 mSet3 <- convert_cc_to_mSet(metabo_data, analysis_type="msetqea") %>%
   normalize_mSet()
 ```
@@ -276,15 +275,14 @@ include_graphics(paste(img_path, "dpi72.png", sep=""))
 ```{r}
 # Re-initialize mSet
 
-mSet <- NULL
-mSet <- convert_cc_to_mSet(metabo_data, analysis_type="pathora") %>%
+mSet4 <- convert_cc_to_mSet(metabo_data, analysis_type="pathora") %>%
   normalize_mSet()
 ```
 
 ```{r}
 # Find top enriched KEGG pathways in the dataset
 
-mSet <- find_metabo_kegg(mSet, keep_mSet=TRUE)
+mSet4 <- find_metabo_kegg(mSet4, keep_mSet=TRUE)
 path_kegg_stats <- mSet$summary_df
 ```
 
