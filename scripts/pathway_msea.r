@@ -124,13 +124,15 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
       normalize_mSet(tmpLocation=tmpLocation)
   }
   
-  mSet$analSet$msetlibname <- "smpdb_pathway" # Patch an odd bug in SetCurrentMsetLib
+  #mSet$analSet$msetlibname <- "smpdb_pathway" # Patch an odd bug in SetCurrentMsetLib
+
+  msetlib <- "kegg_pathway" #"smpdb_pathway"
 
   mSet <- mSet %>%
     CrossReferencing("name") %>%
     CreateMappingResultTable() %>%
     SetMetabolomeFilter(FALSE) %>%
-    SetCurrentMsetLib("smpdb_pathway", 2) %>%
+    SetCurrentMsetLib(msetlib, 2) %>%
     CalculateGlobalTestScore()
   
   pw_hit_link <- mSet %>%
