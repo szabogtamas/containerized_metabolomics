@@ -54,7 +54,7 @@ for (pk in c("tidyr", "dplyr", "MetaboAnalystR")){
   }
 }
 
-source("input_parser.r", local=TRUE)
+source("/home/rstudio/repo_files/scripts/input_parser.r", local=TRUE)
 
 #' The main function of the script, executed only if called from command line.
 #' Calls subfunctions according to supplied command line arguments.

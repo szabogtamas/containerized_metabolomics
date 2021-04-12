@@ -54,7 +54,7 @@ for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
   }
 }
 
-source("pathway_ora.r", local=TRUE)
+source("/home/rstudio/repo_files/scripts/pathway_ora.r", local=TRUE)
 
 #' The main function of the script, executed only if called from command line.
 #' Calls subfunctions according to supplied command line arguments.
