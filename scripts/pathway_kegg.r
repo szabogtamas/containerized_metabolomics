@@ -123,6 +123,8 @@ find_metabo_kegg <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
     SetKEGG.PathLib("hsa", "current") %>%
     SetMetabolomeFilter(FALSE) %>%
     CalculateOraScore("rbc", "hyperg")
+
+  mSet$analSet$type <- "pathora" # This information is lost somehow
   
   pw_hit_link <- mSet %>%
     .$analSet %>%
