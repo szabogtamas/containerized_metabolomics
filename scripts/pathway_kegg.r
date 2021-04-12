@@ -83,8 +83,7 @@ main <- function(opt){
     old_wd <- getwd()
     setwd(dirname(opt$outFile))
     
-    PlotPathSummary(mSet, basename(opt$outFile), opt$fileType)
-    #PlotKEGGPath(mSet, "Glycine, serine and threonine metabolism", 528, 480, "png", NULL)
+    PlotPathSummary(mSet, TRUE, basename(opt$outFile), opt$fileType)
     
     setwd(old_wd)
     
