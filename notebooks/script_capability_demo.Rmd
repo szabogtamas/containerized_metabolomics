@@ -305,14 +305,6 @@ ggplotly(p)
 # Show built-in figure
 
 img_path <- file.path(local_folder, "KEGG_summary_")
-mSet5 <- PlotPathSummary(mSet4, TRUE, img_path, "png")
-include_graphics(paste(img_path, "dpi72.png", sep=""))
-```
-
-```{r message = FALSE, warning = FALSE}
-# Show built-in figure
-
-img_path <- file.path(local_folder, "KEGG_hsa00970_")
-mSet6 <- PlotKEGGPath(mSet4, "Aminoacyl-tRNA biosynthesis")
+mSet4 <- PlotPathSummary(mSet4, TRUE, img_path, "png")
 include_graphics(paste(img_path, "dpi72.png", sep=""))
 ```
