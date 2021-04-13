@@ -5,7 +5,7 @@ scriptDescription <- "Find top enriched pathways in a metabolomics dataset via M
 scriptMandatoryArgs <- list(
   changeValues = list(
     abbr="-i",
-    type="table",
+    type="tables",
     readoptions=list(sep="\t", stringsAsFactors=FALSE),
     help="Metabolite names and a change measure or score."
   )
@@ -64,10 +64,11 @@ source("/home/rstudio/repo_files/scripts/pathway_ora.r", local=TRUE)
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
   
-  hitList <- opt$hitList
-  
   cat("Calculatingenrichment of metabolic pathways\n")
-  mSet <- find_metabo_msea(changeValues, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
+  mSetLs <- map(
+    opt$changeValues,
+    ~find_metabo_msea(.x, tmpLocation=opt$tmpLocation, keep_mSet=TRUE
+  )
   
   cat("Saving figure\n")
   if(opt$figureType == "dotplot"){
