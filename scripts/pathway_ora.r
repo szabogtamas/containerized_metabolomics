@@ -5,7 +5,7 @@ scriptDescription <- "Find top overrepresented pathways in a metabolomics datase
 scriptMandatoryArgs <- list(
   hitList= list(
     abbr="-i",
-    type="vector",
+    type="nested",
     readoptions=list(sep="\t", stringsAsFactors=FALSE),
     help="List of top metabolites."
   )
