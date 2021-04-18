@@ -209,8 +209,19 @@ if (!interactive() & not_called_by_another) {
     action="store_false",
     dest="verbose",
     help="Create figures quietly, without printing to stdout."
-    )
-
+  )
+  
+  scriptOptionalArgs[["baseDir"]] <- list(
+    default=getwd(),
+      help="Path to base directory. Important when using relative paths."
+  )
+  
+  rg <- commandArgs()
+  if("--baseDir" %in% rg){
+    scriptOptionalArgs$baseDir$default <- rg[[which(rg == "--baseDir") + 1]]
+    setwd(scriptOptionalArgs$baseDir$default)
+  }
+  
   # Add custom arguments to parser
   parser <- parser4arglist(parser, list(scriptMandatoryArgs, scriptOptionalArgs))
 
