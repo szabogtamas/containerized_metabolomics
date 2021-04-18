@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 
-eval_blocker <- 1
+if (exists("eval_blocker")) eval_blocker <- 2 else eval_blocker <- 1
 source("/home/rstudio/repo_files/scripts/input_parser.r", local=TRUE)
-eval_blocker <- NULL
+if (eval_blocker == 1) eval_blocker <- NULL else if (eval_blocker == 2) eval_blocker <- 1
 
 scriptDescription <- "A script that runs normalization for metabolomics results."
 
@@ -10,7 +10,7 @@ scriptMandatoryArgs <- list(
   inFile = list(
     abbr="-i",
     type="table",
-    readoptions=list(sep="\t", stringsAsFactors=FALSE),
+    readoptions=list(stringsAsFactors=FALSE),
     help="Table of metabolite abundances in the MetaboAnalyser standard format."
   )
 )
