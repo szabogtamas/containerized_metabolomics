@@ -34,20 +34,6 @@ scriptOptionalArgs <- list(
   )
 )
 
-if(!exists("opt")){
-  opt <- list()
-}
-
-rg <- commandArgs()
-if("--commandRpath" %in% rg){
-  opt$commandRpath <- rg[[which(rg == "--commandRpath") + 1]]
-}
-
-opt <- list()
-for (rn in names(scriptOptionalArgs)){
-  opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
-}
-
 for (pk in c("tidyr", "dplyr", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
@@ -113,4 +99,8 @@ normalize_mSet <- function(inSet, tmpLocation="tmp", cleanUp=FALSE){
 }
 
 # Ensuring command line connectivity by sourcing an argument parser
-source(opt$commandRpath, local=TRUE)
+rg <- commandArgs()
+if("--commandRpath" %in% rg){
+  scriptOptionalArgs$commandRpath$default <- rg[[which(rg == "--commandRpath") + 1]]
+}
+source(scriptOptionalArgs$commandRpath$default, local=TRUE, chdir=FALSE)
