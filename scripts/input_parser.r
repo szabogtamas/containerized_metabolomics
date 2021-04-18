@@ -6,7 +6,7 @@ scriptMandatoryArgs <- list(
   inFile = list(
     abbr="-i",
     type="table",
-    readoptions=list(sep="\t", stringsAsFactors=FALSE),
+    readoptions=list(stringsAsFactors=FALSE),
     help="Table of metabolite quantities/concentrations."
   )
 )
@@ -29,21 +29,6 @@ scriptOptionalArgs <- list(
     help="Path to command line connectivity script (if not in cwd)."
   )
 )
-
-if(!exists("opt")){
-  opt <- list()
-}
-
-rg <- commandArgs()
-if("--commandRpath" %in% rg){
-  opt$commandRpath <- rg[[which(rg == "--commandRpath") + 1]]
-}
-
-for (rn in names(scriptOptionalArgs)){
-  if(!(rn %in% names(opt))){
-    opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
-  }
-}
 
 for (pk in c("tidyr", "dplyr", "stringr", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
@@ -77,7 +62,7 @@ main <- function(opt){
 #' 
 #' @return dtaframe Standardized and reshaped to a long format.
 standardize_metabo_data <- function(input_data){
-
+  
   if(is.character(input_data) & length(input_data) == 1){
     warning(paste("Parsing data in file:", input_data, sep="\n"))
     input_data <- scriptMandatoryArgs %>%
@@ -181,4 +166,8 @@ populate_mSet <- function(analyst_compatible_data, analysis_type="stat", input_f
 }
 
 # Ensuring command line connectivity by sourcing an argument parser
-source(opt$commandRpath, local=TRUE, chdir=TRUE)
+rg <- commandArgs()
+if("--commandRpath" %in% rg){
+  scriptOptionalArgs$commandRpath$default <- rg[[which(rg == "--commandRpath") + 1]]
+}
+source(scriptOptionalArgs$commandRpath$default, local=TRUE, chdir=FALSE)
