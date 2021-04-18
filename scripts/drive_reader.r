@@ -3,38 +3,26 @@
 scriptDescription <- "A script that reads a table from Google Drive."
 
 scriptMandatoryArgs <- list(
-  drive_path = list(
+  drivePath = list(
     abbr="-i",
-    readoptions=list(sep="\t", stringsAsFactors=FALSE),
     help="Data table on Drive."
   ),
   outFile = list(
-    default=NULL,
+    abbr="-o",
     help="Output location for saving the table locally."
   )
 )
 
 scriptOptionalArgs <- list(
+  tokenPath = list(
+    default="~/local_files/.secrets",
+    help="Path to folder where oauth tokens are saved."
+  ),
   commandRpath = list(
     default="/home/rstudio/repo_files/scripts/commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
   )
 )
-
-if(!exists("opt")){
-  opt <- list()
-}
-
-rg <- commandArgs()
-if("--commandRpath" %in% rg){
-  opt$commandRpath <- rg[[which(rg == "--commandRpath") + 1]]
-}
-
-for (rn in names(scriptOptionalArgs)){
-  if(!(rn %in% names(opt))){
-    opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
-  }
-}
 
 for (pk in c("tidyr", "dplyr", "readxl", "googledrive")){
   if(!(pk %in% (.packages()))){
@@ -50,16 +38,14 @@ for (pk in c("tidyr", "dplyr", "readxl", "googledrive")){
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
   
-  outFile <- opt$outFile
-  opt$outFile <- NULL
-  opt$help <- NULL
-  opt$verbose <- NULL
-
+  cat("Authenticating Drive token\n")
+  drive_auth(cache = opt$tokenPath, email = TRUE)
+  
   cat("Reading from Drive\n")
-  data <- do.call(read_drive, opt)
+  data <- read_drive(opt$drivePath)
   
   cat("Saving table\n")
-  tab2tsv(data, outFile)
+  tab2tsv(data, opt$outFile)
 
   invisible(NULL)
 }
@@ -92,4 +78,8 @@ read_drive <- function(drive_path){
 }
 
 # Ensuring command line connectivity by sourcing an argument parser
-source(opt$commandRpath, local=TRUE)
+rg <- commandArgs()
+if("--commandRpath" %in% rg){
+  scriptOptionalArgs$commandRpath$default <- rg[[which(rg == "--commandRpath") + 1]]
+}
+source(scriptOptionalArgs$commandRpath$default, local=TRUE, chdir=FALSE)
