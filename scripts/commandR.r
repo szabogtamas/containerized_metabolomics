@@ -101,6 +101,14 @@ parser4tsv <- function(opt, rn, rg, rv=NULL){
     rg <- rg[[rn]]
   }
   if (rg[["type"]] == "table") {
+    if(!("sep" %in% rg[["readoptions"]])){
+      xtn <- stringr::str_sub(rv,-3,-1)
+      if(xtn == "csv"){
+        rg$readoptions[["sep"]] <- ","
+      } else {
+        rg$readoptions[["sep"]] <- "\t"
+      }
+    }
     opt[[rn]] <- do.call(read.csv, c(list(rv), rg[["readoptions"]]))
   } else {
     nl <- list()
