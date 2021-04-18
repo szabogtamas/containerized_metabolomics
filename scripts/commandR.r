@@ -200,6 +200,14 @@ if (exists("not_called_by_another")){
     not_called_by_another <- TRUE
 }
 
+if (exists("eval_blocker")){
+  if (!is.null(eval_blocker)){
+    not_called_by_another <- FALSE
+  } else {
+    not_called_by_another <- TRUE
+  }
+}
+
 if (!interactive() & not_called_by_another) {
   
   # Initialize parser with verbosity and description of script
