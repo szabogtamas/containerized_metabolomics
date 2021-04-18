@@ -1,5 +1,9 @@
 #!/usr/bin/env Rscript
 
+eval_blocker <- 1
+source("/home/rstudio/repo_files/scripts/input_parser.r", local=TRUE)
+eval_blocker <- NULL
+
 scriptDescription <- "A script that runs normalization for metabolomics results."
 
 scriptMandatoryArgs <- list(
@@ -40,8 +44,6 @@ for (pk in c("tidyr", "dplyr", "MetaboAnalystR")){
   }
 }
 
-source("/home/rstudio/repo_files/scripts/input_parser.r", local=TRUE)
-
 #' The main function of the script, executed only if called from command line.
 #' Calls subfunctions according to supplied command line arguments.
 #' 
@@ -49,9 +51,9 @@ source("/home/rstudio/repo_files/scripts/input_parser.r", local=TRUE)
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
-
+  
   cat("Parsing dataset\n")
-  input <- convert_to_mSet(opt$inFile)
+  input <- convert_cc_to_mSet(opt$inFile, tmpLocation=file.path(opt$tmpLocation, "tmp.csv"), cleanUp=FALSE)
   
   cat("Normalizing dataset\n")
   results <- normalize_mSet(input, opt$tmpLocation, cleanUp=TRUE)
@@ -93,7 +95,7 @@ normalize_mSet <- function(inSet, tmpLocation="tmp", cleanUp=FALSE){
     Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
   
   setwd(old_wd)
-  if(cleanUp) unlink(norm_path)
+  if(cleanUp) unlink(tmpLocation, recursive=TRUE, force=TRUE)
 
   invisible(out)
 }

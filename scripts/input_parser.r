@@ -43,7 +43,7 @@ for (pk in c("tidyr", "dplyr", "stringr", "MetaboAnalystR")){
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
-
+  
   cat("Standardizing input\n")
   results <- standardize_metabo_data(opt$inFile)
   
@@ -97,7 +97,7 @@ standardize_metabo_data <- function(input_data){
 #' 
 #' @return Populated mSet object.
 convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_type="stat", input_format="rowu", cleanUp=FALSE){
-
+  
   old_wd <- getwd()
   tmp_dir <- dirname(tmpLocation)
   preexisted_dir <- dir.exists(tmp_dir)
@@ -105,7 +105,7 @@ convert_cc_to_mSet <- function(input_data, tmpLocation="tmp/tmp.csv", analysis_t
   
   if(!preexisted_dir) dir.create(tmp_dir)
   setwd(tmp_dir)
-
+  
   write_metabodf_tmp(input_data, tmp_out_file=tmpLocation)
   mSet <- populate_mSet(tmpLocation, analysis_type, input_format)
   
