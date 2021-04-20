@@ -51,18 +51,18 @@ for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
-
+  
   cat("Parsing dataset\n")
-  input <- inFile %>%
+  input <- opt$inFile %>%
     convert_cc_to_mSet(
       tmpLocation=file.path(opt$tmpLocation, "tmp.csv"), analysis_type="roc"
     ) %>%
     normalize_mSet(tmpLocation=opt$tmpLocation)
-
+  
   if(opt$figureType == "boxes"){
-
+    
     featureMat <- calcMultiROC(input)
-
+    
     cat("Drawing ggplot\n")
     featureMat %>%
       plotROCfeat() %>%
@@ -70,9 +70,9 @@ main <- function(opt){
     
   } else {
     mSet <- calcMultiROC(
-      input, tmpLocation=opt$tmpLocation, outFile=opt$outFile, fileType=opt$fileType
+      input, tmpLocation=opt$tmpLocation, figureLocation=opt$outFile, fileType=opt$fileType
     )
-  
+    
   }
   
   invisible(NULL)
@@ -91,7 +91,7 @@ main <- function(opt){
 #' 
 #' @return dataframe or mSet  Contains importance of individual metabolites.
 calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tmp", figureLocation=NULL, fileType="pdf", keep_mSet=FALSE, cleanUp=TRUE){
- 
+  
   if(!is(norm_data, "list")){
     norm_data <- norm_data %>%
       convert_cc_to_mSet(tmpLocation=file.path(tmpLocation, "tmp.csv")) %>%
@@ -127,18 +127,18 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
       enframe(name="Metabolite_std", value="Metabolite") %>%
       mutate(Metabolite_std = as.character(Metabolite_std))
   }
-
+  
   rocStats <- "imp_features_cv.csv" %>%
     read.csv() %>%
     select(Metabolite_std=X, Importance) %>%
     mutate(Metabolite_std = as.character(Metabolite_std)) %>%
     left_join(metab_names, by="Metabolite_std")
-
+  
   sample_class_labels <- data.frame(
     Sample = rownames(mSet$dataSet$norm),
     Condition = mSet$dataSet$cls
   )
-
+  
   rocSummary <- mSet %>%
     .$dataSet %>%
     .$norm %>%
@@ -151,24 +151,24 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
     mutate(Sample = str_replace(Sample, "^SAMPLE_", "")) %>%
     left_join(sample_class_labels, by="Sample") %>%
     right_join(rocStats, by="Metabolite_std")
-
+  
   if(!keep_mSet){
     mSet <- rocSummary
   }
-
+  
   setwd(old_wd)
-
+  
   if(!is.null(figureLocation)){
     "multiROC_importance_" %>%
       paste0("dpi72.", fileType) %>%
       file.path(tmpLocation, .) %>%
       file.copy(paste(figureLocation, fileType, sep="."))
   }
-
+  
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
   
   invisible(mSet)
-
+  
 }
 
 
@@ -179,13 +179,13 @@ calcMultiROC <- function(norm_data, norm_path="tmp/row_norm.qs", tmpLocation="tm
 #' 
 #' @return A ggplot showing distributions.
 plotROCfeat <- function(stats_data, num_feat=15){
-
+  
   top_mroc_mtb <- stats_data %>%
     distinct(Metabolite, Importance) %>%
     arrange(desc(Importance)) %>%
     head(num_feat) %>%
     .$Metabolite
-
+  
   stats_data %>%
     filter(Metabolite %in% top_mroc_mtb) %>%
     mutate(
