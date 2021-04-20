@@ -1,5 +1,9 @@
 #!/usr/bin/env Rscript
 
+if (exists("eval_blocker")) eval_blocker <- 2 else eval_blocker <- 1
+source("/home/rstudio/repo_files/scripts/pathway_ora.r", local=TRUE)
+if (eval_blocker == 1) eval_blocker <- NULL else if (eval_blocker == 2) eval_blocker <- 1
+
 scriptDescription <- "Find top enriched pathways in a metabolomics dataset via MetaboAnlyst."
 
 scriptMandatoryArgs <- list(
@@ -34,27 +38,11 @@ scriptOptionalArgs <- list(
   )
 )
 
-if(!exists("opt")){
-  opt <- list()
-}
-
-rg <- commandArgs()
-if("--commandRpath" %in% rg){
-  opt$commandRpath <- rg[[which(rg == "--commandRpath") + 1]]
-}
-
-opt <- list()
-for (rn in names(scriptOptionalArgs)){
-  opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
-}
-
 for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
 }
-
-source("/home/rstudio/repo_files/scripts/pathway_ora.r", local=TRUE)
 
 #' The main function of the script, executed only if called from command line.
 #' Calls subfunctions according to supplied command line arguments.
@@ -164,6 +152,9 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
   
 }
 
-
 # Ensuring command line connectivity by sourcing an argument parser
-source(opt$commandRpath, local=TRUE)
+rg <- commandArgs()
+if("--commandRpath" %in% rg){
+  scriptOptionalArgs$commandRpath$default <- rg[[which(rg == "--commandRpath") + 1]]
+}
+source(scriptOptionalArgs$commandRpath$default, local=TRUE, chdir=FALSE)
