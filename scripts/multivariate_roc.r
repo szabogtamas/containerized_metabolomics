@@ -59,6 +59,7 @@ main <- function(opt){
     ) %>%
     normalize_mSet(tmpLocation=opt$tmpLocation)
   
+  cat("Saving figure\n")
   if(opt$figureType == "boxes"){
     
     featureMat <- calcMultiROC(input)
@@ -69,11 +70,14 @@ main <- function(opt){
       fig2pdf(opt$outFile)
     
   } else {
-    mSet <- calcMultiROC(
+    featureMat <- calcMultiROC(
       input, tmpLocation=opt$tmpLocation, figureLocation=opt$outFile, fileType=opt$fileType
     )
     
   }
+  
+  cat("Saving table\n")
+  tab2tsv(featureMat, opt$outFile)
   
   invisible(NULL)
 }
