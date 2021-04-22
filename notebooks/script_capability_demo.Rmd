@@ -65,7 +65,7 @@ datatable(metabo_data)
 
 drive_auth(cache = "~/local_files/.secrets", email = TRUE)
 
-metabo_data <- "~/Datasets/faeces vizsgálat IBD standard.xlsx" %>%
+metabo_data <- "~/Datasets/IBD/faeces vizsgálat IBD standard.xlsx" %>%
   read_drive() %>%
   pivot_longer(-one_of("Metabolite", "Group")) %>%
   rename(MetaboGroup = Group, Subject = name) %>%
