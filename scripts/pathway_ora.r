@@ -1,5 +1,9 @@
 #!/usr/bin/env Rscript
 
+if (exists("eval_blocker")) eval_blocker <- 2 else eval_blocker <- 1
+source("/home/rstudio/repo_files/scripts/data_norm.r", local=TRUE)
+if (eval_blocker == 1) eval_blocker <- NULL else if (eval_blocker == 2) eval_blocker <- 1
+
 scriptDescription <- "Find top overrepresented pathways in a metabolomics dataset via MetaboAnlyst."
 
 scriptMandatoryArgs <- list(
@@ -34,27 +38,11 @@ scriptOptionalArgs <- list(
   )
 )
 
-if(!exists("opt")){
-  opt <- list()
-}
-
-rg <- commandArgs()
-if("--commandRpath" %in% rg){
-  opt$commandRpath <- rg[[which(rg == "--commandRpath") + 1]]
-}
-
-opt <- list()
-for (rn in names(scriptOptionalArgs)){
-  opt[[rn]] <- scriptOptionalArgs[[rn]][["default"]]
-}
-
 for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
 }
-
-source("/home/rstudio/repo_files/scripts/data_norm.r", local=TRUE)
 
 #' The main function of the script, executed only if called from command line.
 #' Calls subfunctions according to supplied command line arguments.
@@ -65,35 +53,65 @@ source("/home/rstudio/repo_files/scripts/data_norm.r", local=TRUE)
 main <- function(opt){
   
   cat("Calculating ORA on metabolic pathways\n")
-  mSet <- find_metabo_ora(opt$hitList, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
+  ora_paths <- list()
+  
+  if(length(opt$hitList) == 1) names(opt$hitList) <- "_"
+  
+  for (condition in names(opt$hitList)){
+    cat("Calculating ORA for", condition, "\n")
+    hitlist <- opt$hitList[[condition]]
+    
+    if(condition == "_"){
+      condition <- ""
+      outFile <- opt$outFile
+    } else {
+      outFile <- paste(opt$outFile, condition, sep="_")
+    }
+    
+    mSet <- find_metabo_ora(hitlist, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
+    
+    ora_paths[[condition]] <- mSet %>%
+      .$summary_df %>%
+      mutate(Group = condition)
+    
+    if(opt$figureType != "dotplot"){
+      
+      cat("Saving built-in figure for", condition, "\n")
+      
+      old_wd <- getwd()
+      setwd(dirname(outFile))
+      
+      if(opt$figureType == "bar"){
+        PlotORA(mSet, basename(outFile), "bar", opt$fileType)
+      } else {
+        PlotORA(mSet, basename(outFile), "net", opt$fileType)
+      }
+      file.rename(
+        paste(basename(outFile), "dpi72.", opt$fileType, sep=""),
+        paste(basename(outFile), opt$fileType, sep=""),
+      )
+      
+      setwd(old_wd)
+      
+    }
+    
+  }
+  
+  if(length(ora_paths) < 1) ora_paths <- bind_rows(ora_paths)
   
   cat("Saving figure\n")
   if(opt$figureType == "dotplot"){
     
-    mSet %>%
+    ora_paths %>%
       plotPathHits() %>%
       fig2pdf(opt$outFile)
     
     file.rename
     
-  } else {
-    
-    old_wd <- getwd()
-    setwd(dirname(opt$outFile))
-    
-    if(opt$figureType == "bar"){
-      PlotORA(mSet, basename(opt$outFile), "bar", opt$fileType)
-    } else {
-      PlotORA(mSet, basename(opt$outFile), "net", opt$fileType)
-    }
-    file.rename(
-      paste(basename(opt$outFile), "dpi72.", opt$fileType, sep=""),
-      paste(basename(opt$outFile), opt$fileType, sep=""),
-    )
-    
-    setwd(old_wd)
-    
   }
+  
+  cat("Saving table\n")
+  tab2tsv(featureMat, opt$outFile)
   
   invisible(NULL)
 }
@@ -114,7 +132,7 @@ filter_mappable_compounds <- function(hitlist, tmpLocation="tmp", cleanUp=TRUE){
   
   mSet <- NULL
   mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
-    Setup.MapData(selected_compounds) %>%
+    Setup.MapData(hitlist) %>%
     CrossReferencing("name")
   
   mappable_compunds <- mSet$name.map$query.vec[mSet$name.map$match.state == 1]
@@ -216,6 +234,9 @@ plotPathHits <- function(paths_data, numPath=15){
     labs(x="", y="")
 }
 
-
 # Ensuring command line connectivity by sourcing an argument parser
-source(opt$commandRpath, local=TRUE)
+rg <- commandArgs()
+if("--commandRpath" %in% rg){
+  scriptOptionalArgs$commandRpath$default <- rg[[which(rg == "--commandRpath") + 1]]
+}
+source(scriptOptionalArgs$commandRpath$default, local=TRUE, chdir=FALSE)
