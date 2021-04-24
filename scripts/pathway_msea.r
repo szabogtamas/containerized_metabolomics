@@ -55,17 +55,16 @@ main <- function(opt){
   cat("Calculatingenrichment of metabolic pathways\n")
   mSetLs <- map(
     opt$changeValues,
-    ~find_metabo_msea(.x, tmpLocation=opt$tmpLocation, keep_mSet=TRUE
+    ~find_metabo_msea(.x, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
   )
   
   cat("Saving figure\n")
   if(opt$figureType == "dotplot"){
     
-    mSet %>%
-      plotPathHits() %>%
+    mSetLs %>%
+      map(plotPathHits()) %>%
+      bind_rows() %>%
       fig2pdf(opt$outFile)
-    
-    file.rename
     
   } else {
     
