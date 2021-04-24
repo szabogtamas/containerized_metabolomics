@@ -64,8 +64,6 @@ main <- function(opt){
       plotPathHits() %>%
       fig2pdf(opt$outFile)
     
-    file.rename
-    
   } else {
     
     old_wd <- getwd()
