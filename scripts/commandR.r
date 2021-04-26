@@ -86,6 +86,25 @@ genetab2tsv <- function(tab, filename_base, primary_id="GeneID", secondary_id="S
 }
 
 
+#' Guess separator in input file for tables (based on extension).
+#' 
+#' @param filename string.   Path to input file with table.
+#' @param readoptions list.  Read options specified.
+#' 
+#' @return list.
+gues_table_sep <- function(filename, readoptions){
+  if(!("sep" %in% names(readoptions))){
+    xtn <- stringr::str_sub(filename,-3,-1)
+    if(xtn == "csv"){
+      readoptions[["sep"]] <- ","
+    } else {
+      readoptions[["sep"]] <- "\t"
+    }
+  }
+  return(readoptions)
+}
+  
+  
 #' Read multiple tables into a named list.
 #' 
 #' @param opt list.  Arguments passed from command line.
@@ -101,14 +120,7 @@ parser4tsv <- function(opt, rn, rg, rv=NULL){
     rg <- rg[[rn]]
   }
   if (rg[["type"]] == "table") {
-    if(!("sep" %in% rg[["readoptions"]])){
-      xtn <- stringr::str_sub(rv,-3,-1)
-      if(xtn == "csv"){
-        rg$readoptions[["sep"]] <- ","
-      } else {
-        rg$readoptions[["sep"]] <- "\t"
-      }
-    }
+    rg$readoptions <- gues_table_sep(rv, rg$readoptions)
     opt[[rn]] <- do.call(read.csv, c(list(rv), rg[["readoptions"]]))
   } else {
     nl <- list()
@@ -118,8 +130,10 @@ parser4tsv <- function(opt, rn, rg, rv=NULL){
       n <- n+1
       x <- unlist(strsplit(x, ":", fixed=TRUE))
       if (length(x) > 1){
+        rg$readoptions <- gues_table_sep(x[2], rg$readoptions)
         nl[[x[1]]] <- do.call(read.csv, c(list(x[2]), rg[["readoptions"]]))
       } else {
+        rg$readoptions <- gues_table_sep(x[1], rg$readoptions)
         nl[[paste0("Condition_", n)]] <- do.call(read.csv, c(list(x[1]), rg[["readoptions"]]))
       }
     }
