@@ -38,7 +38,7 @@ scriptOptionalArgs <- list(
   )
 )
 
-for (pk in c("pryr", "tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
+for (pk in c("pryr", "pkgcond", "tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
@@ -164,7 +164,7 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
   setwd(tmpLocation)
   
-  mappable_compunds <- filter_mappable_compounds(hitlist)
+  mappable_compunds <- suppress_messages(filter_mappable_compounds(hitlist))
   
   mSet <- NULL
   mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
