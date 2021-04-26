@@ -88,7 +88,7 @@ main <- function(opt){
       }
       file.rename(
         paste(basename(outFile), "dpi72.", opt$fileType, sep=""),
-        paste(basename(outFile), opt$fileType, sep=""),
+        paste(basename(outFile), opt$fileType, sep=".")
       )
       
       setwd(old_wd)
