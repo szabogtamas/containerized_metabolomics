@@ -69,7 +69,6 @@ main <- function(opt){
   if(opt$figureType == "dotplot"){
     
     cat("Saving custom dotplot\n")
-    
     mSummary %>%
       plotPathHits() %>%
       fig2pdf(opt$outFile)
@@ -79,15 +78,22 @@ main <- function(opt){
     old_wd <- getwd()
     setwd(dirname(opt$outFile))
     
-    if(opt$figureType == "bar"){
-      PlotQEA.Overview(mSet, basename(opt$outFile), "bar", opt$fileType)
-    } else {
-      PlotQEA.Overview(mSet, basename(opt$outFile), "net", opt$fileType)
+    for(condition in names(mSetLs)){
+      
+      mSet <- mSetLs[[condition]]
+      
+      if(opt$figureType == "bar"){
+        PlotQEA.Overview(mSet, basename(opt$outFile), "bar", opt$fileType)
+      } else {
+        PlotQEA.Overview(mSet, basename(opt$outFile), "net", opt$fileType)
+      }
+      
+      file.rename(
+        paste(basename(opt$outFile), "dpi72.", opt$fileType, sep=""),
+        paste(basename(opt$outFile), "_", condition, ".", opt$fileType, sep="")
+      )
+      
     }
-    file.rename(
-      paste(basename(opt$outFile), "dpi72.", opt$fileType, sep=""),
-      paste(basename(opt$outFile), opt$fileType, sep=""),
-    )
     
     setwd(old_wd)
     
