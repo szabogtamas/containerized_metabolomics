@@ -97,16 +97,18 @@ main <- function(opt){
     
   }
   
-  if(length(ora_paths) < 1) ora_paths <- bind_rows(ora_paths)
+  if(length(ora_paths) > 1){
+    ora_paths <- bind_rows(ora_paths)
+  } else {
+    ora_paths <- ora_paths[[1]]
+  }
   
-  cat("Saving figure\n")
   if(opt$figureType == "dotplot"){
     
+    cat("Saving figure\n")
     ora_paths %>%
       plotPathHits() %>%
       fig2pdf(opt$outFile)
-    
-    file.rename
     
   }
   
