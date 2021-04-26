@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 
-if (exists("eval_blocker")) eval_blocker <- 2 else eval_blocker <- 1
+block_norm <- TRUE
 source("/home/rstudio/repo_files/scripts/data_norm.r", local=TRUE)
-if (eval_blocker == 1) eval_blocker <- NULL else if (eval_blocker == 2) eval_blocker <- 1
+if (exists("block_descriptive")) eval_blocker <- TRUE else eval_blocker <- NULL
 
 scriptDescription <- "A script that runs descriptive statistics via MetaboAnlyst."
 

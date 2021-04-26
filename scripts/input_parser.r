@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 
+if (exists("block_parse")) eval_blocker <- TRUE else eval_blocker <- NULL
+
 scriptDescription <- "A script that parses metabolomics measurement results for MetaboAnalyst."
 
 scriptMandatoryArgs <- list(

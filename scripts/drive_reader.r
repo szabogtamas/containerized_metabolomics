@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 
+if (exists("block_drive")) eval_blocker <- TRUE else eval_blocker <- NULL
+
 scriptDescription <- "A script that reads a table from Google Drive."
 
 scriptMandatoryArgs <- list(
