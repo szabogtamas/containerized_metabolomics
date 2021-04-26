@@ -38,7 +38,7 @@ scriptOptionalArgs <- list(
   )
 )
 
-for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
+for (pk in c("pryr", "tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
@@ -58,6 +58,7 @@ main <- function(opt){
   if(length(opt$hitList) == 1) names(opt$hitList) <- "_"
   
   for (condition in names(opt$hitList)){
+    
     cat("Calculating ORA for", condition, "\n")
     hitlist <- opt$hitList[[condition]]
     
@@ -69,6 +70,9 @@ main <- function(opt){
     }
     
     mSet <- find_metabo_ora(hitlist, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
+    
+    manenv <- print(where("current.msetlib"))
+    rm("current.msetlib", envir=manenv)
     
     ora_paths[[condition]] <- mSet %>%
       .$summary_df %>%
