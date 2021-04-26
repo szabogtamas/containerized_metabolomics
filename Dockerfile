@@ -85,6 +85,8 @@ RUN install2.r --error \
     pls \
     pROC \
     Rcpp \
+    pryr \
+    pkgcond \ 
     glasso \
     huge \
     plotly \
