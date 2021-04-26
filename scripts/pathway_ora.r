@@ -113,7 +113,7 @@ main <- function(opt){
   }
   
   cat("Saving table\n")
-  tab2tsv(featureMat, opt$outFile)
+  tab2tsv(ora_paths, opt$outFile)
   
   invisible(NULL)
 }
