@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 
-if (exists("eval_blocker")) eval_blocker <- 2 else eval_blocker <- 1
+block_ora <- TRUE
 source("/home/rstudio/repo_files/scripts/pathway_ora.r", local=TRUE)
-if (eval_blocker == 1) eval_blocker <- NULL else if (eval_blocker == 2) eval_blocker <- 1
+if (exists("block_msea")) eval_blocker <- TRUE else eval_blocker <- NULL
 
 scriptDescription <- "Find top enriched pathways in a metabolomics dataset via MetaboAnlyst."
 
@@ -10,7 +10,7 @@ scriptMandatoryArgs <- list(
   changeValues = list(
     abbr="-i",
     type="tables",
-    readoptions=list(sep="\t", stringsAsFactors=FALSE),
+    readoptions=list(stringsAsFactors=FALSE),
     help="Metabolite names and a change measure or score."
   )
 )
@@ -38,7 +38,7 @@ scriptOptionalArgs <- list(
   )
 )
 
-for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
+for (pk in c("tidyr", "dplyr", "purrr", "tibble", "ggplot2", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
@@ -52,18 +52,26 @@ for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
   
-  cat("Calculatingenrichment of metabolic pathways\n")
-  mSetLs <- map(
-    opt$changeValues,
-    ~find_metabo_msea(.x, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
-  )
+  cat("Calculating enrichment of metabolic pathways\n")
+  mSetLs <- opt$changeValues %>%
+    map(
+      ~find_metabo_msea(.x, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
+    )
   
-  cat("Saving figure\n")
+  cat("Saving table\n")
+  mSummary <- mSetLs %>%
+    map(function(x) x$summary_df) %>%
+    bind_rows()
+  
+  tab2tsv(mSummary, opt$outFile)
+  
+  cat("Plotting\n")
   if(opt$figureType == "dotplot"){
     
-    mSetLs %>%
-      map(plotPathHits()) %>%
-      bind_rows() %>%
+    cat("Saving custom dotplot\n")
+    
+    mSummary %>%
+      plotPathHits() %>%
       fig2pdf(opt$outFile)
     
   } else {
@@ -103,19 +111,20 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
   setwd(tmpLocation)
   
-  mappable_compunds <- filter_mappable_compounds(hitlist)
+  mappable_compunds <- metabo_change %>%
+    .$Metabolite %>%
+    unique() %>%
+    filter_mappable_compounds()
   
   if(!is(metabo_change, "list")){
     mSet <- metabo_change %>%
       filter(Metabolite %in% mappable_compunds) %>%
       convert_cc_to_mSet(tmpLocation="tmp.csv", analysis_type="msetqea") %>%
-      normalize_mSet(tmpLocation=tmpLocation)
+      normalize_mSet(tmpLocation=".")
   }
-  
-  #mSet$analSet$msetlibname <- "smpdb_pathway" # Patch an odd bug in SetCurrentMsetLib
 
   msetlib <- "kegg_pathway" #"smpdb_pathway"
-
+  
   mSet <- mSet %>%
     CrossReferencing("name") %>%
     CreateMappingResultTable() %>%
