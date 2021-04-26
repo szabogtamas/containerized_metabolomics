@@ -71,9 +71,6 @@ main <- function(opt){
     
     mSet <- find_metabo_ora(hitlist, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
     
-    manenv <- print(where("current.msetlib"))
-    rm("current.msetlib", envir=manenv)
-    
     ora_paths[[condition]] <- mSet %>%
       .$summary_df %>%
       mutate(Group = condition)
@@ -204,6 +201,9 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
   
   setwd(old_wd)
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
+    
+  manenv <- print(where("current.msetlib"))
+  rm("current.msetlib", envir=manenv)
   
   invisible(mSet)
   
