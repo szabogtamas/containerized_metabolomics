@@ -60,7 +60,7 @@ main <- function(opt){
   
   cat("Saving table\n")
   mSummary <- mSetLs %>%
-    map(function(x) x$summary_df) %>%
+    imap(function(x, y) mutate(x$summary_df, Group = y)) %>%
     bind_rows()
   
   tab2tsv(mSummary, opt$outFile)
@@ -123,7 +123,7 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
       normalize_mSet(tmpLocation=".")
   }
 
-  msetlib <- "kegg_pathway" #"smpdb_pathway"
+  msetlib <- "smpdb_pathway" #"kegg_pathway"
   
   mSet <- mSet %>%
     CrossReferencing("name") %>%
@@ -155,6 +155,9 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
   
   setwd(old_wd)
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
+  
+  manenv <- print(where("current.msetlib"))
+  rm("current.msetlib", envir=manenv)
   
   invisible(mSet)
   
