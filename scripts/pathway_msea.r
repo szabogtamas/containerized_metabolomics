@@ -38,7 +38,7 @@ scriptOptionalArgs <- list(
   )
 )
 
-for (pk in c("tidyr", "dplyr", "purrr", "tibble", "ggplot2", "MetaboAnalystR")){
+for (pk in c("pryr", "tidyr", "dplyr", "purrr", "tibble", "ggplot2", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }

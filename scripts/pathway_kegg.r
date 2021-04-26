@@ -1,16 +1,16 @@
 #!/usr/bin/env Rscript
 
-if (exists("eval_blocker")) eval_blocker <- 2 else eval_blocker <- 1
+block_ora <- TRUE
 source("/home/rstudio/repo_files/scripts/pathway_ora.r", local=TRUE)
-if (eval_blocker == 1) eval_blocker <- NULL else if (eval_blocker == 2) eval_blocker <- 1
+if (exists("block_kegg")) eval_blocker <- TRUE else eval_blocker <- NULL
 
 scriptDescription <- "Find top enriched KEGG pathways in a metabolomics dataset via MetaboAnlyst."
 
 scriptMandatoryArgs <- list(
   changeValues = list(
     abbr="-i",
-    type="table",
-    readoptions=list(sep="\t", stringsAsFactors=FALSE),
+    type="tables",
+    readoptions=list(stringsAsFactors=FALSE),
     help="Metabolite names and a change measure or score."
   )
 )
@@ -38,7 +38,7 @@ scriptOptionalArgs <- list(
   )
 )
 
-for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
+for (pk in c("tidyr", "dplyr", "purrr", "tibble", "ggplot2", "MetaboAnalystR")){
   if(!(pk %in% (.packages()))){
     library(pk, character.only=TRUE)
   }
@@ -52,15 +52,24 @@ for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
   
-  hitList <- opt$hitList
-  
   cat("Calculating enrichment of metabolic KEGG pathways\n")
-  mSet <- find_metabo_kegg(changeValues, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
+  mSetLs <- opt$changeValues %>%
+    map(
+      ~find_metabo_kegg(.x, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
+    )
   
-  cat("Saving figure\n")
+  cat("Saving table\n")
+  mSummary <- mSetLs %>%
+    imap(function(x, y) mutate(x$summary_df, Group = y)) %>%
+    bind_rows()
+  
+  tab2tsv(mSummary, opt$outFile)
+  
+  cat("Plotting\n")
   if(opt$figureType == "dotplot"){
     
-    mSet %>%
+    cat("Saving custom dotplot\n")
+    mSummary %>%
       plotPathHits() %>%
       fig2pdf(opt$outFile)
     
@@ -69,7 +78,17 @@ main <- function(opt){
     old_wd <- getwd()
     setwd(dirname(opt$outFile))
     
-    PlotPathSummary(mSet, TRUE, basename(opt$outFile), opt$fileType)
+    for(condition in names(mSetLs)){
+      
+      mSet <- mSetLs[[condition]]
+      mSet <- PlotPathSummary(mSet, TRUE, basename(opt$outFile), opt$fileType)
+      
+      file.rename(
+        paste(basename(opt$outFile), "dpi72.", opt$fileType, sep=""),
+        paste(basename(opt$outFile), "_", condition, ".", opt$fileType, sep="")
+      )
+      
+    }
     
     setwd(old_wd)
     
@@ -93,13 +112,16 @@ find_metabo_kegg <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
   setwd(tmpLocation)
   
-  mappable_compunds <- filter_mappable_compounds(hitlist)
+  mappable_compunds <- metabo_change %>%
+    .$Metabolite %>%
+    unique() %>%
+    filter_mappable_compounds()
   
   if(!is(metabo_change, "list")){
     mSet <- metabo_change %>%
       filter(Metabolite %in% mappable_compunds) %>%
       convert_cc_to_mSet(tmpLocation="tmp.csv", analysis_type="pathora") %>%
-      normalize_mSet(tmpLocation=tmpLocation)
+      normalize_mSet(tmpLocation=".")
   }
   
   mSet <- mSet %>%
