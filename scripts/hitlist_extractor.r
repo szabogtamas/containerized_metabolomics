@@ -84,6 +84,7 @@ main <- function(opt){
 generate_std_hitlist <- function(changeValues, nHit=25, metabCol="Metabolite", scoreCol="p.value", scoreDesc=FALSE, ...){
   
   changeValues %>%
+    map(~filter.x, !is.na(!!sym(scoreCol))) %>%
     map(
       function(x) {
         if(scoreDesc){
