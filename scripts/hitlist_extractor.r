@@ -26,6 +26,10 @@ scriptOptionalArgs <- list(
     default="p.value",
     help="Name of column with stats result (inverse score)."
   ),
+  scoreDesc = list(
+    default=FALSE,
+    help="If descending order of score should be taken."
+  ),
   outFile = list(
     default="hitlist",
     help="File path without extension to hitlist."
@@ -51,16 +55,17 @@ for (pk in c("tidyr", "dplyr", "purrr")){
 main <- function(opt){
   
   outFile <- opt$outFile
-
+  
   opt$help <- NULL
   opt$verbose <- NULL
   opt$commandRpath <- NULL
+  opt$baseDir <- NULL
   opt$outFile <- NULL
 
   cat("Generating hitlists\n")
   opt %>%
     do.call(generate_std_hitlist, .) %>%
-    paste(names(.), ., sep="::", collapse=",") %>%
+    {paste(names(.), map(., paste, collapse=","), sep=",")} %>%
     writeLines(paste(outFile, "txt", sep="."))
   
   invisible(NULL)
@@ -72,16 +77,23 @@ main <- function(opt){
 #' @param changeValues list. Metabolite score tables.
 #' @param nHit integer. Number of top hits to be extracted.
 #' @param metabCol string. Name of column to be extracted.
-#' @param cleanUp string. Name of column with stats result (inverse score).
+#' @param scoreCol string. Name of column with stats result (inverse score).
+#' @param scoreDesc string. If descending order of score should be taken.
 #' 
 #' @return list  List of hitslists for each condition.
-generate_std_hitlist <- function(changeValues, nHit=25, metabCol="Metabolite", scoreCol="p.value"){
+generate_std_hitlist <- function(changeValues, nHit=25, metabCol="Metabolite", scoreCol="p.value", scoreDesc=FALSE, ...){
   
   changeValues %>%
     map(
-      ~arrange(.x, !!sym(scoreCol))
+      function(x) {
+        if(scoreDesc){
+          arrange(x, desc(!!sym(scoreCol)))
+        } else {
+          arrange(x, !!sym(scoreCol))
+        }
+      }
     ) %>%
-    map(head(nHit)) %>%
+    map(head, nHit) %>%
     map(function(x) x[[metabCol]])
   
 }
