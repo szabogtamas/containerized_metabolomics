@@ -1,0 +1,94 @@
+#!/usr/bin/env Rscript
+
+if (exists("block_hitlist")) eval_blocker <- TRUE else eval_blocker <- NULL
+
+scriptDescription <- "Extract top N hits for ranked table and format hitlist."
+
+scriptMandatoryArgs <- list(
+  changeValues = list(
+    abbr="-i",
+    type="tables",
+    readoptions=list(stringsAsFactors=FALSE),
+    help="Metabolite names and a change measure or score."
+  )
+)
+
+scriptOptionalArgs <- list(
+  nHit = list(
+    default=25,
+    help="Number of top hits to be extracted."
+  ),
+  metabCol = list(
+    default="Metabolite",
+    help="Name of column to be extracted."
+  ),
+  scoreCol = list(
+    default="p.value",
+    help="Name of column with stats result (inverse score)."
+  ),
+  outFile = list(
+    default="hitlist",
+    help="File path without extension to hitlist."
+  ),
+  commandRpath = list(
+    default="/home/rstudio/repo_files/scripts/commandR.r",
+    help="Path to command line connectivity script (if not in cwd)."
+  )
+)
+
+for (pk in c("tidyr", "dplyr", "purrr")){
+  if(!(pk %in% (.packages()))){
+    library(pk, character.only=TRUE)
+  }
+}
+
+#' The main function of the script, executed only if called from command line.
+#' Calls subfunctions according to supplied command line arguments.
+#' 
+#' @param opt list. a named list of all command line options; will be passed on 
+#' 
+#' @return Not intended to return anything, but rather to save outputs to files.
+main <- function(opt){
+  
+  outFile <- opt$outFile
+
+  opt$help <- NULL
+  opt$verbose <- NULL
+  opt$commandRpath <- NULL
+  opt$outFile <- NULL
+
+  cat("Generating hitlists\n")
+  opt %>%
+    do.call(generate_std_hitlist, .) %>%
+    paste(names(.), ., sep="::", collapse=",") %>%
+    writeLines(paste(outFile, "txt", sep="."))
+  
+  invisible(NULL)
+}
+
+
+#' Generate hitlsts from score tables that can be parsed by ORA or Venn-like plots
+#' 
+#' @param changeValues list. Metabolite score tables.
+#' @param nHit integer. Number of top hits to be extracted.
+#' @param metabCol string. Name of column to be extracted.
+#' @param cleanUp string. Name of column with stats result (inverse score).
+#' 
+#' @return list  List of hitslists for each condition.
+generate_std_hitlist <- function(changeValues, nHit=25, metabCol="Metabolite", scoreCol="p.value"){
+  
+  changeValues %>%
+    map(
+      ~arrange(.x, !!sym(scoreCol))
+    ) %>%
+    map(head(nHit)) %>%
+    map(function(x) x[[metabCol]])
+  
+}
+
+# Ensuring command line connectivity by sourcing an argument parser
+rg <- commandArgs()
+if("--commandRpath" %in% rg){
+  scriptOptionalArgs$commandRpath$default <- rg[[which(rg == "--commandRpath") + 1]]
+}
+source(scriptOptionalArgs$commandRpath$default, local=TRUE, chdir=FALSE)
