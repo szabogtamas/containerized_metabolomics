@@ -30,6 +30,11 @@ scriptOptionalArgs <- list(
     default=FALSE,
     help="If descending order of score should be taken."
   ),
+  tabLabels = list(
+    default=NULL,
+    type="vector",
+    help="Labels to be associated with input tables."
+  ),
   outFile = list(
     default="hitlist",
     help="File path without extension to hitlist."
@@ -53,20 +58,16 @@ for (pk in c("tidyr", "dplyr", "purrr")){
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
-  
-  outFile <- opt$outFile
-  
-  opt$help <- NULL
-  opt$verbose <- NULL
-  opt$commandRpath <- NULL
-  opt$baseDir <- NULL
-  opt$outFile <- NULL
+
+  if(!is.null(opt$tabLabels)){
+    names(opt$changeValues) <- opt$tabLabels
+  }
 
   cat("Generating hitlists\n")
   opt %>%
     do.call(generate_std_hitlist, .) %>%
     {paste(names(.), map(., paste, collapse=","), sep=",")} %>%
-    writeLines(paste(outFile, "txt", sep="."))
+    writeLines(paste(opt$outFile, "txt", sep="."))
   
   invisible(NULL)
 }
