@@ -20,6 +20,11 @@ scriptOptionalArgs <- list(
     default="path_ora",
     help="File path without extension to overrepresented pathways summary figure."
   ),
+  conditionLabels = list(
+    default=NULL,
+    type="vector",
+    help="Labels to be associated with input tables."
+  ),
   fileType = list(
     default="pdf",
     help="File extension for figure."
@@ -54,8 +59,15 @@ main <- function(opt){
   
   cat("Calculating ORA on metabolic pathways\n")
   ora_paths <- list()
-  
-  if(length(opt$hitList) == 1) names(opt$hitList) <- "_"
+
+  if(is.null(opt$conditionLabels)){
+    if(length(opt$hitList) == 1) names(opt$hitList) <- "_"
+  } else {
+    for(nm in names(opt$hitList)){
+      opt$hitList[nm] <- c(nm, opt$hitList[nm])
+    }
+    names(opt$hitList) <- opt$hitList
+  }
   
   for (condition in names(opt$hitList)){
     

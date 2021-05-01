@@ -20,6 +20,11 @@ scriptOptionalArgs <- list(
     default="path_kegg",
     help="File path without extension to enriched pathways summary figure."
   ),
+  tabLabels = list(
+    default=NULL,
+    type="vector",
+    help="Labels to be associated with input tables."
+  ),
   fileType = list(
     default="pdf",
     help="File extension for figure."
@@ -52,6 +57,10 @@ for (pk in c("tidyr", "dplyr", "purrr", "tibble", "ggplot2", "MetaboAnalystR")){
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
   
+  if(!is.null(opt$tabLabels)){
+    names(opt$changeValues) <- opt$tabLabels
+  }
+
   cat("Calculating enrichment of metabolic KEGG pathways\n")
   mSetLs <- opt$changeValues %>%
     map(
