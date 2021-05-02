@@ -66,11 +66,16 @@ main <- function(opt){
   
   cat("Saving figure\n")
   if(opt$figureType == "volcano"){
-    
-    stats_data %>%
-      plotMetaboVolcano() %>%
-      fig2pdf(opt$outFile)
-    
+    if(nrow(stats_data) > 0){
+      stats_data %>%
+        plotMetaboVolcano() %>%
+        fig2pdf(opt$outFile)
+    } else {
+      p <- ggplot() +
+        theme_void() +
+        geom_text(aes(0, 0, label="No significant events to plot"))
+      fig2pdf(p, opt$outFile)
+    }
   } else {
     
     tmp_wd <- getwd()
