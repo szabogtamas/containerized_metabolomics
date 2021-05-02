@@ -143,7 +143,7 @@ extract_stat_from_mSet <- function(mSet){
   print(colnames(fc_df))
   colnames(fc_df) <- c("Metabolite", "FC", "logFC")
   print(names(mSet$analSet$tt))
-  print(mSet$analSet$tt)
+  print(head(mSet$analSet$tt$sig.mat))
   tt_df <- mSet %>%
     .$analSet %>%
     .$tt %>%
