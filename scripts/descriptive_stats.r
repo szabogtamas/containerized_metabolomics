@@ -148,8 +148,12 @@ extract_stat_from_mSet <- function(mSet){
     .$sig.mat %>%
     data.frame() %>%
     tibble::rownames_to_column("Metabolite")
+  if(ncol(tt_df) == 5){
+    colnames(tt_df) <- c("Metabolite", "t.stat", "p.value", "logP", "FDR")
+  } else { # There were no significant changes, probably
+    tt_df <- data.frame(Metabolite=c(), t.stat=c(), p.value=c(), logP=c(), FDR=c())
+  }
   
-  colnames(tt_df) <- c("Metabolite", "t.stat", "p.value", "logP", "FDR")
   
   full_join(fc_df, tt_df, by="Metabolite")
   
