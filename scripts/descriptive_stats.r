@@ -140,10 +140,8 @@ extract_stat_from_mSet <- function(mSet){
     data.frame() %>%
     tibble::rownames_to_column("Metabolite")
   
-  print(colnames(fc_df))
   colnames(fc_df) <- c("Metabolite", "FC", "logFC")
-  print(names(mSet$analSet$tt))
-  print(head(mSet$analSet$tt$sig.mat))
+
   tt_df <- mSet %>%
     .$analSet %>%
     .$tt %>%
@@ -151,7 +149,6 @@ extract_stat_from_mSet <- function(mSet){
     data.frame() %>%
     tibble::rownames_to_column("Metabolite")
   
-  print(colnames(tt_df))
   colnames(tt_df) <- c("Metabolite", "t.stat", "p.value", "logP", "FDR")
   
   full_join(fc_df, tt_df, by="Metabolite")
@@ -166,7 +163,7 @@ extract_stat_from_mSet <- function(mSet){
 #' @return A ggplot with the Volcano.
 plotMetaboVolcano <- function(stats_data){
   
-  if(is(stats_data, "list")){
+  if(!is.data.frame(stats_data)){
     stats_data <- extract_stat_from_mSet(stats_data)
   }
   
