@@ -140,6 +140,7 @@ extract_stat_from_mSet <- function(mSet){
     data.frame() %>%
     tibble::rownames_to_column("Metabolite")
   
+  print(colnames(fc_df))
   colnames(fc_df) <- c("Metabolite", "FC", "logFC")
   
   tt_df <- mSet %>%
@@ -149,6 +150,7 @@ extract_stat_from_mSet <- function(mSet){
     data.frame() %>%
     tibble::rownames_to_column("Metabolite")
   
+  print(colnames(tt_df))
   colnames(tt_df) <- c("Metabolite", "t.stat", "p.value", "logP", "FDR")
   
   full_join(fc_df, tt_df, by="Metabolite")
