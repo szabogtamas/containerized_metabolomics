@@ -34,8 +34,40 @@ process runDescStats {
 
 
 /*
+        *Rank metabolites based on multivariate ROC performance
+*/
+Channel
+    .fromPath(params.input_folder + '/*.*')
+    .map{[params.mroc_tag, it.baseName + '_mroc', it]}
+    .set{input_mroc_tabs}
+
+process runMultiROC {
+
+    publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? "../tables/$it" : "../figures/$it" }, mode: 'copy'
+    containerOptions '--bind /data:/data'
+    echo true
+
+    input:
+        tuple testtag, tag, conc_tab from input_mroc_tabs
+
+    output:
+        tuple testtag, tag, "${tag}.tsv", "${tag}.pdf" into mroc_stats
+
+    """
+    Rscript /home/rstudio/repo_files/scripts/multivariate_roc.r\
+    --outFile $tag\
+    -i $conc_tab
+
+    """
+}
+
+
+/*
         *Create hitlists from stats tables
 */
+desc_stats
+    .mix(mroc_stats)
+    .into{ stat_tabs; stat_for_msea; stat_for_kegg }
 
 process hitlistCreator {
     
@@ -43,7 +75,7 @@ process hitlistCreator {
     echo true
 
     input:
-        tuple testtag, tag, score_tab, score_plot from desc_stats
+        tuple testtag, tag, score_tab, score_plot from stat_tabs
 
     output:
         tuple testtag, hit_list into top_hits
