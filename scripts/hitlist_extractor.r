@@ -66,7 +66,7 @@ main <- function(opt){
   cat("Generating hitlists\n")
   opt %>%
     do.call(generate_std_hitlist, .) %>%
-    function(x) nrow(x) > 0 %>%
+    keep(function(x) nrow(x) > 0) %>%
     {paste(names(.), map(., paste, collapse=","), sep=",")} %>%
     writeLines(paste(opt$outFile, "txt", sep="."))
   
