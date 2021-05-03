@@ -63,12 +63,17 @@ main <- function(opt){
   if(opt$figureType == "boxes"){
     
     featureMat <- calcMultiROC(input)
-    
-    cat("Drawing ggplot\n")
-    featureMat %>%
-      plotROCfeat() %>%
-      fig2pdf(opt$outFile)
-    
+
+    if(nrow(featureMat) > 0){
+      featureMat %>%
+        plotROCfeat() %>%
+        fig2pdf(opt$outFile)
+    } else {
+      p <- ggplot() +
+        theme_void() +
+        geom_text(aes(0, 0, label="No significant events to plot"))
+      fig2pdf(p, opt$outFile)
+    }
   } else {
     featureMat <- calcMultiROC(
       input, tmpLocation=opt$tmpLocation, figureLocation=opt$outFile, fileType=opt$fileType
