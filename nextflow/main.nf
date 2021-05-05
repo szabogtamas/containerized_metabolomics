@@ -46,13 +46,12 @@ process hitlistCreator {
         tuple testtag, tag, score_tab, score_plot from desc_stats
 
     output:
-        tuple testtag, hit_list into top_hits
+        tuple testtag, "hits_${tag}.txt" into top_hits
 
     """
-    ls /home/rstudio/repo_files/scripts/
-    #Rscript /home/rstudio/repo_files/scripts/hitlist_extractor.r\
-    #--outFile $tag\
-    #-i $score_tab
+    Rscript /home/rstudio/repo_files/scripts/hitlist_extractor.r\
+    --outFile hits_$tag\
+    -i $score_tab
 
     """
 } 
