@@ -30,9 +30,11 @@ RUN sudo wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-li
 RUN sudo tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2 -C /usr/local/share/
 RUN sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/
 
-RUN cd /usr/local/bin
+RUN cd /tmp
 RUN wget -qO- https://get.nextflow.io | bash
-RUN chmod +x nextflow
+RUN mv nextflow /usr/local/bin/nextflow
+RUN chmod +x /usr/local/bin/nextflow
+ENV PATH="/usr/local/bin:${PATH}"
 
 RUN install2.r --error \
     --deps TRUE \

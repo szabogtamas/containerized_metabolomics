@@ -66,7 +66,7 @@ main <- function(opt){
   cat("Generating hitlists\n")
   opt %>%
     do.call(generate_std_hitlist, .) %>%
-    keep(function(x) nrow(x) > 0) %>%
+    keep(function(x) length(x) > 0) %>%
     {paste(names(.), map(., paste, collapse=","), sep=",")} %>%
     writeLines(paste(opt$outFile, "txt", sep="."))
   
@@ -86,7 +86,7 @@ main <- function(opt){
 generate_std_hitlist <- function(changeValues, nHit=25, metabCol="Metabolite", scoreCol="p.value", scoreDesc=FALSE, ...){
   
   changeValues %>%
-    map(~filter.x, !is.na(!!sym(scoreCol))) %>%
+    map(~filter(.x, !is.na(!!sym(scoreCol)))) %>%
     map(
       function(x) {
         if(scoreDesc){
