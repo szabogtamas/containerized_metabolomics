@@ -131,14 +131,18 @@ parser4tsv <- function(opt, rn, rg, rv=NULL){
       x <- unlist(strsplit(x, ":", fixed=TRUE))
       if (length(x) > 1){
         rg$readoptions <- guess_table_sep(x[2], rg$readoptions)
-        if (!file.size(x) == 0) {
+        if (!file.size(x[2]) == 0) {
           nl[[x[2]]] <- do.call(read.csv, c(list(x[2]), rg[["readoptions"]]))
         } else {
           nl[[x[1]]] <- NULL
         }
       } else {
         rg$readoptions <- guess_table_sep(x[1], rg$readoptions)
-        nl[[paste0("Condition_", n)]] <- do.call(read.csv, c(list(x[1]), rg[["readoptions"]]))
+        if (!file.size(x[1]) == 0) {
+          nl[[paste0("Condition_", n)]] <- do.call(read.csv, c(list(x[1]), rg[["readoptions"]]))
+        } else {
+          nl[[paste0("Condition_", n)]] <- NULL
+        }
       }
     }
     opt[[rn]] <- nl
