@@ -71,63 +71,68 @@ main <- function(opt){
   
   for (condition in names(opt$hitList)){
     
-    cat("Calculating ORA for", condition, "\n")
     hitlist <- opt$hitList[[condition]]
     
-    if(condition == "_"){
-      condition <- ""
-      outFile <- opt$outFile
-    } else {
-      outFile <- paste(opt$outFile, condition, sep="_")
-    }
-    
-    mSet <- find_metabo_ora(hitlist, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
-    
-    ora_paths[[condition]] <- mSet %>%
-      .$summary_df %>%
-      mutate(Group = condition)
-    
-    if(opt$figureType != "dotplot"){
+    if(!is.null(hitlist)){
       
-      cat("Saving built-in figure for", condition, "\n")
-      
-      old_wd <- getwd()
-      setwd(dirname(outFile))
-      
-      if(opt$figureType == "bar"){
-        PlotORA(mSet, basename(outFile), "bar", opt$fileType)
+      cat("Calculating ORA for", condition, "\n")
+    
+      if(condition == "_"){
+        condition <- ""
+        outFile <- opt$outFile
       } else {
-        PlotORA(mSet, basename(outFile), "net", opt$fileType)
+        outFile <- paste(opt$outFile, condition, sep="_")
       }
-      file.rename(
-        paste(basename(outFile), "dpi72.", opt$fileType, sep=""),
-        paste(basename(outFile), opt$fileType, sep=".")
-      )
       
-      setwd(old_wd)
+      mSet <- find_metabo_ora(hitlist, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
+      
+      ora_paths[[condition]] <- mSet %>%
+        .$summary_df %>%
+        mutate(Group = condition)
+      
+      if(opt$figureType != "dotplot"){
+        
+        cat("Saving built-in figure for", condition, "\n")
+        
+        old_wd <- getwd()
+        setwd(dirname(outFile))
+        
+        if(opt$figureType == "bar"){
+          PlotORA(mSet, basename(outFile), "bar", opt$fileType)
+        } else {
+          PlotORA(mSet, basename(outFile), "net", opt$fileType)
+        }
+        file.rename(
+          paste(basename(outFile), "dpi72.", opt$fileType, sep=""),
+          paste(basename(outFile), opt$fileType, sep=".")
+        )
+        
+        setwd(old_wd)
+        
+      }
       
     }
     
-  }
-  
-  if(length(ora_paths) > 1){
-    ora_paths <- bind_rows(ora_paths)
-  } else {
-    ora_paths <- ora_paths[[1]]
-  }
-  
-  if(opt$figureType == "dotplot"){
+    if(length(ora_paths) > 1){
+      ora_paths <- bind_rows(ora_paths)
+    } else {
+      ora_paths <- ora_paths[[1]]
+    }
     
-    cat("Saving figure\n")
-    ora_paths %>%
-      plotPathHits() %>%
-      fig2pdf(opt$outFile)
+    if(opt$figureType == "dotplot"){
+      
+      cat("Saving figure\n")
+      ora_paths %>%
+        plotPathHits() %>%
+        fig2pdf(opt$outFile)
+      
+    }
     
-  }
-  
-  cat("Saving table\n")
-  tab2tsv(ora_paths, opt$outFile)
-  
+    cat("Saving table\n")
+    tab2tsv(ora_paths, opt$outFile)
+      
+    }
+      
   invisible(NULL)
 }
 
