@@ -103,6 +103,22 @@ guess_table_sep <- function(filename, readoptions){
   }
   return(readoptions)
 }
+
+
+#' Read a csv or tsv file and return NULL if file is empty.
+#' 
+#' @param fn string.         File name to read
+#' @param readoptions, list. List of options to be unpacked and passed over to read.csv
+#' 
+#' @return list.
+read_nonempty_table <- function(fn, ...){
+  if (!file.size(fn) == 0) {
+          tab <- do.call(read.csv, c(list(fn), list(...)))
+        } else {
+          tab <- NULL
+        }
+  return(tab)
+}
   
   
 #' Read multiple tables into a named list.
@@ -131,18 +147,10 @@ parser4tsv <- function(opt, rn, rg, rv=NULL){
       x <- unlist(strsplit(x, ":", fixed=TRUE))
       if (length(x) > 1){
         rg$readoptions <- guess_table_sep(x[2], rg$readoptions)
-        if (!file.size(x[2]) == 0) {
-          nl[[x[2]]] <- do.call(read.csv, c(list(x[2]), rg[["readoptions"]]))
-        } else {
-          nl[[x[1]]] <- NULL
-        }
+        nl[[x[1]]] <- read_nonempty_table(nl[[x[2]]], rg$readoptions)
       } else {
         rg$readoptions <- guess_table_sep(x[1], rg$readoptions)
-        if (!file.size(x[1]) == 0) {
-          nl[[paste0("Condition_", n)]] <- do.call(read.csv, c(list(x[1]), rg[["readoptions"]]))
-        } else {
-          nl[[paste0("Condition_", n)]] <- NULL
-        }
+        nl[[paste0("Condition_", n)]] <- read_nonempty_table(nl[[x[1]]], rg$readoptions)
       }
     }
     opt[[rn]] <- nl
