@@ -72,7 +72,7 @@ main <- function(opt){
   for (condition in names(opt$hitList)){
     
     hitlist <- opt$hitList[[condition]]
-    
+
     if(!is.null(hitlist)){
       
       cat("Calculating ORA for", condition, "\n")
@@ -127,11 +127,17 @@ main <- function(opt){
         fig2pdf(opt$outFile)
       
     }
+  } else {
+
+    ora_paths <- data.frame(Pathway=c(), hitRatio=c(), Raw.p=c()) 
+
+    cat("Empty figure\n")
+      p <- ggplot() + theme_void()
+      fig2pdf(p, opt$outFile)
+  }
     
-    cat("Saving table\n")
-    tab2tsv(ora_paths, opt$outFile)
-      
-    }
+  cat("Saving table\n")
+  tab2tsv(ora_paths, opt$outFile)
       
   invisible(NULL)
 }
