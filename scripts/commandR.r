@@ -137,7 +137,7 @@ parser4tsv <- function(opt, rn, rg, rv=NULL){
   }
   if (rg[["type"]] == "table") {
     rg$readoptions <- guess_table_sep(rv, rg$readoptions)
-    opt[[rn]] <- do.call(read.csv, c(list(rv), rg[["readoptions"]]))
+    opt[[rn]] <- read_nonempty_table(list(rv), rg$readoptions)
   } else {
     nl <- list()
     sl <- unlist(strsplit(rv, ",", fixed=TRUE))
