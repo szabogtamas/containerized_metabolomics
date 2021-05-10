@@ -111,9 +111,9 @@ guess_table_sep <- function(filename, readoptions){
 #' @param readoptions, list. List of options to be unpacked and passed over to read.csv
 #' 
 #' @return list.
-read_nonempty_table <- function(fn, ...){
+read_nonempty_table <- function(fn, readoptions){
   if (!file.size(fn) == 0) {
-          tab <- do.call(read.csv, c(list(fn), list(...)))
+          tab <- do.call(read.csv, c(list(fn), list(readoptions)))
         } else {
           tab <- NULL
         }
@@ -137,7 +137,7 @@ parser4tsv <- function(opt, rn, rg, rv=NULL){
   }
   if (rg[["type"]] == "table") {
     rg$readoptions <- guess_table_sep(rv, rg$readoptions)
-    opt[[rn]] <- read_nonempty_table(list(rv), rg$readoptions)
+    opt[[rn]] <- read_nonempty_table(rv, rg$readoptions)
   } else {
     nl <- list()
     sl <- unlist(strsplit(rv, ",", fixed=TRUE))
