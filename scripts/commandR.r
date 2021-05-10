@@ -147,10 +147,10 @@ parser4tsv <- function(opt, rn, rg, rv=NULL){
       x <- unlist(strsplit(x, ":", fixed=TRUE))
       if (length(x) > 1){
         rg$readoptions <- guess_table_sep(x[2], rg$readoptions)
-        nl[[x[1]]] <- read_nonempty_table(nl[[x[2]]], rg$readoptions)
+        nl[[x[1]]] <- read_nonempty_table(x[2], rg$readoptions)
       } else {
         rg$readoptions <- guess_table_sep(x[1], rg$readoptions)
-        nl[[paste0("Condition_", n)]] <- read_nonempty_table(nl[[x[1]]], rg$readoptions)
+        nl[[paste0("Condition_", n)]] <- read_nonempty_table(x[1]]], rg$readoptions)
       }
     }
     opt[[rn]] <- nl
