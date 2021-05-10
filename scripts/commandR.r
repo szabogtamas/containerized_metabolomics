@@ -112,11 +112,12 @@ guess_table_sep <- function(filename, readoptions){
 #' 
 #' @return list.
 read_nonempty_table <- function(fn, readoptions){
+  readoptions <- guess_table_sep(fn, readoptions)
   if (!file.size(fn) == 0) {
-          tab <- do.call(read.csv, c(list(fn), list(readoptions)))
-        } else {
-          tab <- NULL
-        }
+    tab <- do.call(read.csv, c(list(fn), list(readoptions)))
+  } else {
+    tab <- NULL
+  }
   return(tab)
 }
   
@@ -136,7 +137,6 @@ parser4tsv <- function(opt, rn, rg, rv=NULL){
     rg <- rg[[rn]]
   }
   if (rg[["type"]] == "table") {
-    rg$readoptions <- guess_table_sep(rv, rg$readoptions)
     opt[[rn]] <- read_nonempty_table(rv, rg$readoptions)
   } else {
     nl <- list()
@@ -146,10 +146,8 @@ parser4tsv <- function(opt, rn, rg, rv=NULL){
       n <- n+1
       x <- unlist(strsplit(x, ":", fixed=TRUE))
       if (length(x) > 1){
-        rg$readoptions <- guess_table_sep(x[2], rg$readoptions)
         nl[[x[1]]] <- read_nonempty_table(x[2], rg$readoptions)
       } else {
-        rg$readoptions <- guess_table_sep(x[1], rg$readoptions)
         nl[[paste0("Condition_", n)]] <- read_nonempty_table(x[1]]], rg$readoptions)
       }
     }
