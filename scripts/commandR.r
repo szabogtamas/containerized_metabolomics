@@ -148,7 +148,7 @@ parser4tsv <- function(opt, rn, rg, rv=NULL){
       if (length(x) > 1){
         nl[[x[1]]] <- read_nonempty_table(x[2], rg$readoptions)
       } else {
-        nl[[paste0("Condition_", n)]] <- read_nonempty_table(x[1]]], rg$readoptions)
+        nl[[paste0("Condition_", n)]] <- read_nonempty_table(x[1], rg$readoptions)
       }
     }
     opt[[rn]] <- nl
