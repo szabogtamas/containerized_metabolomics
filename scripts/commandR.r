@@ -116,7 +116,7 @@ read_nonempty_table <- function(fn, readoptions){
   if (!file.size(fn) == 0) {
     print(fn)
     print(readoptions)
-    tab <- do.call(read.csv, c(list(fn), list(readoptions)))
+    tab <- do.call(read.csv, c(list(fn), readoptions))
   } else {
     tab <- NULL
   }
