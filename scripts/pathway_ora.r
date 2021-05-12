@@ -66,7 +66,7 @@ main <- function(opt){
     for(nm in names(opt$hitList)){
       opt$hitList[nm] <- c(nm, opt$hitList[nm])
     }
-    names(opt$hitList) <- opt$hitList
+    names(opt$hitList) <- opt$conditionLabels
   }
   
   for (condition in names(opt$hitList)){
@@ -108,17 +108,17 @@ main <- function(opt){
         )
         
         setwd(old_wd)
-        
       }
-      
     }
+  }
     
-    if(length(ora_paths) > 1){
-      ora_paths <- bind_rows(ora_paths)
-    } else {
-      ora_paths <- ora_paths[[1]]
-    }
+  if(length(ora_paths) > 1){
+    ora_paths <- bind_rows(ora_paths)
+  } else {
+    ora_paths <- ora_paths[[1]]
+  }
     
+  if(nrow(ora_paths) > 0){
     if(opt$figureType == "dotplot"){
       
       cat("Saving figure\n")
