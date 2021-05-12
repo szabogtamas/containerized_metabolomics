@@ -114,6 +114,8 @@ guess_table_sep <- function(filename, readoptions){
 read_nonempty_table <- function(fn, readoptions){
   readoptions <- guess_table_sep(fn, readoptions)
   if (!file.size(fn) == 0) {
+    print(fn)
+    print(readoptions)
     tab <- do.call(read.csv, c(list(fn), list(readoptions)))
   } else {
     tab <- NULL
