@@ -161,7 +161,11 @@ filter_mappable_compounds <- function(hitlist, tmpLocation="tmp", cleanUp=TRUE){
     Setup.MapData(hitlist) %>%
     CrossReferencing("name")
   
-  mappable_compunds <- mSet$name.map$query.vec[mSet$name.map$match.state == 1]
+  if(!is.null(mSet$name.map)){
+    mappable_compunds <- mSet$name.map$query.vec[mSet$name.map$match.state == 1]
+  } else {
+    mappable_compunds <- c()
+  }
   
   setwd(old_wd)
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
