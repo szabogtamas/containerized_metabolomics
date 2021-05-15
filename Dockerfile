@@ -32,8 +32,10 @@ RUN sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/
 
 RUN cd /tmp
 RUN wget -qO- https://get.nextflow.io | bash
-RUN mv nextflow /usr/local/bin/nextflow
-RUN chmod +x /usr/local/bin/nextflow
+RUN mv nextflow /usr/local/bin/nextflow  &&\
+  sudo chmod 777 /usr/local/bin/nextflow &&\
+  sudo chown rstudio /usr/local/bin/nextflow &&\
+  sudo chmod a+r /opt/nextflow/framework/20.10.0/nextflow-20.10.0-one.jar
 ENV PATH="/usr/local/bin:${PATH}"
 
 RUN install2.r --error \
