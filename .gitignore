@@ -5,6 +5,9 @@
 # Input and output datasets
 data/
 results/
+nextflow/work
+nextflow/input_data
+nextflow/.nextflow*
 .secrets/
 # User-specific files
 *.rsuser
