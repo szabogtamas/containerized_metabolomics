@@ -10,7 +10,7 @@ scriptMandatoryArgs <- list(
   inFile = list(
     abbr="-i",
     type="table",
-    readoptions=list(sep="\t", stringsAsFactors=FALSE),
+    readoptions=list(stringsAsFactors=FALSE),
     help="Table of metobolite abundances."
   )
 )
