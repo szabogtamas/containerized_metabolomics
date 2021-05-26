@@ -23,11 +23,11 @@ scriptOptionalArgs <- list(
     help="Name of column to be extracted."
   ),
   scoreCol = list(
-    default="p.value",
+    default="Importance",
     help="Name of column with stats result (inverse score)."
   ),
   scoreDesc = list(
-    default=FALSE,
+    default=TRUE,
     help="If descending order of score should be taken."
   ),
   tabLabels = list(
@@ -80,10 +80,10 @@ main <- function(opt){
 #' @param nHit integer. Number of top hits to be extracted.
 #' @param metabCol string. Name of column to be extracted.
 #' @param scoreCol string. Name of column with stats result (inverse score).
-#' @param scoreDesc string. If descending order of score should be taken.
+#' @param scoreDesc string. If descending order of score should be taken, typically for pvalue.
 #' 
 #' @return list  List of hitslists for each condition.
-generate_std_hitlist <- function(changeValues, nHit=25, metabCol="Metabolite", scoreCol="p.value", scoreDesc=FALSE, ...){
+generate_std_hitlist <- function(changeValues, nHit=25, metabCol="Metabolite", scoreCol="Importance", scoreDesc=TRUE, ...){
   
   changeValues %>%
     map(~filter(.x, !is.na(!!sym(scoreCol)))) %>%
