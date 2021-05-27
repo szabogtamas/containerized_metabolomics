@@ -68,7 +68,7 @@ standardize_metabo_data <- function(input_data, argList=NULL){
   if(is.null(argList)) argList <- list(
     inFile = list(
       type="table",
-      readoptions=list(stringsAsFactors=FALSE),
+      readoptions=list(stringsAsFactors=FALSE)
     )
   )
   
