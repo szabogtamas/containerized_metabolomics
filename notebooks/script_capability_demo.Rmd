@@ -55,7 +55,7 @@ print(test_data_file)
 ```{r}
 # Parse test input
 
-metabo_data <-standardize_metabo_data(test_data_file)
+metabo_data <- standardize_metabo_data(test_data_file)
 
 datatable(metabo_data)
 ```

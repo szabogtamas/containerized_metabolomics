@@ -63,11 +63,18 @@ main <- function(opt){
 #' @param input_data dataframe. The primary input
 #' 
 #' @return dtaframe Standardized and reshaped to a long format.
-standardize_metabo_data <- function(input_data){
+standardize_metabo_data <- function(input_data, argList=NULL){
+  
+  if(is.null(argList)) argList <- list(
+    inFile = list(
+      type="table",
+      readoptions=list(stringsAsFactors=FALSE),
+    )
+  )
   
   if(is.character(input_data) & length(input_data) == 1){
     warning(paste("Parsing data in file:", input_data, sep="\n"))
-    input_data <- scriptMandatoryArgs %>%
+    input_data <- argList %>%
       parser4tsv(., "inFile", .["inFile"], input_data) %>%
       .$inFile
   }
