@@ -59,7 +59,7 @@ for (pk in c("tidyr", "dplyr", "purrr")){
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
 
-  if(!is.null(opt$tabLabels)){
+  if(!is.null(opt$tabLabels) & length(opt$changeValues) == length(opt$tabLabels)){
     names(opt$changeValues) <- opt$tabLabels
   }
 
