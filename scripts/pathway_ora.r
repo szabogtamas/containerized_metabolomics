@@ -151,7 +151,7 @@ main <- function(opt){
 #' 
 #' @return character. Compounds that could be mapped.
 filter_mappable_compounds <- function(hitlist, tmpLocation="tmp", cleanUp=TRUE){
-  
+  print(hitlist)
   old_wd <- getwd()
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
   setwd(tmpLocation)
