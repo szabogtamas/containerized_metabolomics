@@ -16,7 +16,6 @@ process runDescStats {
 
     publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? "../tables/$it" : "../figures/$it" }, mode: 'copy'
     containerOptions '--bind /data:/data'
-    echo true
 
     input:
         tuple testtag, tag, conc_tab from input_tabs
@@ -45,7 +44,6 @@ process runMultiROC {
 
     publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? "../tables/$it" : "../figures/$it" }, mode: 'copy'
     containerOptions '--bind /data:/data'
-    echo true
 
     input:
         tuple testtag, tag, conc_tab from input_mroc_tabs
@@ -72,7 +70,6 @@ desc_stats
 process hitlistCreator {
     
     containerOptions '--bind /data:/data'
-    echo true
 
     input:
         tuple testtag, tag, score_tab, score_plot from stat_tabs
@@ -83,6 +80,7 @@ process hitlistCreator {
     """
     Rscript /home/rstudio/repo_files/scripts/hitlist_extractor.r\
     --outFile hits_$tag\
+    --tabLabels $tag\
     -i $score_tab
 
     """
