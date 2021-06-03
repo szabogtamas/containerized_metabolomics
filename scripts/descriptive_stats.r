@@ -152,8 +152,7 @@ extract_stat_from_mSet <- function(mSet){
     .$tt %>%
     .$sig.mat %>%
     data.frame() %>%
-    tibble::rownames_to_column("Metabolite") %>%
-    mutate(Importance = -log10(p.value))
+    tibble::rownames_to_column("Metabolite")
   
   if(ncol(tt_df) == 5){
     colnames(tt_df) <- c("Metabolite", "t.stat", "p.value", "logP", "FDR")
