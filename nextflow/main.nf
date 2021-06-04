@@ -113,3 +113,21 @@ process pwORA {
     -i  $score_tab
     """
 } 
+
+process pwMSEA {
+    
+    containerOptions '--bind /data:/data'
+    echo true
+    publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? "../tables/$it" : "../figures/$it" }, mode: 'copy'
+
+    input:
+        tuple testtag, score_tab from stat_for_msea
+
+    output:
+        tuple "${testtag}_msea.tsv", "${testtag}_msea.pdf" into msea_stats
+
+    """
+    Rscript /home/rstudio/repo_files/scripts/pathway_msea.r\
+    -i  $score_tab
+    """
+} 
