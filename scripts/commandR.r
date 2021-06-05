@@ -169,7 +169,7 @@ parser4nested <- function(opt, rn, rv=NULL){
   if (!is.null(rv)){
     opt[[rn]] <- rv
   }
-  sl <- unlist(strsplit(opt[[rn]], "::", fixed=TRUE))
+  sl <- unlist(strsplit(gsub("::$", "", opt[[rn]]), "::", fixed=TRUE))
   for (x in sl){
     x <- unlist(strsplit(x, ",", fixed=TRUE))
     if (length(sl) > 1){
