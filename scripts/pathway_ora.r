@@ -193,41 +193,44 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
     error=function(cond) return(c())
   )    
   
-  mSet <- NULL
-  mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
-    Setup.MapData(mappable_compunds) %>%
-    CrossReferencing("name") %>%
-    CreateMappingResultTable() %>%
-    SetMetabolomeFilter(FALSE) %>%
-    SetCurrentMsetLib("smpdb_pathway", 2) %>%
-    CalculateHyperScore()
-  
-  pw_hit_link <- mSet %>%
-    .$analSet %>%
-    .$ora.hits %>%
-    enframe(name="Pathway", value="Hits") %>%
-    unnest(Hits) %>%
-    group_by(Pathway) %>%
-    mutate(
-      Hits = paste(Hits, collapse="; ")
-    ) %>%
-    ungroup() %>%
-    distinct()
-  
-  pathway_data <- mSet %>%
-    .$analSet %>%
-    .$ora.mat %>%
-    data.frame() %>%
-    rownames_to_column("Pathway") %>%
-    rename(nHits = hits) %>%
-    mutate(hitRatio = nHits/total) %>%
-    left_join(pw_hit_link, by="Pathway")
-  
-  if(keep_mSet){
-    mSet$summary_df <- pathway_data
-  } else {
-    mSet <- pathway_data
+  if(length(mappable_compunds) > 1){
+    mSet <- NULL
+    mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
+      Setup.MapData(mappable_compunds) %>%
+      CrossReferencing("name") %>%
+      CreateMappingResultTable() %>%
+      SetMetabolomeFilter(FALSE) %>%
+      SetCurrentMsetLib("smpdb_pathway", 2) %>%
+      CalculateHyperScore()
+    
+    pw_hit_link <- mSet %>%
+      .$analSet %>%
+      .$ora.hits %>%
+      enframe(name="Pathway", value="Hits") %>%
+      unnest(Hits) %>%
+      group_by(Pathway) %>%
+      mutate(
+        Hits = paste(Hits, collapse="; ")
+      ) %>%
+      ungroup() %>%
+      distinct()
+    
+    pathway_data <- mSet %>%
+      .$analSet %>%
+      .$ora.mat %>%
+      data.frame() %>%
+      rownames_to_column("Pathway") %>%
+      rename(nHits = hits) %>%
+      mutate(hitRatio = nHits/total) %>%
+      left_join(pw_hit_link, by="Pathway")
+    
+    if(keep_mSet){
+      mSet$summary_df <- pathway_data
+    } else {
+      mSet <- pathway_data
+    }
   }
+  
   
   setwd(old_wd)
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
