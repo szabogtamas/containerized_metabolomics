@@ -93,7 +93,7 @@ process hitlistCreator {
 
 top_hits
     .collectFile(){ item -> [ "${item[0]}.txt", item[1] + '' ]}
-    .map{[it.baseName, it]}
+    .map{[it.baseName, '"' + it.text.replaceAll("\\n", "::") + '"']}
     .set{hits_ora}
 
 process pwORA {
