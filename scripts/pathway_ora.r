@@ -188,7 +188,10 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
   setwd(tmpLocation)
   
-  mappable_compunds <- suppress_messages(filter_mappable_compounds(hitlist))
+  mappable_compunds <- tryCatch(
+    suppress_messages(filter_mappable_compounds(hitlist)),
+    error=function(cond) return(c())
+  )    
   
   mSet <- NULL
   mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
