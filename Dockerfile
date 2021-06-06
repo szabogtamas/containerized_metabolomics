@@ -108,7 +108,8 @@ ADD ./.Rprofile /home/rstudio/.Rprofile
 ENV R_PROFILE_USER /home/rstudio/.Rprofile
 RUN chmod a+rwx -R /home/rstudio
 
-RUN cd /home/rstudio/repo_files
-RUN git init
-RUN git remote add origin https://github.com/szabogtamas/containerized_metabolomics.git
-RUN git fetch origin && git checkout --track origin/dev
+RUN cd /home/rstudio/repo_files &&\
+  git init &&\
+  git remote add origin https://github.com/szabogtamas/containerized_metabolomics.git &&\
+  git fetch origin &&\
+  git checkout --track origin/dev
