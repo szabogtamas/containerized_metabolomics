@@ -60,7 +60,7 @@ main <- function(opt){
   if(!is.null(opt$tabLabels)){
     names(opt$changeValues) <- opt$tabLabels
   }
-  
+  print(opt$changeValues)
   cat("Calculating enrichment of metabolic pathways\n")
   mSetLs <- opt$changeValues %>%
     map(
@@ -146,7 +146,7 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
     SetMetabolomeFilter(FALSE) %>%
     SetCurrentMsetLib(msetlib, 2) %>%
     CalculateGlobalTestScore()
-  
+  # TODO: improve scenario for zero hits 
   pw_hit_link <- mSet %>%
     .$analSet %>%
     .$qea.hits %>%
