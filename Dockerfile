@@ -60,30 +60,30 @@ RUN install2.r --error \
     knitr \
     data.table
     
-RUN R -e "BiocManager::install('xcms')"
-RUN R -e "BiocManager::install('impute')"
-RUN R -e "BiocManager::install('pcaMethods')"
-RUN R -e "BiocManager::install('siggenes')"
-RUN R -e "BiocManager::install('globaltest')"
-RUN R -e "BiocManager::install('GlobalAncova')"
-RUN R -e "BiocManager::install('Rgraphviz')"
-RUN R -e "BiocManager::install('KEGGgraph')"
-RUN R -e "BiocManager::install('preprocessCore')"
-RUN R -e "BiocManager::install('genefilter')"
-RUN R -e "BiocManager::install('SSPA')"
-RUN R -e "BiocManager::install('BiocParallel')"
-RUN R -e "BiocManager::install('MSnbase')"
-RUN R -e "BiocManager::install('RBGL')"
-RUN R -e "BiocManager::install('multtest')"
-RUN R -e "BiocManager::install('edgeR')"
-RUN R -e "BiocManager::install('limma')"
-RUN R -e "BiocManager::install('fgsea')"
-RUN R -e "BiocManager::install('sva')"
-RUN R -e "BiocManager::install('crmn')"
-RUN R -e "BiocManager::install('ctc')"
-RUN R -e "BiocManager::install('ppcor')"
-RUN R -e "BiocManager::install('graph')"
-RUN R -e "BiocManager::install('vdiffr')"
+RUN R -e "BiocManager::install('xcms')" &&\
+  R -e "BiocManager::install('impute')" &&\
+  R -e "BiocManager::install('pcaMethods')" &&\
+  R -e "BiocManager::install('siggenes')" &&\
+  R -e "BiocManager::install('globaltest')" &&\
+  R -e "BiocManager::install('GlobalAncova')" &&\
+  R -e "BiocManager::install('Rgraphviz')" &&\
+  R -e "BiocManager::install('KEGGgraph')" &&\
+  R -e "BiocManager::install('preprocessCore')" &&\
+  R -e "BiocManager::install('genefilter')" &&\
+  R -e "BiocManager::install('SSPA')" &&\
+  R -e "BiocManager::install('BiocParallel')" &&\
+  R -e "BiocManager::install('MSnbase')" &&\
+  R -e "BiocManager::install('RBGL')" &&\
+  R -e "BiocManager::install('multtest')" &&\
+  R -e "BiocManager::install('edgeR')" &&\
+  R -e "BiocManager::install('limma')" &&\
+  R -e "BiocManager::install('fgsea')" &&\
+  R -e "BiocManager::install('sva')" &&\
+  R -e "BiocManager::install('crmn')" &&\
+  R -e "BiocManager::install('ctc')" &&\
+  R -e "BiocManager::install('ppcor')" &&\
+  R -e "BiocManager::install('graph')" &&\
+  R -e "BiocManager::install('vdiffr')"
 
 RUN install2.r --error \
     --deps TRUE \
