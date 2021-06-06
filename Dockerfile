@@ -30,9 +30,9 @@ RUN sudo apt-get install -y build-essential chrpath libxft-dev &&\
   sudo tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2 -C /usr/local/share/ &&\
   sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/
 
-RUN cd /tmp
-RUN wget -qO- https://get.nextflow.io | bash
-RUN mv nextflow /usr/local/bin/nextflow  &&\
+RUN cd /tmp &&\
+  wget -qO- https://get.nextflow.io | bash &&\
+  mv nextflow /usr/local/bin/nextflow  &&\
   sudo chmod 777 /usr/local/bin/nextflow &&\
   sudo chown rstudio /usr/local/bin/nextflow
 ENV PATH="/usr/local/bin:${PATH}"
