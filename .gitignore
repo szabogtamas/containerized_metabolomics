@@ -5,6 +5,8 @@
 # Input and output datasets
 data/
 input_data/
+tables/
+figures/
 results/
 nextflow/work
 nextflow/.nextflow*
