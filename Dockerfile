@@ -1,28 +1,28 @@
 FROM rocker/verse:3.6.3
 
-RUN sudo apt-get update -y
-RUN sudo apt-get install -y libxt-dev
-RUN sudo apt-get install -y libx11-dev
-RUN sudo apt-get install -y curl
-RUN sudo apt-get install -y libmagick++-dev
-RUN sudo apt-get install -y libfontconfig1-dev
-RUN sudo apt-get install -y zlib1g-dev
-RUN sudo apt-get install -y cargo
-RUN sudo apt-get install -y libxml2-dev
-RUN sudo apt-get install -y libcairo2-dev
-RUN sudo apt-get install -y mesa-common-dev
-RUN sudo apt-get install -y libglu1-mesa-dev
-RUN sudo apt-get install -y libopenmpi-dev
-RUN sudo apt-get install -y libnetcdf-dev
-RUN sudo apt-get install -y libssl-dev 
-RUN sudo apt-get install -y libcurl4-openssl-dev
-RUN sudo apt-get install -y libssh2-1-dev
-RUN sudo apt-get install -y libpq-dev
-RUN sudo apt-get install -y zlib1g-dev
-RUN sudo apt-get install -y libgeos-dev
-RUN sudo apt-get install -y libudunits2-dev
-RUN sudo apt-get install -y libgdal-dev
-RUN sudo apt-get install -y libsodium-dev
+RUN sudo apt-get update -y &&\
+  sudo apt-get install -y libxt-dev &&\
+  sudo apt-get install -y libx11-dev &&\
+  sudo apt-get install -y curl &&\
+  sudo apt-get install -y libmagick++-dev &&\
+  sudo apt-get install -y libfontconfig1-dev &&\
+  sudo apt-get install -y zlib1g-dev &&\
+  sudo apt-get install -y cargo &&\
+  sudo apt-get install -y libxml2-dev &&\
+  sudo apt-get install -y libcairo2-dev &&\
+  sudo apt-get install -y mesa-common-dev &&\
+  sudo apt-get install -y libglu1-mesa-dev &&\
+  sudo apt-get install -y libopenmpi-dev &&\
+  sudo apt-get install -y libnetcdf-dev &&\
+  sudo apt-get install -y libssl-dev &&\
+  sudo apt-get install -y libcurl4-openssl-dev &&\
+  sudo apt-get install -y libssh2-1-dev &&\
+  sudo apt-get install -y libpq-dev &&\
+  sudo apt-get install -y zlib1g-dev &&\
+  sudo apt-get install -y libgeos-dev &&\
+  sudo apt-get install -y libudunits2-dev &&\
+  sudo apt-get install -y libgdal-dev &&\
+  sudo apt-get install -y libsodium-dev
 
 RUN sudo apt-get install -y build-essential chrpath libxft-dev
 RUN sudo apt-get install -y libfreetype6-dev libfreetype6 libfontconfig1-dev libfontconfig1
