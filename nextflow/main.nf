@@ -121,10 +121,10 @@ process pwMSEA {
     publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? "../tables/$it" : "../figures/$it" }, mode: 'copy'
 
     input:
-        tuple testtag, score_tab from stat_for_msea
+        tuple testtag, tag, score_tab, stat_fig from stat_for_msea
 
     output:
-        tuple "${testtag}_msea.tsv", "${testtag}_msea.pdf" into msea_stats
+        tuple "${testtag}_${tag}_msea.tsv", "${testtag}_${tag}_msea.pdf" into msea_stats
 
     """
     Rscript /home/rstudio/repo_files/scripts/pathway_msea.r\
