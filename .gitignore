@@ -4,9 +4,9 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 # Input and output datasets
 data/
+input_data/
 results/
 nextflow/work
-nextflow/input_data
 nextflow/.nextflow*
 .secrets/
 # User-specific files
@@ -287,4 +287,3 @@ healthchecksdb
 MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-/home/rstudio/local_files/.secrets
