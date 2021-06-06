@@ -24,11 +24,11 @@ RUN sudo apt-get update -y &&\
   sudo apt-get install -y libgdal-dev &&\
   sudo apt-get install -y libsodium-dev
 
-RUN sudo apt-get install -y build-essential chrpath libxft-dev
-RUN sudo apt-get install -y libfreetype6-dev libfreetype6 libfontconfig1-dev libfontconfig1
-RUN sudo wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
-RUN sudo tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2 -C /usr/local/share/
-RUN sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/
+RUN sudo apt-get install -y build-essential chrpath libxft-dev &&\
+  sudo apt-get install -y libfreetype6-dev libfreetype6 libfontconfig1-dev libfontconfig1 &&\
+  sudo wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 &&\
+  sudo tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2 -C /usr/local/share/ &&\
+  sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/
 
 RUN cd /tmp
 RUN wget -qO- https://get.nextflow.io | bash
