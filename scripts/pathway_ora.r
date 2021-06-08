@@ -117,7 +117,7 @@ main <- function(opt){
   } else {
     ora_paths <- ora_paths[[1]]
   }
-    
+  
   if(nrow(ora_paths) > 0){
     if(opt$figureType == "dotplot"){
       
@@ -189,19 +189,24 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
   setwd(tmpLocation)
   
   mappable_compunds <- tryCatch(
-    suppress_messages(filter_mappable_compounds(hitlist)),
+    suppress_messages(filter_mappable_compounds(unique(hitlist))),
     error=function(cond) return(c())
-  )    
+  )
+  
+  msetlib <- "smpdb_pathway"
+  mSet <- NULL
   
   if(length(mappable_compunds) > 1){
-    mSet <- NULL
     mSet <- InitDataObjects("conc", "msetora", FALSE) %>%
       Setup.MapData(mappable_compunds) %>%
       CrossReferencing("name") %>%
       CreateMappingResultTable() %>%
       SetMetabolomeFilter(FALSE) %>%
-      SetCurrentMsetLib("smpdb_pathway", 2) %>%
+      SetCurrentMsetLib(msetlib, 2) %>%
       CalculateHyperScore()
+  }
+  
+  if("analSet" %in% names(mSet)){
     
     pw_hit_link <- mSet %>%
       .$analSet %>%
@@ -224,19 +229,25 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
       mutate(hitRatio = nHits/total) %>%
       left_join(pw_hit_link, by="Pathway")
     
-    if(keep_mSet){
-      mSet$summary_df <- pathway_data
-    } else {
-      mSet <- pathway_data
-    }
+    manenv <- print(where("current.msetlib"))
+    rm("current.msetlib", envir=manenv)
+    
+  } else {
+    pathway_data <- data.frame(
+      Pathway=c(), total=c(), expected=c(), nHits=c(),
+      Raw.p=c(), Holm.p=c(), FDR=c(), hitRatio=c(), Hits=c()
+    )
+    mSet <- list()
   }
   
+  if(keep_mSet){
+    mSet$summary_df <- pathway_data
+  } else {
+    mSet <- pathway_data
+  }
   
   setwd(old_wd)
   if(cleanUp) unlink(tmpLocation, recursive=TRUE)
-    
-  manenv <- print(where("current.msetlib"))
-  rm("current.msetlib", envir=manenv)
   
   invisible(mSet)
   

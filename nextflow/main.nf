@@ -5,20 +5,20 @@ def date = new Date()
 def sdf = new SimpleDateFormat("dd/MM/yyyy")
 
 /*
-        *Calculate basic descriptive statistics for experiment
-*/
+ *    Calculate basic descriptive statistics for experiment
+ */
 Channel
     .fromPath(params.input_folder + '/*.*')
-    .map{[params.ttest_tag, it.baseName + '_stats', it]}
-    .set{input_tabs}
+    .map{[params.ttest_tag, it.baseName, it]}
+    .set{ input_stats_tabs }
 
 process runDescStats {
 
-    publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? "../tables/$it" : "../figures/$it" }, mode: 'copy'
+    publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? params.table_folder + "/$it" : params.figure_folder + "/$it" }, mode: 'copy'
     containerOptions '--bind /data:/data'
 
     input:
-        tuple testtag, tag, conc_tab from input_tabs
+        tuple testtag, tag, conc_tab from input_stats_tabs
 
     output:
         tuple testtag, tag, "${tag}.tsv", "${tag}.pdf" into desc_stats
@@ -33,16 +33,16 @@ process runDescStats {
 
 
 /*
-        *Rank metabolites based on multivariate ROC performance
-*/
+ *    Rank metabolites based on multivariate ROC performance
+ */
 Channel
     .fromPath(params.input_folder + '/*.*')
-    .map{[params.mroc_tag, it.baseName + '_mroc', it]}
-    .set{input_mroc_tabs}
+    .map{[params.mroc_tag, it.baseName, it]}
+    .set{ input_mroc_tabs }
 
 process runMultiROC {
 
-    publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? "../tables/$it" : "../figures/$it" }, mode: 'copy'
+    publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? params.table_folder + "/$it" : params.figure_folder + "/$it" }, mode: 'copy'
     containerOptions '--bind /data:/data'
 
     input:
@@ -61,11 +61,11 @@ process runMultiROC {
 
 
 /*
-        *Create hitlists from stats tables
-*/
+ *    Create hitlists from stats tables
+ */
 desc_stats
     .mix(mroc_stats)
-    .into{ stat_tabs; stat_for_msea; stat_for_kegg }
+    .set{ stat_tabs }
 
 process hitlistCreator {
     
@@ -88,46 +88,56 @@ process hitlistCreator {
 
 
 /*
-        *Calculate pathway overrepresentation
-*/
+ *    Calculate pathway overrepresentation
+ */
 
 top_hits
     .collectFile(){ item -> [ "${item[0]}.txt", item[1] + '' ]}
-    .map{[it.baseName, '"' + it.text.replaceAll("\\n", "::") + '"']}
-    .set{hits_ora}
+    .map{[params.ora_tag, it.baseName, '"' + it.text.replaceAll("\\n", "::") + '"']}
+    .set{ hits_ora }
 
 process pwORA {
     
     containerOptions '--bind /data:/data'
-    echo true
-    publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? "../tables/$it" : "../figures/$it" }, mode: 'copy'
-
+    publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? params.table_folder + "/$it" : params.figure_folder + "/$it" }, mode: 'copy'
+    
     input:
-        tuple testtag, score_tab from hits_ora
+        tuple tag, testtag, score_tab from hits_ora
 
     output:
         tuple "${testtag}_ora.tsv", "${testtag}_ora.pdf" into ora_stats
 
     """
     Rscript /home/rstudio/repo_files/scripts/pathway_ora.r\
-    -i  $score_tab
+    -i  $score_tab\
+    --outFile ${testtag}_${tag}
     """
 } 
+
+
+/*
+*    Run MSEA to detect pathway enrichment
+*/
+
+Channel
+    .fromPath(params.input_folder + '/*.*')
+    .map{[params.msea_tag, it.baseName, it]}
+    .set{ input_for_msea }
 
 process pwMSEA {
     
     containerOptions '--bind /data:/data'
-    echo true
-    publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? "../tables/$it" : "../figures/$it" }, mode: 'copy'
-
+    publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? params.table_folder + "/$it" : params.figure_folder + "/$it" }, mode: 'copy'
+    
     input:
-        tuple testtag, tag, score_tab, stat_fig from stat_for_msea
+        tuple testtag, tag, in_tab from input_for_msea
 
     output:
-        tuple "${testtag}_${tag}_msea.tsv", "${testtag}_${tag}_msea.pdf" into msea_stats
+        tuple "${testtag}_${tag}.tsv", "${testtag}_${tag}.pdf" into msea_stats
 
     """
     Rscript /home/rstudio/repo_files/scripts/pathway_msea.r\
-    -i  $score_tab
+    -i  $in_tab\
+    --outFile ${testtag}_${tag}
     """
 } 

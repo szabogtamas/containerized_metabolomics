@@ -60,53 +60,65 @@ main <- function(opt){
   if(!is.null(opt$tabLabels)){
     names(opt$changeValues) <- opt$tabLabels
   }
-  print(opt$changeValues)
+  
   cat("Calculating enrichment of metabolic pathways\n")
   mSetLs <- opt$changeValues %>%
     map(
       ~find_metabo_msea(.x, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
     )
   
-  cat("Saving table\n")
-  mSummary <- mSetLs %>%
-    imap(function(x, y) mutate(x$summary_df, Group = y)) %>%
-    bind_rows()
-  
-  tab2tsv(mSummary, opt$outFile)
-  
-  cat("Plotting\n")
-  if(opt$figureType == "dotplot"){
+  if(length(mSetLs) > 0){
     
-    cat("Saving custom dotplot\n")
-    mSummary %>%
-      plotPathHits() %>%
-      fig2pdf(opt$outFile)
-    
-  } else {
-    
-    old_wd <- getwd()
-    setwd(dirname(opt$outFile))
-    
-    for(condition in names(mSetLs)){
+    mSummary <- mSetLs %>%
+      imap(function(x, y) mutate(x$summary_df, Group = y)) %>%
+      bind_rows()
       
-      mSet <- mSetLs[[condition]]
+    cat("Plotting\n")
+    if(opt$figureType == "dotplot"){
       
-      if(opt$figureType == "bar"){
-        PlotQEA.Overview(mSet, basename(opt$outFile), "bar", opt$fileType)
-      } else {
-        PlotQEA.Overview(mSet, basename(opt$outFile), "net", opt$fileType)
+      cat("Saving custom dotplot\n")
+      mSummary %>%
+        plotPathHits() %>%
+        fig2pdf(opt$outFile)
+      
+    } else {
+      
+      cat("Saving built-in figure\n")
+      old_wd <- getwd()
+      setwd(dirname(opt$outFile))
+      
+      for(condition in names(mSetLs)){
+        
+        mSet <- mSetLs[[condition]]
+        
+        if(opt$figureType == "bar"){
+          PlotQEA.Overview(mSet, basename(opt$outFile), "bar", opt$fileType)
+        } else {
+          PlotQEA.Overview(mSet, basename(opt$outFile), "net", opt$fileType)
+        }
+        
+        file.rename(
+          paste(basename(opt$outFile), "dpi72.", opt$fileType, sep=""),
+          paste(basename(opt$outFile), "_", condition, ".", opt$fileType, sep="")
+        )
+        
       }
       
-      file.rename(
-        paste(basename(opt$outFile), "dpi72.", opt$fileType, sep=""),
-        paste(basename(opt$outFile), "_", condition, ".", opt$fileType, sep="")
-      )
+      setwd(old_wd)
       
     }
+  
+  } else {
     
-    setwd(old_wd)
+    mSummary <- data.frame(Pathway=c(), hitRatio=c(), Raw.p=c()) 
     
+    cat("Empty figure\n")
+    p <- ggplot() + theme_void()
+    fig2pdf(p, opt$outFile)
   }
+  
+  cat("Saving table\n")
+  tab2tsv(mSummary, opt$outFile)
   
   invisible(NULL)
 }
@@ -131,14 +143,16 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
     unique() %>%
     filter_mappable_compounds()
   
-  if(!is(metabo_change, "list")){
+  if(is(metabo_change, "list")){
+    mSet <- metabo_change
+  } else {
     mSet <- metabo_change %>%
       filter(Metabolite %in% mappable_compunds) %>%
       convert_cc_to_mSet(tmpLocation="tmp.csv", analysis_type="msetqea") %>%
       normalize_mSet(tmpLocation=".")
   }
 
-  msetlib <- "smpdb_pathway" #"kegg_pathway"
+  msetlib <- "smpdb_pathway"
   
   mSet <- mSet %>%
     CrossReferencing("name") %>%
@@ -146,7 +160,7 @@ find_metabo_msea <- function(metabo_change, tmpLocation="tmp", keep_mSet=FALSE, 
     SetMetabolomeFilter(FALSE) %>%
     SetCurrentMsetLib(msetlib, 2) %>%
     CalculateGlobalTestScore()
-  # TODO: improve scenario for zero hits 
+  
   pw_hit_link <- mSet %>%
     .$analSet %>%
     .$qea.hits %>%
