@@ -1,8 +1,11 @@
 #!/usr/bin/env nextflow
 
-import java.text.SimpleDateFormat
-def date = new Date()
-def sdf = new SimpleDateFormat("dd/MM/yyyy")
+############################################################################
+#                                                                          #
+#   Run basic metabolomics analysis based on MetaboAnalyst toolkit         #
+#                                                                          #
+############################################################################
+
 
 /*
  *    Calculate basic descriptive statistics for experiment
