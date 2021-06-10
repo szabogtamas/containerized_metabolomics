@@ -1,10 +1,10 @@
 #!/usr/bin/env nextflow
 
-############################################################################
-#                                                                          #
-#   Run basic metabolomics analysis based on MetaboAnalyst toolkit         #
-#                                                                          #
-############################################################################
+////////////////////////////////////////////////////////////////////////////
+//                                                                        //
+//  Run basic metabolomics analysis based on MetaboAnalyst toolkit        //
+//                                                                        //
+////////////////////////////////////////////////////////////////////////////
 
 
 /*
@@ -24,7 +24,8 @@ process runDescStats {
         tuple testtag, tag, conc_tab from input_stats_tabs
 
     output:
-        tuple testtag, tag, "${tag}.tsv", "${tag}.pdf" into desc_stats
+        tuple testtag, tag, "${tag}.tsv" into desc_stats
+        tuple "${testtag}_${tag}", "${tag}.pdf" into stats_figures
 
     """
     Rscript /home/rstudio/repo_files/scripts/descriptive_stats.r\
@@ -52,7 +53,8 @@ process runMultiROC {
         tuple testtag, tag, conc_tab from input_mroc_tabs
 
     output:
-        tuple testtag, tag, "${tag}.tsv", "${tag}.pdf" into mroc_stats
+        tuple testtag, tag, "${tag}.tsv" into mroc_stats
+        tuple "${testtag}_${tag}", "${tag}.pdf" into mroc_figures
 
     """
     Rscript /home/rstudio/repo_files/scripts/multivariate_roc.r\
@@ -106,7 +108,8 @@ process pwORA {
         tuple tag, testtag, score_tab from hits_ora
 
     output:
-        tuple "${testtag}_ora.tsv", "${testtag}_ora.pdf" into ora_stats
+        tuple "${testtag}_${tag}", "${testtag}_ora.tsv" into ora_stats
+        tuple "${testtag}_${tag}", "${testtag}_ora.pdf" into ora_figures
 
     """
     Rscript /home/rstudio/repo_files/scripts/pathway_ora.r\
@@ -133,7 +136,8 @@ process pwMSEA {
         tuple testtag, tag, in_tab from input_for_msea
 
     output:
-        tuple "${testtag}_${tag}.tsv", "${testtag}_${tag}.pdf" into msea_stats
+        tuple "${testtag}_${tag}", "${testtag}_${tag}.tsv" into msea_stats
+        tuple "${testtag}_${tag}", "${testtag}_${tag}.pdf" into msea_figures
 
     """
     Rscript /home/rstudio/repo_files/scripts/pathway_msea.r\
@@ -160,7 +164,8 @@ process pwKEGG {
         tuple testtag, tag, in_tab from input_for_kegg
 
     output:
-        tuple "${testtag}_${tag}.tsv", "${testtag}_${tag}.pdf" into kegg_stats
+        tuple "${testtag}_${tag}", "${testtag}_${tag}.tsv" into kegg_stats
+        tuple "${testtag}_${tag}", "${testtag}_${tag}.pdf" into kegg_figures
 
     """
     Rscript /home/rstudio/repo_files/scripts/pathway_kegg.r\
@@ -179,9 +184,11 @@ process reportGenerator {
     publishDir params.report_folder, mode: 'copy'
     
     input:
-        tuple ora_table, ora_figure from ora_stats
-        tuple msea_table, msea_figure from msea_stats
-        tuple kegg_table, kegg_figure from kegg_stats
+        file stats_tag, stats_figure from stats_figures
+        file mroc_tag, mroc_figure from mroc_figures
+        file ora_tag, ora_figure from ora_figures
+        file msea_tag, msea_figure from msea_figures
+        file kegg_tag, kegg_figure from kegg_figures
         val report_filename from params.report_filename
         val report_title from params.report_title
         val report_author from params.report_author
