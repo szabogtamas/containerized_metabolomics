@@ -22,6 +22,10 @@ library(knitr)
 knitr::include_graphics("/home/rstudio/local_files/figures/friss_mc.pdf")
 ```
 
+```{r echo=FALSE, message=FALSE, fig.align='center', out.width='0.75\\linewidth', fig.pos='H'}
+knitr::include_graphics("/home/rstudio/local_files/figures/friss_uc.pdf")
+```
+
 ```{r}
 print(params$figure_folder)
 ```
