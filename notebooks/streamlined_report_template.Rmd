@@ -9,23 +9,15 @@ params:
   report_title: "Sample metabolomics report"
   report_title: "Anonymus"
   report_time: "`r format(Sys.Date(), format='%d/%m/%Y')`"
-  figure_folder: "/home/rstudio/local_files/figures"
+  figures: []
 ---
 
 ```{r}
 library(knitr)
 ```
 
-## Showing all figures
-
 ```{r echo=FALSE, message=FALSE, fig.align='center', out.width='0.75\\linewidth', fig.pos='H'}
-knitr::include_graphics("/home/rstudio/local_files/figures/friss_mc.pdf")
-```
-
-```{r echo=FALSE, message=FALSE, fig.align='center', out.width='0.75\\linewidth', fig.pos='H'}
-knitr::include_graphics("/home/rstudio/local_files/figures/friss_uc.pdf")
-```
-
-```{r}
-print(params$figure_folder)
+for (metab_fig in param.figures) {
+  knitr::include_graphics(metab_fig)
+}
 ```
