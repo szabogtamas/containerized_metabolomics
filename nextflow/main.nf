@@ -177,26 +177,31 @@ process pwKEGG {
  */
 
 desc_stats_figs
-    .mix( mroc_stats_figs, ora_stats_figs, msea_stats_figs, mroc_stats_figs )
+    .mix( mroc_stats_figs, ora_stats_figs, msea_stats_figs, kegg_stats_figs )
     .collect()
     .set{ all_figures }
 
+Channel
+    .fromPath(params.report_template)
+    .set{ report_template }
+
 process reportGenerator {
     
+    stageInMode 'copy'
     publishDir params.report_folder, mode: 'copy'
     
     input:
         file report_figure from all_figures
-        val report_template from params.report_template
+        file report_template from report_template
         val report_filename from params.report_filename
         val report_title from params.report_title
         val report_author from params.report_author
-
+        
     output:
-        file $report_filename into final_report
-
+        file "${report_filename}" into final_report
+        
     """
-    Rscript /home/rstudio/repo_files/scripts/report_kniting.r\
+    Rscript /home/rstudio/repo_files/scripts/report_knitting.r\
         --reportTemplate $report_template --outFile $report_filename\
         --report_title $report_title --report_author $report_author\
         $report_figure
