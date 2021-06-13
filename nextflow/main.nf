@@ -187,7 +187,7 @@ process reportGenerator {
     
     input:
         file report_figure from all_figures
-        val report_filename from params.report_template
+        val report_template from params.report_template
         val report_filename from params.report_filename
         val report_title from params.report_title
         val report_author from params.report_author
