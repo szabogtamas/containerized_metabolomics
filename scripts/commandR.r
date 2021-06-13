@@ -272,7 +272,6 @@ if (!interactive() & not_called_by_another) {
   # Parse command line options and split up lists or nested lists
   all_opt <- parse_args(parser, positional_arguments=TRUE)
   opt <- all_opt$opt
-  args <- all_opt$args
 
   #Parse inputs for certain types (lists and tables)
   all_arguments <- c(scriptMandatoryArgs, scriptOptionalArgs)
@@ -308,9 +307,9 @@ if (!interactive() & not_called_by_another) {
     checkpass <- TRUE
   }
   
-  # Add positionals to argument list if there is any
-  if (!is.null(arg)) {
-    opt$positionals <- arg
+  # Add positionals toargument list if there is any
+  if (length(all_opt$args) > 0 ) {
+    opt$positionals <- all_opt$args
   }
 
   # Execute main function if mandatory arguments are set (otherwise print help message)
