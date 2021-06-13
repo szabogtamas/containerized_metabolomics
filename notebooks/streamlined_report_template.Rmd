@@ -2,7 +2,9 @@
 title: "`r params$report_title`"
 author: "`r params$report_author`"
 date: "`r params$report_time`"
-output: pdf_document
+output:
+  pdf_document:
+    toc: True
 params:
   report_title: "Sample metabolomics report"
   report_author: "Anonymus"
@@ -10,8 +12,12 @@ params:
   figures: ["test_figure_1.pdf", "test_figure_2.pdf"]
 ---
 
-```{r echo=FALSE, message=FALSE, out.width='0.9\\linewidth', fig.align='center', fig.pos='H'}
+```{r echo=FALSE, results="asis"}
 figures <- params$figures
 figures <- figures[grepl("(\\.pdf|\\.png|\\.jpg)", figures)]
-knitr::include_graphics(figures)
+for(figure in figures) {
+  figname <- gsub("\\..{3}$", "", basename(figure))
+  cat("\n## ", figname, "\n")
+  cat("![](", figure, ")\n")
+}
 ```
