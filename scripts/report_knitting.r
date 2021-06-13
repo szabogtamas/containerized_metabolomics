@@ -28,9 +28,12 @@ scriptOptionalArgs <- list(
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
-  
-  print(opt)
-
+    
+  rmarkdown::render(
+    opt$reportTemplate,
+    output_file = opt$outFile,
+    params = list(figures=opt$positionals)
+  )
   invisible(NULL)
 }
 
