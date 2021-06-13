@@ -307,6 +307,11 @@ if (!interactive() & not_called_by_another) {
   } else {
     checkpass <- TRUE
   }
+  
+  # Add positionals to argument list if there is any
+  if (!is.null(arg)) {
+    opt$positionals <- arg
+  }
 
   # Execute main function if mandatory arguments are set (otherwise print help message)
   if (checkpass) { 
