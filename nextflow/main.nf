@@ -177,7 +177,7 @@ process pwKEGG {
  */
 
 desc_stats_figs
-    .mix(mroc_stats_figs; ora_stats_figs; msea_stats_figs; mroc_stats_figs )
+    .mix( mroc_stats_figs, ora_stats_figs, msea_stats_figs, mroc_stats_figs )
     .collect()
     .set{ all_figures }
 
@@ -187,6 +187,7 @@ process reportGenerator {
     
     input:
         file report_figure from all_figures
+        val report_filename from params.report_template
         val report_filename from params.report_filename
         val report_title from params.report_title
         val report_author from params.report_author
@@ -196,7 +197,7 @@ process reportGenerator {
 
     """
     Rscript /home/rstudio/repo_files/scripts/report_kniting.r\
-        --reportTemplate $report_filename --outFile $report_filename\
+        --reportTemplate $report_template --outFile $report_filename\
         --report_title $report_title --report_author $report_author\
         $report_figure
     """
