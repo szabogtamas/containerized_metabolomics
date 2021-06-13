@@ -1,23 +1,17 @@
 ---
 title: "`r params$report_title`"
 author: "`r params$report_author`"
-date: "`r params$report_time)`"
-output: 
-  pdf_document:
-    toc: true
+date: "`r params$report_time`"
+output: pdf_document
 params:
   report_title: "Sample metabolomics report"
-  report_title: "Anonymus"
-  report_time: "`r format(Sys.Date(), format='%d/%m/%Y')`"
-  figures: []
+  report_author: "Anonymus"
+  report_time: !r format(Sys.Date(), format="%d/%m/%Y")
+  figures: ["test_figure_1.pdf", "test_figure_2.pdf"]
 ---
 
-```{r}
-library(knitr)
-```
-
-```{r echo=FALSE, message=FALSE, fig.align='center', out.width='0.75\\linewidth', fig.pos='H'}
-for (metab_fig in param.figures) {
-  knitr::include_graphics(metab_fig)
-}
+```{r echo=FALSE, message=FALSE, out.width='0.9\\linewidth', fig.align='center', fig.pos='H'}
+figures <- params$figures
+figures <- figures[grepl("(\\.pdf|\\.png|\\.jpg)", figures)]
+knitr::include_graphics(figures)
 ```
