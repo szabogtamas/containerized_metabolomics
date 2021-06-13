@@ -15,6 +15,14 @@ scriptOptionalArgs <- list(
     default="metabolomics_report.pdf",
     help="File path to report output."
   ),
+  report_title = list(
+    default="A metabolomics report template",
+    help="Title of basic report joining utput figures."
+  ),
+  report_author = list(
+    default="Anonymus",
+    help="Author of the report."
+  ),
   commandRpath = list(
     default="/home/rstudio/repo_files/scripts/commandR.r",
     help="Path to command line connectivity script (if not in cwd)."
@@ -32,7 +40,11 @@ main <- function(opt){
   rmarkdown::render(
     opt$reportTemplate,
     output_file = opt$outFile,
-    params = list(figures=opt$positionals)
+    params = list(
+        report_title=opt$report_title,
+        report_author=opt$report_author,
+        figures=opt$positionals
+    )
   )
   invisible(NULL)
 }
