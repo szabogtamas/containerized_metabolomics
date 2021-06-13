@@ -270,7 +270,9 @@ if (!interactive() & not_called_by_another) {
   parser <- parser4arglist(parser, list(scriptMandatoryArgs, scriptOptionalArgs))
 
   # Parse command line options and split up lists or nested lists
-  opt <- parse_args(parser)
+  all_opt <- parse_args(parser, positional_arguments=TRUE)
+  opt <- all_opt$opt
+  args <- all_opt$args
 
   #Parse inputs for certain types (lists and tables)
   all_arguments <- c(scriptMandatoryArgs, scriptOptionalArgs)
