@@ -111,11 +111,11 @@ main <- function(opt){
       }
     }
   }
-    
-  if(length(ora_paths) > 1){
-    ora_paths <- bind_rows(ora_paths)
-  } else {
+  
+  if(length(ora_paths) == 1){
     ora_paths <- ora_paths[[1]]
+  } else {
+    ora_paths <- bind_rows(ora_paths)
   }
   
   if(nrow(ora_paths) > 0){
