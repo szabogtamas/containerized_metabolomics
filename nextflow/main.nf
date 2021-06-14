@@ -122,7 +122,9 @@ process pwORA {
 
 Channel
     .fromPath(params.input_folder + '/*.*')
-    .map{[params.msea_tag, it.baseName, it]}
+    .map{it.baseName + ':' + it}
+    .collect()
+    .map{it.join(',')}
     .set{ input_for_msea }
 
 process pwMSEA {
@@ -130,16 +132,17 @@ process pwMSEA {
     publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? params.table_folder + "/$it" : params.figure_folder + "/$it" }, mode: 'copy'
     
     input:
-        tuple testtag, tag, in_tab from input_for_msea
+        val testtag from params.msea_tag
+        val in_tab from input_for_msea
 
     output:
-        file "${testtag}_${tag}.tsv" into msea_stats
-        file "${testtag}_${tag}.pdf" into msea_stats_figs
+        file "${testtag}.tsv" into msea_stats
+        file "${testtag}.pdf" into msea_stats_figs
 
     """
     Rscript /home/rstudio/repo_files/scripts/pathway_msea.r\
         -i  $in_tab\
-        --outFile ${testtag}_${tag}
+        --outFile $testtag
     """
 } 
 
@@ -150,7 +153,9 @@ process pwMSEA {
 
 Channel
     .fromPath(params.input_folder + '/*.*')
-    .map{[params.kegg_tag, it.baseName, it]}
+    .map{it.baseName + ':' + it}
+    .collect()
+    .map{it.join(',')}
     .set{ input_for_kegg }
 
 process pwKEGG {
@@ -158,16 +163,17 @@ process pwKEGG {
     publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? params.table_folder + "/$it" : params.figure_folder + "/$it" }, mode: 'copy'
     
     input:
-        tuple testtag, tag, in_tab from input_for_kegg
+        val testtag from params.kegg_tag
+        val in_tab from input_for_kegg
 
     output:
-        file "${testtag}_${tag}.tsv" into kegg_stats
-        file "${testtag}_${tag}.pdf" into kegg_stats_figs
+        file "${testtag}.tsv" into kegg_stats
+        file "${testtag}.pdf" into kegg_stats_figs
 
     """
     Rscript /home/rstudio/repo_files/scripts/pathway_kegg.r\
         -i  $in_tab\
-        --outFile ${testtag}_${tag}
+        --outFile $testtag
     """
 } 
 
