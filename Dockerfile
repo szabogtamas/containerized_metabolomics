@@ -57,7 +57,7 @@ RUN install2.r --error \
     pheatmap \
     lattice \
     rmarkdown \
-    knitr \
+    #knitr \
     data.table
     
 RUN R -e "BiocManager::install('xcms')" &&\
