@@ -57,8 +57,11 @@ RUN install2.r --error \
     pheatmap \
     lattice \
     rmarkdown \
-    #knitr \
     data.table
+
+# A no very elegant workaround, but gifski breakes the install2.r approach for knitr
+RUN sudo apt-get update -y &&\
+  sudo apt-get install -y r-cran-knitr
     
 RUN R -e "BiocManager::install('xcms')" &&\
   R -e "BiocManager::install('impute')" &&\
