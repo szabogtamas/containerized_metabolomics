@@ -59,9 +59,10 @@ RUN install2.r --error \
     rmarkdown \
     data.table
 
-# A no very elegant workaround, but gifski breakes the install2.r approach for knitr
+# A not very elegant workaround, but gifski breakes the install2.r approach for knitr
 RUN sudo apt-get update -y &&\
   sudo apt-get install -y r-cran-knitr
+RUN R -e "devtools::install_github('sgibb/MALDIquant@1.19.3')"
     
 RUN R -e "BiocManager::install('xcms')" &&\
   R -e "BiocManager::install('impute')" &&\
