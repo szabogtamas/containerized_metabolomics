@@ -1,4 +1,4 @@
-FROM rocker/verse:3.6.3
+FROM rocker/verse:4.1
 
 RUN sudo apt-get update -y &&\
   sudo apt-get install -y libxt-dev &&\
@@ -57,12 +57,8 @@ RUN install2.r --error \
     pheatmap \
     lattice \
     rmarkdown \
-    data.table
-
-# A not very elegant workaround, but gifski breakes the install2.r approach for knitr
-RUN sudo apt-get update -y &&\
-  sudo apt-get install -y r-cran-knitr
-RUN R -e "devtools::install_github('sgibb/MALDIquant@1.19.3')"
+    data.table \
+    knitr
     
 RUN R -e "BiocManager::install('xcms')" &&\
   R -e "BiocManager::install('impute')" &&\
@@ -105,9 +101,10 @@ RUN install2.r --error \
     readxl \
     googledrive
 
+RUN R -e "devtools::install_github('xia-lab/OptiLCMS')"
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
-ADD ./ /home/rstudio/repo_files
-ADD ./.Rprofile /home/rstudio/.Rprofile
-ENV R_PROFILE_USER /home/rstudio/.Rprofile
-RUN chmod a+rwx -R /home/rstudio
+#ADD ./ /home/rstudio/repo_files
+#ADD ./.Rprofile /home/rstudio/.Rprofile
+#ENV R_PROFILE_USER /home/rstudio/.Rprofile
+#RUN chmod a+rwx -R /home/rstudio
