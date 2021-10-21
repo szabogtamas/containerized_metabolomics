@@ -104,7 +104,7 @@ RUN install2.r --error \
 RUN R -e "devtools::install_github('xia-lab/OptiLCMS')"
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 
-#ADD ./ /home/rstudio/repo_files
-#ADD ./.Rprofile /home/rstudio/.Rprofile
-#ENV R_PROFILE_USER /home/rstudio/.Rprofile
-#RUN chmod a+rwx -R /home/rstudio
+ADD ./ /home/rstudio/repo_files
+ADD ./.Rprofile /home/rstudio/.Rprofile
+ENV R_PROFILE_USER /home/rstudio/.Rprofile
+RUN chmod a+rwx -R /home/rstudio
