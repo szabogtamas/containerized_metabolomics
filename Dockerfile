@@ -103,6 +103,7 @@ RUN install2.r --error \
 
 RUN R -e "devtools::install_github('xia-lab/OptiLCMS')"
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
+RUN R -e "tinytex::parse_packages(text = '! LaTeX Error: File `amsmath.sty` not found.')"
 
 ADD ./ /home/rstudio/repo_files
 ADD ./.Rprofile /home/rstudio/.Rprofile
