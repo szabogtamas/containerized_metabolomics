@@ -52,18 +52,21 @@ for (pk in c("tidyr", "dplyr", "tibble", "ggplot2", "MetaboAnalystR")){
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
   
+  if(!dir.exists(opt$tmpLocation)) dir.create(opt$tmpLocation)
+  tmpLocation <- tools::file_path_as_absolute(opt$tmpLocation)
+  
   cat("Parsing dataset\n")
   input <- opt$inFile %>%
     convert_cc_to_mSet(
-      tmpLocation=file.path(opt$tmpLocation, "tmp.csv"), analysis_type="roc"
+      tmpLocation=file.path(tmpLocation, "tmp.csv"), analysis_type="roc"
     ) %>%
-    normalize_mSet(tmpLocation=opt$tmpLocation)
+    normalize_mSet(tmpLocation=tmpLocation)
   
   cat("Saving figure\n")
   if(opt$figureType == "boxes"){
     
     featureMat <- calcMultiROC(input)
-
+    
     if(nrow(featureMat) > 0){
       featureMat %>%
         plotROCfeat() %>%
@@ -76,7 +79,7 @@ main <- function(opt){
     }
   } else {
     featureMat <- calcMultiROC(
-      input, tmpLocation=opt$tmpLocation, figureLocation=opt$outFile, fileType=opt$fileType
+      input, tmpLocation=tmpLocation, figureLocation=opt$outFile, fileType=opt$fileType
     )
     
   }
