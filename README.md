@@ -10,6 +10,8 @@ Heavily builds on metaboanalyst and two example notebooks simply recreate demos 
   
 The additional advantage of this container (besides easy deployment) is that it hosts R scripts wrapping some metaboanalyst pipelines together to provide a shortcut both working from a notebook or via command line.
 
+Since most recent update, it is based on R 4.1 (after R 3.6).
+
 ## Interactive notebook
 
 To run the example notebook, simply pull the Docker container with
