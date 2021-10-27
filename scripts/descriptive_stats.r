@@ -51,14 +51,17 @@ for (pk in c("tidyr", "dplyr", "ggplot2", "MetaboAnalystR")){
 #' 
 #' @return Not intended to return anything, but rather to save outputs to files.
 main <- function(opt){
-
+  
+  if(!dir.exists(opt$tmpLocation)) dir.create(opt$tmpLocation)
+  tmpLocation <- tools::file_path_as_absolute(opt$tmpLocation)
+  
   cat("Parsing dataset\n")
   input <- opt$inFile %>%
-    convert_cc_to_mSet(tmpLocation=file.path(opt$tmpLocation, "tmp.csv")) %>%
-    normalize_mSet(tmpLocation=opt$tmpLocation)
-
+    convert_cc_to_mSet(tmpLocation=file.path(tmpLocation, "tmp.csv")) %>%
+    normalize_mSet(tmpLocation=tmpLocation)
+  
   cat("Calculating basic descriptive statistics\n")
-  mSet <- calcMetaboStat(input, tmpLocation=opt$tmpLocation, keep_mSet=TRUE)
+  mSet <- calcMetaboStat(input, tmpLocation=tmpLocation, keep_mSet=TRUE)
   
   cat("Saving table\n")
   stats_data <- extract_stat_from_mSet(mSet)
@@ -88,7 +91,7 @@ main <- function(opt){
     setwd(tmp_wd)
     
   }
-
+  
   invisible(NULL)
 }
 

@@ -84,13 +84,13 @@ main <- function(opt){
 #' @return normalized metabo Set.
 normalize_mSet <- function(inSet, tmpLocation="tmp", cleanUp=FALSE){
   
-  old_wd <- getwd()
+  old_wd <- tools::file_path_as_absolute(getwd())
   if(!dir.exists(tmpLocation)) dir.create(tmpLocation)
   setwd(tmpLocation)
 
   out <- inSet %>%
     ReplaceMin() %>%
-    #FilterVariable("iqr", "F", 25) %>% # Not working since update
+    FilterVariable("iqr", "F", 25) %>%
     PreparePrenormData() %>%
     Normalization("MedianNorm", "LogNorm", "NULL", ratio=FALSE, ratioNum=20)
   
