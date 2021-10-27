@@ -177,7 +177,7 @@ process pwKEGG {
     """
 } 
 
-    
+
 /*
  *    Gather all figures into a single report
  */
@@ -207,9 +207,11 @@ process reportGenerator {
         file "${report_filename}" into final_report
         
     """
-    Rscript /home/rstudio/repo_files/scripts/report_knitting.r\
-        --reportTemplate $report_template --outFile $report_filename\
-        --report_title $report_title --report_author $report_author\
-        $report_figure
+    pdftk $report_figure cat output $report_filename
     """
+    //Rscript /home/rstudio/repo_files/scripts/report_knitting.r\
+    //    --reportTemplate $report_template --outFile $report_filename\
+    //    --report_title $report_title --report_author $report_author\
+    //    $report_figure
+    //"""
 }
