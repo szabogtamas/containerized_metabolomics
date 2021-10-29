@@ -105,9 +105,7 @@ RUN R -e "devtools::install_github('xia-lab/OptiLCMS')"
 RUN R -e "devtools::install_github('xia-lab/MetaboAnalystR', build = TRUE, build_vignettes = TRUE, build_manual = TRUE)"
 RUN R -e "tinytex::parse_packages(text = '! LaTeX Error: File `amsmath.sty` not found.')"
 
-RUN sudo add-apt-repository ppa:malteworld/ppa &&\
-  sudo apt update  -y &&\
-  sudo apt install pdftk
+RUN sudo apt-get install poppler-utils
 
 ADD ./ /home/rstudio/repo_files
 ADD ./.Rprofile /home/rstudio/.Rprofile
