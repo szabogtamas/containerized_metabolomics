@@ -207,7 +207,7 @@ process reportGenerator {
         file "${report_filename}" into final_report
         
     """
-    pdftk $report_figure cat output $report_filename
+    pdfunite $report_figure $report_filename
     """
     //Rscript /home/rstudio/repo_files/scripts/report_knitting.r\
     //    --reportTemplate $report_template --outFile $report_filename\
