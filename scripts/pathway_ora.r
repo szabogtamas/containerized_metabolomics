@@ -193,7 +193,8 @@ find_metabo_ora <- function(hitlist, tmpLocation="tmp", keep_mSet=FALSE, cleanUp
     error=function(cond) return(c())
   )
   
-  msetlib <- "smpdb_pathway"
+  #msetlib <- "smpdb_pathway"
+  msetlib <- "kegg_pathway"
   mSet <- NULL
   
   if(length(mappable_compunds) > 1){
