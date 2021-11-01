@@ -45,4 +45,6 @@ docker run -it -v $PWD:/home/rstudio/local_files \
 
 Additional tables will be in `tables` folder and individual figures in `figures` folder.
 
-Please note that or some strange reason, Nextflow pipeline hangs sometimes when called from within the container. A more robust use case is when Nextflow is launched on a host or SGE and the individual processes are executed inside this container.
+Please note that or some strange reason (and less frequently since last updates), Nextflow pipeline hangs sometimes when called from within the container. A more robust use case is when Nextflow is launched on a host or SGE and the individual processes are executed inside this container.
+  
+In the most recent rocker image, tinytex package manager is not working well and this results in an error when knitting the pdf report. Due to this obstacle, pdf figures are merged into a report using pdfunite, temporarily.
