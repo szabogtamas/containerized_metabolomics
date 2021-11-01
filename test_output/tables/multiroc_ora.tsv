@@ -1,0 +1,3 @@
+Pathway	total	expected	nHits	Raw.p	Holm.p	FDR	hitRatio	Hits	Group
+Valine, Leucine and Isoleucine Degradation	60	0.117	1	0.114	1	1	0.0166666666666667	L-Leucine	conditionB
+Bile Acid Biosynthesis	65	0.127	1	0.123	1	1	0.0153846153846154	Chenodeoxycholic acid	conditionB
