@@ -13,7 +13,11 @@
 
 Channel
     .fromPath(params.input_folder + '/*.*')
-    .map{[params.ttest_tag, it.baseName, it]}
+    .map{[it.baseName, it]}
+    .into{ input_stats_ftabs; input_mroc_ftabs }
+
+input_stats_ftabs
+    .map{[params.ttest_tag, it[0], it[1]]}
     .set{ input_stats_tabs }
 
 process runDescStats {
@@ -39,9 +43,8 @@ process runDescStats {
  *    Rank metabolites based on multivariate ROC performance
  */
 
-Channel
-    .fromPath(params.input_folder + '/*.*')
-    .map{[params.mroc_tag, it.baseName, it]}
+input_mroc_ftabs
+    .map{[params.mroc_tag, it[0], it[1]]}
     .set{ input_mroc_tabs }
 
 process runMultiROC {
@@ -49,15 +52,15 @@ process runMultiROC {
     publishDir '.', saveAs: { it.contains('.tsv') || it.contains('.xlsx') ? params.table_folder + "/$it" : params.figure_folder + "/$it" }, mode: 'copy'
 
     input:
-        tuple testtag, tag, conc_tab from input_mroc_tabs
+        tuple mtesttag, mtag, conc_tab from input_mroc_tabs
 
     output:
-        tuple testtag, tag, "${testtag}_${tag}.tsv" into mroc_stats
-        file "${testtag}_${tag}.pdf" into mroc_stats_figs
+        tuple mtesttag, mtag, "${mtesttag}_${mtag}.tsv" into mroc_stats
+        file "${mtesttag}_${mtag}.pdf" into mroc_stats_figs
 
     """
     Rscript /home/rstudio/repo_files/scripts/multivariate_roc.r\
-        --outFile ${testtag}_${tag}\
+        --outFile ${mtesttag}_${mtag}\
         -i $conc_tab
     """
 }
