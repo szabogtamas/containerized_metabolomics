@@ -11,6 +11,11 @@ results/
 nextflow/work
 nextflow/.nextflow*
 .secrets/
+
+# Do not ignore examples
+!test_output/figures/
+!test_output/tables/
+
 # User-specific files
 *.rsuser
 *.suo
